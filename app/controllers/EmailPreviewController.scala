@@ -47,12 +47,14 @@ class EmailPreviewController @Inject()
 
   def sendEmail(emailUUID: String, userSelection: String): Action[AnyContent] = requiresAtLeast(GatekeeperRole.USER){
     implicit request => {
-      val fetchEmail: Future[OutgoingEmail] = emailService.fetchEmail(emailUUID)
-      fetchEmail.map { email =>
-        emailConnector.sendEmail(EmailPreviewForm(emailUUID, ComposeEmailForm(email.subject, email.htmlEmailBody, true)))
-        //TODO need to fetch email count based on UUID
-        Redirect(routes.ComposeEmailController.sentEmailConfirmation(userSelection, 1))
-      }
+      val outgoingEmail= for {
+        fetchEmail <- emailService.fetchEmail(emailUUID)
+        outgoingEmail <- emailConnector.sendEmail(EmailPreviewForm(emailUUID, ComposeEmailForm(fetchEmail.subject, fetchEmail.htmlEmailBody, true)))
+
+        _ = logger.info(s"outgoingEmail count is ${outgoingEmail.emailsCount}")
+      } yield outgoingEmail
+      outgoingEmail.map( e =>
+        Redirect(routes.ComposeEmailController.sentEmailConfirmation(userSelection, e.emailsCount)))
     }
   }
 
