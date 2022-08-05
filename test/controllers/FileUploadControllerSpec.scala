@@ -80,7 +80,8 @@ class FileUploadControllerSpec extends ControllerBaseSpec with Matchers with Moc
          |    "status": "INPROGRESS",
          |    "composedBy": "auto-emailer",
          |    "approvedBy": "auto-emailer",
-         |    "userSelectionQuery": $selectionQuery
+         |    "userSelectionQuery": $selectionQuery,
+         |    "emailsCount": 1
          |  }
       """.stripMargin
 

@@ -50,7 +50,8 @@ class UploadDocumentsConnectorSpec extends AsyncHmrcSpec with BeforeAndAfterEach
        |    "status": "",
        |    "composedBy": "auto-emailer",
        |    "approvedBy": "auto-emailer",
-       |    "userSelectionQuery": $selectionQuery
+       |    "userSelectionQuery": $selectionQuery,
+       |    "emailsCount": 1
        |  }
       """.stripMargin
   val mockComposeEmailConnector: GatekeeperEmailConnector = mock[GatekeeperEmailConnector]

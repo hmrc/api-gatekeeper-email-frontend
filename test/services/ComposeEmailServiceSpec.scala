@@ -45,17 +45,17 @@ class ComposeEmailServiceSpec extends AnyWordSpec with Matchers with GuiceOneApp
 
   "saveEmail" should {
     "handle saving an email successfully" in new Setup {
-      when(mockEmailConnector.saveEmail(*, *, *)(*)).thenReturn(Future.successful(OutgoingEmail("", "", None, "", "", "", "", "", None, userSelectionQuery)))
+      when(mockEmailConnector.saveEmail(*, *, *)(*)).thenReturn(Future.successful(OutgoingEmail("", "", None, "", "", "", "", "", None, userSelectionQuery, 1)))
       val result = await(underTest.saveEmail(new ComposeEmailForm("", "", true), "", userSelectionQuery))
-      result shouldBe OutgoingEmail("", "", None, "", "", "", "", "", None, userSelectionQuery)
+      result shouldBe OutgoingEmail("", "", None, "", "", "", "", "", None, userSelectionQuery, 1)
     }
   }
 
   "fetchEmail" should {
     "handle fetching an email successfully" in new Setup {
-      when(mockEmailConnector.fetchEmail(*)(*)).thenReturn(Future.successful(OutgoingEmail("", "", None, "", "", "", "", "", None, userSelectionQuery)))
+      when(mockEmailConnector.fetchEmail(*)(*)).thenReturn(Future.successful(OutgoingEmail("", "", None, "", "", "", "", "", None, userSelectionQuery, 1)))
       val result = await(underTest.fetchEmail(emailUUID = emailUUID))
-      result shouldBe OutgoingEmail("", "", None, "", "", "", "", "", None, userSelectionQuery)
+      result shouldBe OutgoingEmail("", "", None, "", "", "", "", "", None, userSelectionQuery, 1)
     }
   }
 
@@ -69,9 +69,9 @@ class ComposeEmailServiceSpec extends AnyWordSpec with Matchers with GuiceOneApp
 
   "updateEmail" should {
     "handle updating an email successfully" in new Setup {
-      when(mockEmailConnector.updateEmail(*, *, *, *)(*)).thenReturn(Future.successful(OutgoingEmail("", "", None, "", "", "", "", "", None, userSelectionQuery)))
+      when(mockEmailConnector.updateEmail(*, *, *, *)(*)).thenReturn(Future.successful(OutgoingEmail("", "", None, "", "", "", "", "", None, userSelectionQuery, 1)))
       val result = await(underTest.updateEmail(new ComposeEmailForm("", "", true), "", Some(userSelectionQuery)))
-      result shouldBe OutgoingEmail("", "", None, "", "", "", "", "", None, userSelectionQuery)
+      result shouldBe OutgoingEmail("", "", None, "", "", "", "", "", None, userSelectionQuery, 1)
     }
   }
 }

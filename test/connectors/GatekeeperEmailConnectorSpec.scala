@@ -97,7 +97,8 @@ class GatekeeperEmailConnectorSpec extends AsyncHmrcSpec with BeforeAndAfterEach
          |    "status": "",
          |    "composedBy": "auto-emailer",
          |    "approvedBy": "auto-emailer",
-         |    "userSelectionQuery": $selectionQuery
+         |    "userSelectionQuery": $selectionQuery,
+         |    "emailsCount": 1
          |  }
       """.stripMargin
 

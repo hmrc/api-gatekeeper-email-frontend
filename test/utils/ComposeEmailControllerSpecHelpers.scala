@@ -67,15 +67,15 @@ object ComposeEmailControllerSpecHelpers  extends ControllerBaseSpec with Matche
   class ComposeEmailServiceTest extends ComposeEmailService(mock[GatekeeperEmailConnector]){
     override def saveEmail(composeEmailForm: ComposeEmailForm, emailUUID: String,  userSelectionQuery: DevelopersEmailQuery)(implicit hc: HeaderCarrier): Future[OutgoingEmail] =
       Future.successful(OutgoingEmail("srinivasalu.munagala@digital.hmrc.gov.uk",
-        "Hello", None,  "*test email body*", "", "", "", "", None, userSelectionQuery))
+        "Hello", None,  "*test email body*", "", "", "", "", None, userSelectionQuery, 1))
     override def fetchEmail(emailUUID: String)(implicit hc: HeaderCarrier): Future[OutgoingEmail] = {
       Future.successful(OutgoingEmail("srinivasalu.munagala@digital.hmrc.gov.uk",
-        "Hello", None,  "*test email body*", "", "", "", "", None, userSelectionQuery))
+        "Hello", None,  "*test email body*", "", "", "", "", None, userSelectionQuery, 1))
     }
     override def updateEmail(composeEmailForm: ComposeEmailForm, emailUUID: String, userSelectionQuery: Option[DevelopersEmailQuery],
                              attachmentDetails: Option[Seq[UploadedFile]])(implicit hc: HeaderCarrier): Future[OutgoingEmail] = {
       Future.successful(OutgoingEmail("srinivasalu.munagala@digital.hmrc.gov.uk",
-        "Hello", None,  "*test email body*", "", "", "", "", None, userSelectionQuery.get))
+        "Hello", None,  "*test email body*", "", "", "", "", None, userSelectionQuery.get, 1))
     }
 
     override def deleteEmail(emailUUID: String)(implicit hc: HeaderCarrier): Future[Boolean] = Future.successful(true)
