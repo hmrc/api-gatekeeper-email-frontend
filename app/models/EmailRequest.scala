@@ -22,37 +22,40 @@ import play.api.libs.json.{Json, OFormat}
 
 case class EmailData(emailSubject: String, emailBody: String)
 
-case class EmailRequest(to: List[User],
+case class EmailRequest(to: List[RegisteredUser],
                         templateId: String,
                         emailData: EmailData,
                         force: Boolean = false,
                         auditData: Map[String, String] = Map.empty,
                         eventUrl: Option[String] = None,
-                        attachmentDetails: Option[Seq[UploadedFile]] = None)
+                        attachmentDetails: Option[Seq[UploadedFile]] = None,
+                        userSelectionQuery: Option[DevelopersEmailQuery] = None)
 
 object EmailRequest {
   implicit val emailDataFmt = Json.format[EmailData]
-  implicit val userFmt = Json.format[User]
+  implicit val userFmt = Json.format[RegisteredUser]
   implicit val format: OFormat[UploadCargo] = Json.format[UploadCargo]
   implicit val attachmentDetailsFormat: OFormat[UploadedFile] = Json.format[UploadedFile]
   implicit val sendEmailRequestFmt = Json.format[EmailRequest]
 
-  def createEmailRequest(form: ComposeEmailForm,userInfo: List[User]) = {
+  def createEmailRequest(form: ComposeEmailForm, developersEmailQuery: DevelopersEmailQuery) = {
 
     EmailRequest(
-      to = userInfo,
+      to = List(),
       templateId = "gatekeeper",
-      EmailData(form.emailSubject, form.emailBody)
+      EmailData(form.emailSubject, form.emailBody),
+      userSelectionQuery = Some(developersEmailQuery)
     )
   }
 
-  def updateEmailRequest(composeEmailForm: ComposeEmailForm, user: List[User], attachmentDetails: Option[Seq[UploadedFile]] = None) = {
+  def updateEmailRequest(composeEmailForm: ComposeEmailForm, developersEmailQuery: Option[DevelopersEmailQuery], attachmentDetails: Option[Seq[UploadedFile]] = None) = {
 
     EmailRequest(
-      user,
+      List(),
       templateId = "gatekeeper",
       EmailData(composeEmailForm.emailSubject, composeEmailForm.emailBody),
-      attachmentDetails = attachmentDetails
+      attachmentDetails = attachmentDetails,
+      userSelectionQuery = developersEmailQuery
     )
   }
 

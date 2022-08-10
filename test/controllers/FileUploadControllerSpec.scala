@@ -40,7 +40,7 @@ import scala.concurrent.Future.successful
 class FileUploadControllerSpec extends ControllerBaseSpec with Matchers with MockitoSugar with ArgumentMatchersSugar {
 
   trait Setup extends ControllerSetupBase {
-    val su = List(User("sawd", "efef", "eff", true))
+    val su = List(RegisteredUser("sawd", "efef", "eff", true))
     val emailUUID = UUID.randomUUID().toString
     lazy val mockGatekeeperEmailService = mock[ComposeEmailService]
     val csrfToken: (String, String) = "csrfToken" -> app.injector.instanceOf[TokenProvider].generateToken
@@ -57,6 +57,7 @@ class FileUploadControllerSpec extends ControllerBaseSpec with Matchers with Moc
     val composeEmailForm: ComposeEmailForm = ComposeEmailForm("dfasd", "asdfasf", true)
     val composeEmail: ComposeEmail = fakeApplication.injector.instanceOf[ComposeEmail]
     val emailSentConfirmation: EmailSentConfirmation = fakeApplication.injector.instanceOf[EmailSentConfirmation]
+    val selectionQuery = """{"topic":"topic-dev", "privateapimatch": false, "apiVersionFilter": "apiVersionFilter", "allUsers": false}""".stripMargin
 
     val controller = new FileUploadController(mcc: MessagesControllerComponents,
                                               forbiddenView,
@@ -78,7 +79,9 @@ class FileUploadControllerSpec extends ControllerBaseSpec with Matchers with Moc
          |    "subject": "emailSubject",
          |    "status": "INPROGRESS",
          |    "composedBy": "auto-emailer",
-         |    "approvedBy": "auto-emailer"
+         |    "approvedBy": "auto-emailer",
+         |    "userSelectionQuery": $selectionQuery,
+         |    "emailsCount": 1
          |  }
       """.stripMargin
 
