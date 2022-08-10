@@ -124,7 +124,7 @@ class ComposeEmailController @Inject()(mcc: MessagesControllerComponents,
               Redirect(controllers.routes.FileUploadController.start(emailUUID, false, true))
             }
             else {
-              logger.info(s"*****email status***********:${emailFetched.status}")
+              logger.info(s"Fetched email status:${emailFetched.status}")
               Ok(emailPreview(base64Decode(email.htmlEmailBody), controllers.EmailPreviewForm.form.fill(EmailPreviewForm(email.emailUUID, form)),
                 userSelectionMap, emailFetched.status))
             }
