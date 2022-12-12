@@ -6,6 +6,7 @@ object AppDependencies {
   lazy val bootstrapPlayVersion = "5.24.0"
   lazy val jsoupVersion = "1.13.1"
   lazy val scalaCheckVersion = "1.14.0"
+  lazy val seleniumVersion = "4.4.0"
 
   def apply(): Seq[ModuleID] = dependencies ++ testDependencies
 
@@ -23,8 +24,8 @@ object AppDependencies {
     "org.pegdown"             %   "pegdown"                   % "1.6.0",
     "org.jsoup"               %   "jsoup"                     % jsoupVersion,
     "com.github.tomakehurst"  %   "wiremock"                  % "1.58",
-    "org.seleniumhq.selenium" %   "selenium-java"             % "2.53.1",
-    "org.seleniumhq.selenium" %   "selenium-htmlunit-driver"  % "2.52.0",
+    "org.seleniumhq.selenium"     %   "selenium-java"                     % seleniumVersion,
+    "org.seleniumhq.selenium"     %   "htmlunit-driver"                   % "3.64.0",
     "org.mockito"             %%  "mockito-scala-scalatest"   % "1.7.1",
     "org.scalacheck"          %%  "scalacheck"                % scalaCheckVersion,
     "uk.gov.hmrc"             %%  "bootstrap-test-play-28"    % bootstrapPlayVersion,
