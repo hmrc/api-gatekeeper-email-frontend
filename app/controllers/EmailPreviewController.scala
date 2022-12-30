@@ -25,7 +25,7 @@ import play.api.i18n.I18nSupport
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.ComposeEmailService
-import uk.gov.hmrc.play.bootstrap.controller.WithDefaultFormBinding
+import uk.gov.hmrc.play.bootstrap.controller.WithUnsafeDefaultFormBinding
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.GatekeeperAuthWrapper
 import views.html.{ComposeEmail, ForbiddenView}
@@ -43,7 +43,7 @@ class EmailPreviewController @Inject()
  override val authConnector: AuthConnector,
  emailConnector: GatekeeperEmailConnector)
 (implicit val appConfig: AppConfig, val ec: ExecutionContext)
-  extends FrontendController(mcc) with GatekeeperAuthWrapper with I18nSupport with Logging with WithDefaultFormBinding {
+  extends FrontendController(mcc) with GatekeeperAuthWrapper with I18nSupport with Logging with WithUnsafeDefaultFormBinding {
 
   def sendEmail(emailUUID: String, userSelection: String): Action[AnyContent] = requiresAtLeast(GatekeeperRole.USER){
     implicit request => {
