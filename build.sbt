@@ -1,4 +1,3 @@
-import _root_.play.core.PlayVersion
 import com.typesafe.sbt.digest.Import._
 import com.typesafe.sbt.uglify.Import._
 import com.typesafe.sbt.web.Import._
@@ -14,8 +13,10 @@ import uk.gov.hmrc.sbtdistributables.SbtDistributablesPlugin._
 import uk.gov.hmrc.versioning.SbtGitVersioning
 import bloop.integrations.sbt.BloopDefaults
 
-lazy val microservice =  (project in file("."))
-  .enablePlugins(PlayScala, SbtAutoBuildPlugin, SbtGitVersioning, SbtDistributablesPlugin, SbtArtifactory)
+lazy val appName = "gatekeeper-compose-email-frontend"
+
+lazy val microservice = Project(appName, file("."))
+  .enablePlugins(PlayScala, SbtAutoBuildPlugin, SbtGitVersioning, SbtDistributablesPlugin)
   .settings(
     Concat.groups := Seq(
       "javascripts/apis-app.js" -> group(
@@ -26,9 +27,9 @@ lazy val microservice =  (project in file("."))
       "unused=false",
       "dead_code=true"
     ),
-    includeFilter in uglify := GlobFilter("apis-*.js"),
+    uglify / includeFilter := GlobFilter("apis-*.js"),
     pipelineStages := Seq(digest),
-    pipelineStages in Assets := Seq(
+    Assets / pipelineStages := Seq(
       concat,
       uglify
     ),
@@ -44,7 +45,7 @@ lazy val microservice =  (project in file("."))
     name:= appName,
     libraryDependencies ++= AppDependencies(),
     retrieveManaged := true,
-    evictionWarningOptions in update := EvictionWarningOptions.default.withWarnScalaVersionEviction(false),
+    update / evictionWarningOptions := EvictionWarningOptions.default.withWarnScalaVersionEviction(false),
     routesGenerator := InjectedRoutesGenerator,
     shellPrompt := (_ => "> "),
     majorVersion := 0,
@@ -98,9 +99,7 @@ lazy val microservice =  (project in file("."))
 lazy val AcceptanceTest = config("acceptance") extend Test
 lazy val SandboxTest = config("sandbox") extend Test
 
-lazy val appName = "gatekeeper-compose-email-frontend"
-
-coverageMinimum := 77
+coverageMinimumStmtTotal := 77
 coverageFailOnMinimum := true
 coverageExcludedPackages := Seq(
   "<empty>",
