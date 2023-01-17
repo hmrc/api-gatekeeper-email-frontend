@@ -1,5 +1,5 @@
 @*
- * Copyright 2022 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,9 @@
  * limitations under the License.
  *@
 
-@import config.AppConfig
+@import uk.gov.hmrc.gatekeepercomposeemailfrontend.config.AppConfig
+@import uk.gov.hmrc.gatekeepercomposeemailfrontend.controllers.ComposeEmailForm
+@import uk.gov.hmrc.gatekeepercomposeemailfrontend.controllers
 @import include._
 @import play.api.libs.json._
 @this(layout: Layout)
@@ -29,7 +31,7 @@
   @errorSummary(form)
 
   <h2 class="govuk-heading-l">Compose email</h2>
-@helper.form(routes.ComposeEmailController.upload(emailUUID, Json.toJson(userSelection).toString())) {
+@helper.form(controllers.routes.ComposeEmailController.upload(emailUUID, Json.toJson(userSelection).toString())) {
   @helper.CSRF.formField
 
     <dl class="govuk-summary-list email-summary" style="border-top: 1px solid #b1b4b6;margin-bottom: 30px;border-left: 1px solid #b1b4b6;border-right: 1px solid #b1b4b6;">
@@ -74,7 +76,7 @@
 }
     <div class="govuk-grid-column-one-half govuk-!-padding-right-0">
         <div class="govuk-button-group" style="float: left; margin-top: 0%; margin-right: 10%;">
-            @helper.form(action = routes.ComposeEmailController.deleteOption(emailUUID, Json.toJson(userSelection).toString())) {
+            @helper.form(action = controllers.routes.ComposeEmailController.deleteOption(emailUUID, Json.toJson(userSelection).toString())) {
             @helper.CSRF.formField
             <button draggable="false"
                     class="govuk-button  govuk-button--secondary"  data-module="govuk-button">

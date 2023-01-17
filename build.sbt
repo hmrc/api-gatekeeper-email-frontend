@@ -15,6 +15,16 @@ import bloop.integrations.sbt.BloopDefaults
 
 lazy val appName = "gatekeeper-compose-email-frontend"
 
+ThisBuild / scalafixDependencies += "com.github.liancheng" %% "organize-imports" % "0.6.0"
+ 
+inThisBuild(
+  List(
+    scalaVersion := "2.12.15",
+    semanticdbEnabled := true,
+    semanticdbVersion := scalafixSemanticdb.revision
+  )
+)
+
 lazy val microservice = Project(appName, file("."))
   .enablePlugins(PlayScala, SbtAutoBuildPlugin, SbtGitVersioning, SbtDistributablesPlugin)
   .settings(
@@ -34,13 +44,12 @@ lazy val microservice = Project(appName, file("."))
       uglify
     ),
     scalacOptions += "-Ypartial-unification",
-    routesImport += "controllers.binders._"
+    routesImport += "uk.gov.hmrc.gatekeepercomposeemailfrontend.controllers.binders._"
   )
   .settings(scalaSettings: _*)
   .settings(publishingSettings: _*)
   .settings(SilencerSettings(): _*)
   .settings(
-    targetJvm := "jvm-1.8",
     scalaVersion := "2.12.15",
     name:= appName,
     libraryDependencies ++= AppDependencies(),
@@ -49,7 +58,7 @@ lazy val microservice = Project(appName, file("."))
     routesGenerator := InjectedRoutesGenerator,
     shellPrompt := (_ => "> "),
     majorVersion := 0,
-    routesImport += "controllers.binders._",
+    routesImport += "uk.gov.hmrc.gatekeepercomposeemailfrontend.controllers.binders._",
     Test / testOptions := Seq(Tests.Argument(TestFrameworks.ScalaTest, "-eT")),
     Test / unmanagedSourceDirectories += baseDirectory.value / "testCommon",
     Test / unmanagedSourceDirectories += baseDirectory.value / "test"
@@ -66,11 +75,12 @@ lazy val microservice = Project(appName, file("."))
   .configs(AcceptanceTest)
   .settings(inConfig(AcceptanceTest)(Defaults.testSettings): _*)
   .settings(inConfig(AcceptanceTest)(BloopDefaults.configSettings))
+  .settings(headerSettings(AcceptanceTest) ++ automateHeaderSettings(AcceptanceTest))
   .settings(
     AcceptanceTest / Keys.fork := false,
     AcceptanceTest / parallelExecution := false,
     AcceptanceTest / testOptions := Seq(Tests.Argument("-l", "SandboxTest", "-eT")),
-    AcceptanceTest / testOptions += Tests.Cleanup((loader: java.lang.ClassLoader) => loader.loadClass("common.AfterHook").newInstance),
+    AcceptanceTest / testOptions += Tests.Cleanup((loader: java.lang.ClassLoader) => loader.loadClass("uk.gov.hmrc.gatekeepercomposeemailfrontend.common.AfterHook").newInstance),
     AcceptanceTest / unmanagedSourceDirectories += baseDirectory.value / "testCommon",
     AcceptanceTest / unmanagedSourceDirectories += baseDirectory.value / "acceptance"
   )
@@ -81,7 +91,7 @@ lazy val microservice = Project(appName, file("."))
     SandboxTest / Keys.fork := false,
     SandboxTest / parallelExecution := false,
     SandboxTest / testOptions := Seq(Tests.Argument("-l", "NonSandboxTest"), Tests.Argument("-n", "SandboxTest", "-eT")),
-    SandboxTest / testOptions += Tests.Cleanup((loader: java.lang.ClassLoader) => loader.loadClass("common.AfterHook").newInstance),
+    SandboxTest / testOptions += Tests.Cleanup((loader: java.lang.ClassLoader) => loader.loadClass("uk.gov.hmrc.gatekeepercomposeemailfrontend.common.AfterHook").newInstance),
     SandboxTest / unmanagedSourceDirectories += baseDirectory(_ / "acceptance").value
   )
   .settings(
@@ -90,7 +100,7 @@ lazy val microservice = Project(appName, file("."))
     ),
     TwirlKeys.templateImports ++= Seq(
     "views.html.helper.CSPNonce",
-    "config.AppConfig"
+    "uk.gov.hmrc.gatekeepercomposeemailfrontend.config.AppConfig"
     )
   )
   .disablePlugins(sbt.plugins.JUnitXmlReportPlugin)
