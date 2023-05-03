@@ -35,14 +35,14 @@ import uk.gov.hmrc.gatekeepercomposeemailfrontend.common.ControllerBaseSpec
 import uk.gov.hmrc.gatekeepercomposeemailfrontend.connectors.{AuthConnector, GatekeeperEmailConnector}
 import uk.gov.hmrc.gatekeepercomposeemailfrontend.controllers.{ComposeEmailController, ComposeEmailForm, RemoveUploadedFileFormProvider}
 import uk.gov.hmrc.gatekeepercomposeemailfrontend.models.file_upload.UploadedFile
-import uk.gov.hmrc.gatekeepercomposeemailfrontend.models.{DevelopersEmailQuery, OutgoingEmail, RegisteredUser, User}
+import uk.gov.hmrc.gatekeepercomposeemailfrontend.models.{DevelopersEmailQuery, OutgoingEmail, RegisteredUser}
 import uk.gov.hmrc.gatekeepercomposeemailfrontend.services.ComposeEmailService
 
 object ComposeEmailControllerSpecHelpers extends ControllerBaseSpec with Matchers with GivenWhenThen
     with MockitoSugar {
   implicit val materializer        = app.materializer
   lazy val forbiddenView           = app.injector.instanceOf[ForbiddenView]
-  val errorTemplate: ErrorTemplate = fakeApplication.injector.instanceOf[ErrorTemplate]
+  val errorTemplate: ErrorTemplate = fakeApplication().injector.instanceOf[ErrorTemplate]
 
   override def fakeApplication(): Application =
     new GuiceApplicationBuilder()

@@ -26,7 +26,7 @@ import uk.gov.hmrc.gatekeepercomposeemailfrontend.config.EmailConnectorConfig
 import uk.gov.hmrc.gatekeepercomposeemailfrontend.controllers.{ComposeEmailForm, EmailPreviewForm}
 import uk.gov.hmrc.gatekeepercomposeemailfrontend.models.EmailRequest.{createEmailRequest, updateEmailRequest}
 import uk.gov.hmrc.gatekeepercomposeemailfrontend.models.file_upload.UploadedFile
-import uk.gov.hmrc.gatekeepercomposeemailfrontend.models.{DevelopersEmailQuery, EmailRequest, OutgoingEmail, User}
+import uk.gov.hmrc.gatekeepercomposeemailfrontend.models.{DevelopersEmailQuery, EmailRequest, OutgoingEmail}
 import uk.gov.hmrc.gatekeepercomposeemailfrontend.utils.ApplicationLogger
 
 @Singleton

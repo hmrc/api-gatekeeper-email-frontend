@@ -145,7 +145,7 @@ class ComposeEmailController @Inject() (
         Future.successful(BadRequest(composeEmail(emailUUID, formWithErrors, Map[String, String]().empty)))
       }
 
-      ComposeEmailForm.form.bindFromRequest.fold(handleInvalidForm(_), handleValidForm(_))
+      ComposeEmailForm.form.bindFromRequest().fold(handleInvalidForm(_), handleValidForm(_))
   }
 
   def deleteOption(emailUUID: String, userSelection: String): Action[AnyContent] = requiresAtLeast(GatekeeperRole.USER) {

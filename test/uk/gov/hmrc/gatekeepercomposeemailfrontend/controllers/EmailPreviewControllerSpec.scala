@@ -37,7 +37,7 @@ import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.gatekeepercomposeemailfrontend.connectors.GatekeeperEmailConnector
 import uk.gov.hmrc.gatekeepercomposeemailfrontend.models.OutgoingEmail
 import uk.gov.hmrc.gatekeepercomposeemailfrontend.services.ComposeEmailService
-import uk.gov.hmrc.gatekeepercomposeemailfrontend.utils.ComposeEmailControllerSpecHelpers.{app, mcc}
+import uk.gov.hmrc.gatekeepercomposeemailfrontend.utils.ComposeEmailControllerSpecHelpers.mcc
 
 class EmailPreviewControllerSpec extends ControllerBaseSpec with Matchers {
   implicit val materializer = app.materializer

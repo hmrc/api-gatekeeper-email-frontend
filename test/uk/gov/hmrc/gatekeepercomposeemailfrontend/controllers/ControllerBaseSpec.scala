@@ -28,6 +28,8 @@ trait ControllerBaseSpec extends AsyncHmrcSpec with GuiceOneAppPerSuite {
 
   implicit val appConfig: AppConfig = app.injector.instanceOf[AppConfig]
 
+  lazy val fakeApp: Application = fakeApplication()
+
   override def fakeApplication(): Application =
     GuiceApplicationBuilder()
       .configure("metrics.jvm" -> false)

@@ -24,7 +24,7 @@ import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.gatekeepercomposeemailfrontend.connectors.GatekeeperEmailConnector
 import uk.gov.hmrc.gatekeepercomposeemailfrontend.controllers.ComposeEmailForm
 import uk.gov.hmrc.gatekeepercomposeemailfrontend.models.file_upload.UploadedFile
-import uk.gov.hmrc.gatekeepercomposeemailfrontend.models.{DevelopersEmailQuery, OutgoingEmail, User}
+import uk.gov.hmrc.gatekeepercomposeemailfrontend.models.{DevelopersEmailQuery, OutgoingEmail}
 
 class ComposeEmailService @Inject() (emailConnector: GatekeeperEmailConnector)(implicit val ec: ExecutionContext) {
 

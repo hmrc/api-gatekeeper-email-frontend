@@ -28,7 +28,7 @@ import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
 import uk.gov.hmrc.gatekeepercomposeemailfrontend.common.AsyncHmrcSpec
 import uk.gov.hmrc.gatekeepercomposeemailfrontend.config.AppConfig
 import uk.gov.hmrc.gatekeepercomposeemailfrontend.models.file_upload.UploadDocumentsWrapper
-import uk.gov.hmrc.gatekeepercomposeemailfrontend.models.{OutgoingEmail, RegisteredUser, User}
+import uk.gov.hmrc.gatekeepercomposeemailfrontend.models.{OutgoingEmail, RegisteredUser}
 import uk.gov.hmrc.gatekeepercomposeemailfrontend.services.ComposeEmailService
 
 class UploadDocumentsConnectorSpec extends AsyncHmrcSpec with BeforeAndAfterEach with BeforeAndAfterAll with GuiceOneAppPerSuite {

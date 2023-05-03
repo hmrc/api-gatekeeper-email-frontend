@@ -51,8 +51,8 @@ class ComposeEmailControllerSpec extends ControllerBaseSpec with Matchers with M
     implicit val hc: HeaderCarrier = HeaderCarrier()
 
     val composeEmailForm: ComposeEmailForm           = ComposeEmailForm("dfasd", "asdfasf", true)
-    val composeEmail: ComposeEmail                   = fakeApplication.injector.instanceOf[ComposeEmail]
-    val emailSentConfirmation: EmailSentConfirmation = fakeApplication.injector.instanceOf[EmailSentConfirmation]
+    val composeEmail: ComposeEmail                   = fakeApp.injector.instanceOf[ComposeEmail]
+    val emailSentConfirmation: EmailSentConfirmation = fakeApp.injector.instanceOf[EmailSentConfirmation]
     val controller                                   = buildController(mockGateKeeperService, mockAuthConnector)
   }
 

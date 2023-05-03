@@ -48,7 +48,7 @@ class FileUploadControllerSpec extends ControllerBaseSpec with Matchers with Moc
     implicit val materializer           = app.materializer
     lazy val forbiddenView              = app.injector.instanceOf[ForbiddenView]
     override val mockAuthConnector      = mock[AuthConnector]
-    val errorTemplate: ErrorTemplate    = fakeApplication.injector.instanceOf[ErrorTemplate]
+    val errorTemplate: ErrorTemplate    = fakeApp.injector.instanceOf[ErrorTemplate]
     lazy val emailPreviewTemplateView   = app.injector.instanceOf[EmailPreview]
     val uploadDocumentsConnector        = mock[UploadDocumentsConnector]
     implicit val hc: HeaderCarrier      = HeaderCarrier()
@@ -56,8 +56,8 @@ class FileUploadControllerSpec extends ControllerBaseSpec with Matchers with Moc
     val notLoggedInRequest              = FakeRequest("POST", "/start-file-upload/:emailUUID").withCSRFToken
 
     val composeEmailForm: ComposeEmailForm           = ComposeEmailForm("dfasd", "asdfasf", true)
-    val composeEmail: ComposeEmail                   = fakeApplication.injector.instanceOf[ComposeEmail]
-    val emailSentConfirmation: EmailSentConfirmation = fakeApplication.injector.instanceOf[EmailSentConfirmation]
+    val composeEmail: ComposeEmail                   = fakeApp.injector.instanceOf[ComposeEmail]
+    val emailSentConfirmation: EmailSentConfirmation = fakeApp.injector.instanceOf[EmailSentConfirmation]
     val selectionQuery                               = """{"topic":"topic-dev", "privateapimatch": false, "apiVersionFilter": "apiVersionFilter", "allUsers": false}""".stripMargin
 
     val controller = new FileUploadController(

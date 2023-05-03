@@ -15,15 +15,11 @@ import bloop.integrations.sbt.BloopDefaults
 
 lazy val appName = "gatekeeper-compose-email-frontend"
 
+scalaVersion := "2.13.8"
+
 ThisBuild / scalafixDependencies += "com.github.liancheng" %% "organize-imports" % "0.6.0"
- 
-inThisBuild(
-  List(
-    scalaVersion := "2.12.15",
-    semanticdbEnabled := true,
-    semanticdbVersion := scalafixSemanticdb.revision
-  )
-)
+ThisBuild / semanticdbEnabled := true
+ThisBuild / semanticdbVersion := scalafixSemanticdb.revision
 
 lazy val microservice = Project(appName, file("."))
   .enablePlugins(PlayScala, SbtAutoBuildPlugin, SbtGitVersioning, SbtDistributablesPlugin)
@@ -43,18 +39,15 @@ lazy val microservice = Project(appName, file("."))
       concat,
       uglify
     ),
-    scalacOptions += "-Ypartial-unification",
     routesImport += "uk.gov.hmrc.gatekeepercomposeemailfrontend.controllers.binders._"
   )
   .settings(scalaSettings: _*)
   .settings(publishingSettings: _*)
   .settings(SilencerSettings(): _*)
   .settings(
-    scalaVersion := "2.12.15",
     name:= appName,
     libraryDependencies ++= AppDependencies(),
     retrieveManaged := true,
-    update / evictionWarningOptions := EvictionWarningOptions.default.withWarnScalaVersionEviction(false),
     routesGenerator := InjectedRoutesGenerator,
     shellPrompt := (_ => "> "),
     majorVersion := 0,
@@ -101,6 +94,14 @@ lazy val microservice = Project(appName, file("."))
     TwirlKeys.templateImports ++= Seq(
     "views.html.helper.CSPNonce",
     "uk.gov.hmrc.gatekeepercomposeemailfrontend.config.AppConfig"
+    )
+  )
+  .settings(
+    scalacOptions ++= Seq(
+      "-Wconf:cat=unused&src=views/.*\\.scala:s",
+      "-Wconf:cat=unused&src=.*RoutesPrefix\\.scala:s",
+      "-Wconf:cat=unused&src=.*Routes\\.scala:s",
+      "-Wconf:cat=unused&src=.*ReverseRoutes\\.scala:s"
     )
   )
   .disablePlugins(sbt.plugins.JUnitXmlReportPlugin)
