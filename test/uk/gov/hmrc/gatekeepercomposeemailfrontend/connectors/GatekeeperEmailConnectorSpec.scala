@@ -86,7 +86,7 @@ class GatekeeperEmailConnectorSpec extends AsyncHmrcSpec with BeforeAndAfterEach
     self: Setup =>
     val selectionQuery = """{"topic":"topic-dev", "privateapimatch": false, "apiVersionFilter": "apiVersionFilter", "allUsers": false}""".stripMargin
 
-    val outgoingEmail  =
+    val outgoingEmail =
       s"""
          |  {
          |    "emailUUID": "$emailUUID",

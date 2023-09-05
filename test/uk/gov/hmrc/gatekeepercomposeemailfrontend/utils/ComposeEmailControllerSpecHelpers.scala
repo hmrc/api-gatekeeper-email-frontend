@@ -71,7 +71,7 @@ object ComposeEmailControllerSpecHelpers extends ControllerBaseSpec with Matcher
     override def saveEmail(composeEmailForm: ComposeEmailForm, emailUUID: String, userSelectionQuery: DevelopersEmailQuery)(implicit hc: HeaderCarrier): Future[OutgoingEmail] =
       Future.successful(OutgoingEmail("srinivasalu.munagala@digital.hmrc.gov.uk", "Hello", None, "*test email body*", "", "", "", "", None, userSelectionQuery, 1))
 
-    override def fetchEmail(emailUUID: String)(implicit hc: HeaderCarrier): Future[OutgoingEmail]                                                                              = {
+    override def fetchEmail(emailUUID: String)(implicit hc: HeaderCarrier): Future[OutgoingEmail] = {
       Future.successful(OutgoingEmail("srinivasalu.munagala@digital.hmrc.gov.uk", "Hello", None, "*test email body*", "", "", "", "", None, userSelectionQuery, 1))
     }
 

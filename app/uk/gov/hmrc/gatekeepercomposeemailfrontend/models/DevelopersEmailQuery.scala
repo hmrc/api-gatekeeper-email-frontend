@@ -31,7 +31,7 @@ case class APICategoryDetails(category: String, name: String) {
   }
 }
 
-object APICategoryDetails                                     {
+object APICategoryDetails {
   implicit val formatApiCategory = Json.format[APICategoryDetails]
 }
 

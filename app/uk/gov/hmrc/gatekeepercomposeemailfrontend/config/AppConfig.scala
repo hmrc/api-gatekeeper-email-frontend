@@ -30,7 +30,6 @@ class AppConfig @Inject() (config: Configuration, servicesConfig: ServicesConfig
   lazy val initiateUrl            = baseUrl("upscan-initiate") + "/upscan/initiate"
   lazy val initiateV2Url          = baseUrl("upscan-initiate") + "/upscan/v2/initiate"
   lazy val callbackEndpointTarget = getString("upscan.callback-endpoint")
-  val assetsPrefix                = getString("assets.url") + getString("assets.version")
   val title                       = "HMRC API Gatekeeper"
   val emailBaseUrl                = baseUrl("gatekeeper-email")
   val emailSubject                = getString("emailSubject")
@@ -67,9 +66,9 @@ class AppConfig @Inject() (config: Configuration, servicesConfig: ServicesConfig
 
   lazy val helpMakeGovUkBetterUrl: String = config.get[String]("urls.helpMakeGovUkBetterUrl")
 
-  lazy val selfUrl: String                     = servicesConfig.getString("self.url")
+  lazy val selfUrl: String = servicesConfig.getString("self.url")
 
-  lazy val fileUploadBaseUrl: String           =
+  lazy val fileUploadBaseUrl: String =
     servicesConfig.baseUrl("upload-documents-frontend")
 
   lazy val fileUploadCallbackUrlPrefix: String =
@@ -78,7 +77,7 @@ class AppConfig @Inject() (config: Configuration, servicesConfig: ServicesConfig
   lazy val fileUploadContinueUrlPrefix: String =
     servicesConfig.getConfString("upload-documents-frontend.continue-url-prefix", "")
 
-  lazy val fileUploadContextPath: String       =
+  lazy val fileUploadContextPath: String =
     servicesConfig.getConfString("upload-documents-frontend.context-path", "/internal")
 
   lazy val fileUploadPublicUrl: String         =

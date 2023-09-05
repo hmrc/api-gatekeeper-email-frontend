@@ -3,7 +3,7 @@ import sbt._
 
 object AppDependencies {
 
-  lazy val bootstrapPlayVersion = "7.12.0"
+  lazy val bootstrapPlayVersion = "7.21.0"
   lazy val jsoupVersion = "1.13.1"
   lazy val scalaCheckVersion = "1.14.0"
   lazy val seleniumVersion = "4.8.3"
@@ -12,7 +12,7 @@ object AppDependencies {
 
   lazy val dependencies = Seq(
     "uk.gov.hmrc"       %%  "bootstrap-frontend-play-28"    % bootstrapPlayVersion,
-    "uk.gov.hmrc"       %%  "play-frontend-hmrc"            % "5.3.0-play-28"
+    "uk.gov.hmrc"       %%  "play-frontend-hmrc"            % "7.19.0-play-28"
   )
 
   lazy val testScopes = Seq(Test.name, IntegrationTest.name, "acceptance").mkString(",")

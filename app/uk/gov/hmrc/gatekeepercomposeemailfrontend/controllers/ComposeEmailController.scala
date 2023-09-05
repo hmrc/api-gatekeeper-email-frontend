@@ -58,7 +58,11 @@ class ComposeEmailController @Inject() (
       val emailUUID = UUID.randomUUID().toString
       for {
         email <- emailService.saveEmail(ComposeEmailForm("", "", false), emailUUID, userSelectionQuery)
-      } yield Ok(composeEmail(email.emailUUID, uk.gov.hmrc.gatekeepercomposeemailfrontend.controllers.ComposeEmailForm.form.fill(ComposeEmailForm("", "", false)), Json.parse(userSelection).as[Map[String, String]]))
+      } yield Ok(composeEmail(
+        email.emailUUID,
+        uk.gov.hmrc.gatekeepercomposeemailfrontend.controllers.ComposeEmailForm.form.fill(ComposeEmailForm("", "", false)),
+        Json.parse(userSelection).as[Map[String, String]]
+      ))
     }
 
     try {
@@ -110,7 +114,10 @@ class ComposeEmailController @Inject() (
       fetchEmail.map { email =>
         Ok(emailPreview(
           base64Decode(email.htmlEmailBody),
-          uk.gov.hmrc.gatekeepercomposeemailfrontend.controllers.EmailPreviewForm.form.fill(EmailPreviewForm(email.emailUUID, ComposeEmailForm(email.subject, email.markdownEmailBody, true))),
+          uk.gov.hmrc.gatekeepercomposeemailfrontend.controllers.EmailPreviewForm.form.fill(EmailPreviewForm(
+            email.emailUUID,
+            ComposeEmailForm(email.subject, email.markdownEmailBody, true)
+          )),
           userSelectionMap,
           email.status
         ))
@@ -131,7 +138,10 @@ class ComposeEmailController @Inject() (
               logger.info(s"Fetched email status:${emailFetched.status}")
               Ok(emailPreview(
                 base64Decode(email.htmlEmailBody),
-                uk.gov.hmrc.gatekeepercomposeemailfrontend.controllers.EmailPreviewForm.form.fill(uk.gov.hmrc.gatekeepercomposeemailfrontend.controllers.EmailPreviewForm(email.emailUUID, form)),
+                uk.gov.hmrc.gatekeepercomposeemailfrontend.controllers.EmailPreviewForm.form.fill(uk.gov.hmrc.gatekeepercomposeemailfrontend.controllers.EmailPreviewForm(
+                  email.emailUUID,
+                  form
+                )),
                 userSelectionMap,
                 emailFetched.status
               ))
@@ -167,7 +177,11 @@ class ComposeEmailController @Inject() (
               result => Ok(deleteConfirmEmail())
             }
           } else {
-            Future.successful(Ok(composeEmail(emailUUID, uk.gov.hmrc.gatekeepercomposeemailfrontend.controllers.ComposeEmailForm.form.fill(ComposeEmailForm("", "", false)), Json.parse(userSelection).as[Map[String, String]])))
+            Future.successful(Ok(composeEmail(
+              emailUUID,
+              uk.gov.hmrc.gatekeepercomposeemailfrontend.controllers.ComposeEmailForm.form.fill(ComposeEmailForm("", "", false)),
+              Json.parse(userSelection).as[Map[String, String]]
+            )))
           }
         }
       )

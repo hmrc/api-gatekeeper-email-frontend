@@ -70,7 +70,11 @@ class EmailPreviewController @Inject() (
         val fetchEmail: Future[OutgoingEmail]     = emailService.fetchEmail(emailUUID)
         fetchEmail.map { email =>
           val txtEmailBody = base64Decode(email.markdownEmailBody).substring(1)
-          Ok(composeEmail(emailUUID, uk.gov.hmrc.gatekeepercomposeemailfrontend.controllers.ComposeEmailForm.form.fill(ComposeEmailForm(email.subject, txtEmailBody, true)), userSelectionMap))
+          Ok(composeEmail(
+            emailUUID,
+            uk.gov.hmrc.gatekeepercomposeemailfrontend.controllers.ComposeEmailForm.form.fill(ComposeEmailForm(email.subject, txtEmailBody, true)),
+            userSelectionMap
+          ))
         }
       }
   }

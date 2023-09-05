@@ -18,7 +18,7 @@
 @import include._
 @import uk.gov.hmrc.govukfrontend.views.html.components.GovukLayout
 @import uk.gov.hmrc.hmrcfrontend.views.html.components.HmrcFooter
-@import uk.gov.hmrc.hmrcfrontend.views.html.helpers.{HmrcHead, HmrcStandardHeader}
+@import uk.gov.hmrc.hmrcfrontend.views.html.helpers.{HmrcHead, HmrcScripts, HmrcStandardHeader}
 @import uk.gov.hmrc.hmrcfrontend.views.viewmodels.footer.Footer
 @import uk.gov.hmrc.hmrcfrontend.views.viewmodels.language.En
 
@@ -27,20 +27,30 @@
       hmrcStandardHeader: HmrcStandardHeader,
       hmrcFooter: HmrcFooter,
       hmrcHead: HmrcHead,
+      hmrcScripts: HmrcScripts,
       appConfig: AppConfig)
 
 @(pageTitle: Option[String] = None,
         scriptsBlock: Option[Html] = None)(contentBlock: Html)(implicit request: Request[_], messages: Messages)
 
 
+@scriptElem = {
+  @hmrcScripts()
+  <script @CSPNonce.attr src='@routes.Assets.versioned("javascripts/apis-app.min.js")' type="text/javascript"></script>
+}
+
+@head = {
+  @hmrcHead()
+  <link href='@routes.Assets.versioned("stylesheets/application.css")' media="screen" rel="stylesheet" type="text/css" />
+}
+ 
 @govukLayout(
  pageTitle = pageTitle,
- headBlock = Some(hmrcHead()),
+ headBlock = Some(head),
  headerBlock = Some(siteHeader()),
- scriptsBlock = None,
+ scriptsBlock = Some(scriptElem),
  beforeContentBlock = None,
  footerBlock = Some(hmrcFooter(new Footer(meta= None, language = En))),
- assetPath = None,
- cspNonce = None
+ assetPath = None
 )(contentBlock)
 

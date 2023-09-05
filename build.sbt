@@ -7,10 +7,7 @@ import play.sbt.routes.RoutesKeys.routesGenerator
 import sbt.Keys.{baseDirectory, unmanagedSourceDirectories, _}
 import sbt._
 import uk.gov.hmrc.DefaultBuildSettings._
-import uk.gov.hmrc.SbtAutoBuildPlugin
 import uk.gov.hmrc.sbtdistributables.SbtDistributablesPlugin
-import uk.gov.hmrc.sbtdistributables.SbtDistributablesPlugin._
-import uk.gov.hmrc.versioning.SbtGitVersioning
 import bloop.integrations.sbt.BloopDefaults
 
 lazy val appName = "gatekeeper-compose-email-frontend"
@@ -22,7 +19,7 @@ ThisBuild / semanticdbEnabled := true
 ThisBuild / semanticdbVersion := scalafixSemanticdb.revision
 
 lazy val microservice = Project(appName, file("."))
-  .enablePlugins(PlayScala, SbtAutoBuildPlugin, SbtGitVersioning, SbtDistributablesPlugin)
+  .enablePlugins(PlayScala, SbtDistributablesPlugin)
   .settings(
     Concat.groups := Seq(
       "javascripts/apis-app.js" -> group(
@@ -42,8 +39,6 @@ lazy val microservice = Project(appName, file("."))
     routesImport += "uk.gov.hmrc.gatekeepercomposeemailfrontend.controllers.binders._"
   )
   .settings(scalaSettings: _*)
-  .settings(publishingSettings: _*)
-  .settings(SilencerSettings(): _*)
   .settings(
     name:= appName,
     libraryDependencies ++= AppDependencies(),
@@ -92,8 +87,8 @@ lazy val microservice = Project(appName, file("."))
       Resolver.typesafeRepo("releases")
     ),
     TwirlKeys.templateImports ++= Seq(
-    "views.html.helper.CSPNonce",
-    "uk.gov.hmrc.gatekeepercomposeemailfrontend.config.AppConfig"
+      "views.html.helper.CSPNonce",
+      "uk.gov.hmrc.gatekeepercomposeemailfrontend.config.AppConfig"
     )
   )
   .settings(
