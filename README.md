@@ -1,7 +1,9 @@
 
-# API Gatekeeper email service
+# API Gatekeeper Email Service
 
-This service is a part of Gatekeeper.
+This is renamed version of gatekeeper-compose-email-frontend and retains the same history as it is a clone
+
+ This service is a part of Gatekeeper.
 It facilitates sending emails to API producers via HMRC's digital contact service.
 
 ## Running
