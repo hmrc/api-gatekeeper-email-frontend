@@ -10,7 +10,7 @@ import uk.gov.hmrc.DefaultBuildSettings._
 import uk.gov.hmrc.sbtdistributables.SbtDistributablesPlugin
 import bloop.integrations.sbt.BloopDefaults
 
-lazy val appName = "gatekeeper-compose-email-frontend"
+lazy val appName = "api-gatekeeper-email-frontend"
 
 scalaVersion := "2.13.8"
 
