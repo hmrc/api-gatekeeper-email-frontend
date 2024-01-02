@@ -16,9 +16,9 @@
 
 package uk.gov.hmrc.gatekeepercomposeemailfrontend.models
 
-import play.api.libs.json.Json
+import play.api.libs.json.{Format, Json}
 
 object JsonFormatters {
-  implicit val formatUser = Json.format[RegisteredUser]
+  implicit val formatUser: Format[RegisteredUser] = Json.format[RegisteredUser]
 
 }

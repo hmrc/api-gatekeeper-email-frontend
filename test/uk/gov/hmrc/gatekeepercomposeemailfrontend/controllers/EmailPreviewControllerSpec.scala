@@ -20,6 +20,7 @@ import java.util.UUID
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future.successful
 
+import akka.stream.Materializer
 import org.scalatest.matchers.should.Matchers
 import views.html.{ComposeEmail, ForbiddenView}
 
@@ -40,7 +41,7 @@ import uk.gov.hmrc.gatekeepercomposeemailfrontend.services.ComposeEmailService
 import uk.gov.hmrc.gatekeepercomposeemailfrontend.utils.ComposeEmailControllerSpecHelpers.mcc
 
 class EmailPreviewControllerSpec extends ControllerBaseSpec with Matchers {
-  implicit val materializer = app.materializer
+  implicit val materializer: Materializer = app.materializer
 
   trait Setup extends ControllerSetupBase {
     val emailUUID                                                      = UUID.randomUUID().toString

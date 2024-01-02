@@ -68,10 +68,10 @@ class UploadDocumentsConnectorSpec extends AsyncHmrcSpec with BeforeAndAfterEach
   trait Setup {
     val httpClient = app.injector.instanceOf[HttpClient]
 
-    implicit val hc        = HeaderCarrier()
-    implicit val appConfig = mock[AppConfig]
-    val CREATED            = 201
-    val OK                 = 200
+    implicit val hc: HeaderCarrier    = HeaderCarrier()
+    implicit val appConfig: AppConfig = mock[AppConfig]
+    val CREATED                       = 201
+    val OK                            = 200
 
     class UploadDocumentsConnectorSuccess extends UploadDocumentsConnector(httpClient, composEmailServieStub) {
 

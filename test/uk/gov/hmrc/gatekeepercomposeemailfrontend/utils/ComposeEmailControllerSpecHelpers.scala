@@ -19,6 +19,7 @@ package uk.gov.hmrc.gatekeepercomposeemailfrontend.utils
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
+import akka.stream.Materializer
 import org.mockito.MockitoSugar
 import org.scalatest.GivenWhenThen
 import org.scalatest.matchers.should.Matchers
@@ -40,9 +41,9 @@ import uk.gov.hmrc.gatekeepercomposeemailfrontend.services.ComposeEmailService
 
 object ComposeEmailControllerSpecHelpers extends ControllerBaseSpec with Matchers with GivenWhenThen
     with MockitoSugar {
-  implicit val materializer        = app.materializer
-  lazy val forbiddenView           = app.injector.instanceOf[ForbiddenView]
-  val errorTemplate: ErrorTemplate = fakeApplication().injector.instanceOf[ErrorTemplate]
+  implicit val materializer: Materializer = app.materializer
+  lazy val forbiddenView                  = app.injector.instanceOf[ForbiddenView]
+  val errorTemplate: ErrorTemplate        = fakeApplication().injector.instanceOf[ErrorTemplate]
 
   override def fakeApplication(): Application =
     new GuiceApplicationBuilder()
