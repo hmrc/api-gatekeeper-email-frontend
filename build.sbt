@@ -12,9 +12,9 @@ import bloop.integrations.sbt.BloopDefaults
 
 lazy val appName = "api-gatekeeper-email-frontend"
 
-scalaVersion := "2.13.8"
+scalaVersion := "2.13.12"
 
-ThisBuild / scalafixDependencies += "com.github.liancheng" %% "organize-imports" % "0.6.0"
+ThisBuild / libraryDependencySchemes += "org.scala-lang.modules" %% "scala-xml" % VersionScheme.Always
 ThisBuild / semanticdbEnabled := true
 ThisBuild / semanticdbVersion := scalafixSemanticdb.revision
 
@@ -60,6 +60,7 @@ lazy val microservice = Project(appName, file("."))
     IntegrationTest / unmanagedSourceDirectories += baseDirectory.value / "testCommon",
     IntegrationTest / unmanagedSourceDirectories += baseDirectory.value / "it"
   )
+  .settings(scalafixConfigSettings(IntegrationTest))
   .configs(AcceptanceTest)
   .settings(inConfig(AcceptanceTest)(Defaults.testSettings): _*)
   .settings(inConfig(AcceptanceTest)(BloopDefaults.configSettings))
@@ -116,3 +117,12 @@ coverageExcludedPackages := Seq(
   "app",
   "uk.gov.hmrc.BuildInfo"
 ).mkString(";")
+
+commands ++= Seq(
+  Command.command("run-all-tests") { state => "test" :: "it:test" :: "acceptance:test" :: "sandbox:test" :: state },
+
+  Command.command("clean-and-test") { state => "clean" :: "compile" :: "run-all-tests" :: state },
+
+  // Coverage does not need compile !
+  Command.command("pre-commit") { state => "clean" :: "scalafmtAll" :: "scalafixAll" :: "coverage" :: "run-all-tests" :: "coverageOff" :: "coverageAggregate" :: state }
+)

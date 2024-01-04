@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ import java.util.UUID
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future.successful
 
+import akka.stream.Materializer
 import org.mockito.{ArgumentMatchersSugar, MockitoSugar}
 import org.scalatest.matchers.should.Matchers
 import views.html._
@@ -41,19 +42,19 @@ import uk.gov.hmrc.gatekeepercomposeemailfrontend.utils.ComposeEmailControllerSp
 class FileUploadControllerSpec extends ControllerBaseSpec with Matchers with MockitoSugar with ArgumentMatchersSugar {
 
   trait Setup extends ControllerSetupBase {
-    val su                              = List(RegisteredUser("sawd", "efef", "eff", true))
-    val emailUUID                       = UUID.randomUUID().toString
-    lazy val mockGatekeeperEmailService = mock[ComposeEmailService]
-    val csrfToken: (String, String)     = "csrfToken" -> app.injector.instanceOf[TokenProvider].generateToken
-    implicit val materializer           = app.materializer
-    lazy val forbiddenView              = app.injector.instanceOf[ForbiddenView]
-    override val mockAuthConnector      = mock[AuthConnector]
-    val errorTemplate: ErrorTemplate    = fakeApp.injector.instanceOf[ErrorTemplate]
-    lazy val emailPreviewTemplateView   = app.injector.instanceOf[EmailPreview]
-    val uploadDocumentsConnector        = mock[UploadDocumentsConnector]
-    implicit val hc: HeaderCarrier      = HeaderCarrier()
-    val loggedInRequest                 = FakeRequest("POST", "/start-file-upload/:emailUUID").withSession(csrfToken, authToken, userToken).withCSRFToken
-    val notLoggedInRequest              = FakeRequest("POST", "/start-file-upload/:emailUUID").withCSRFToken
+    val su                                  = List(RegisteredUser("sawd", "efef", "eff", true))
+    val emailUUID                           = UUID.randomUUID().toString
+    lazy val mockGatekeeperEmailService     = mock[ComposeEmailService]
+    val csrfToken: (String, String)         = "csrfToken" -> app.injector.instanceOf[TokenProvider].generateToken
+    implicit val materializer: Materializer = app.materializer
+    lazy val forbiddenView                  = app.injector.instanceOf[ForbiddenView]
+    override val mockAuthConnector          = mock[AuthConnector]
+    val errorTemplate: ErrorTemplate        = fakeApp.injector.instanceOf[ErrorTemplate]
+    lazy val emailPreviewTemplateView       = app.injector.instanceOf[EmailPreview]
+    val uploadDocumentsConnector            = mock[UploadDocumentsConnector]
+    implicit val hc: HeaderCarrier          = HeaderCarrier()
+    val loggedInRequest                     = FakeRequest("POST", "/start-file-upload/:emailUUID").withSession(csrfToken, authToken, userToken).withCSRFToken
+    val notLoggedInRequest                  = FakeRequest("POST", "/start-file-upload/:emailUUID").withCSRFToken
 
     val composeEmailForm: ComposeEmailForm           = ComposeEmailForm("dfasd", "asdfasf", true)
     val composeEmail: ComposeEmail                   = fakeApp.injector.instanceOf[ComposeEmail]

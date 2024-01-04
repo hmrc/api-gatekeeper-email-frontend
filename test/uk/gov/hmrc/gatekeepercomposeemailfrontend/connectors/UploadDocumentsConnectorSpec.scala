@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -68,10 +68,10 @@ class UploadDocumentsConnectorSpec extends AsyncHmrcSpec with BeforeAndAfterEach
   trait Setup {
     val httpClient = app.injector.instanceOf[HttpClient]
 
-    implicit val hc        = HeaderCarrier()
-    implicit val appConfig = mock[AppConfig]
-    val CREATED            = 201
-    val OK                 = 200
+    implicit val hc: HeaderCarrier    = HeaderCarrier()
+    implicit val appConfig: AppConfig = mock[AppConfig]
+    val CREATED                       = 201
+    val OK                            = 200
 
     class UploadDocumentsConnectorSuccess extends UploadDocumentsConnector(httpClient, composEmailServieStub) {
 

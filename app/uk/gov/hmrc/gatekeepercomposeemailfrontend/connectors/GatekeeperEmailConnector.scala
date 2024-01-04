@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -67,7 +67,7 @@ class GatekeeperEmailConnector @Inject() (http: HttpClient, config: EmailConnect
   private def postSaveEmail(request: EmailRequest, emailUUID: String)(implicit hc: HeaderCarrier) = {
     http.POST[EmailRequest, Either[UpstreamErrorResponse, OutgoingEmail]](s"$serviceUrl/gatekeeper-email/save-email?emailUUID=$emailUUID", request)
       .map {
-        case resp @ Right(_) => resp.right.get
+        case resp @ Right(_) => resp.value
         case Left(err)       => throw err
       }
   }
@@ -75,7 +75,7 @@ class GatekeeperEmailConnector @Inject() (http: HttpClient, config: EmailConnect
   private def postUpdateEmail(request: EmailRequest, emailUUID: String)(implicit hc: HeaderCarrier) = {
     http.POST[EmailRequest, Either[UpstreamErrorResponse, OutgoingEmail]](s"$serviceUrl/gatekeeper-email/update-email?emailUUID=$emailUUID", request)
       .map {
-        case resp @ Right(_) => resp.right.get
+        case resp @ Right(_) => resp.value
         case Left(err)       => throw err
       }
   }

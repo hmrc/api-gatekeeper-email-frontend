@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@ package uk.gov.hmrc.gatekeepercomposeemailfrontend.controllers
 
 import java.util.UUID
 
+import akka.stream.Materializer
 import org.mockito.{ArgumentMatchersSugar, MockitoSugar}
 import org.scalatest.matchers.should.Matchers
 import views.html.{ComposeEmail, EmailSentConfirmation}
@@ -36,11 +37,11 @@ import uk.gov.hmrc.gatekeepercomposeemailfrontend.utils.ComposeEmailControllerSp
 class ComposeEmailControllerSpec extends ControllerBaseSpec with Matchers with MockitoSugar with ArgumentMatchersSugar {
 
   trait Setup extends ControllerSetupBase {
-    val su                              = List(RegisteredUser("sawd", "efef", "eff", true))
-    val emailUUID                       = UUID.randomUUID().toString
-    lazy val mockGatekeeperEmailService = mock[ComposeEmailService]
-    val csrfToken: (String, String)     = "csrfToken" -> app.injector.instanceOf[TokenProvider].generateToken
-    implicit val materializer           = app.materializer
+    val su                                  = List(RegisteredUser("sawd", "efef", "eff", true))
+    val emailUUID                           = UUID.randomUUID().toString
+    lazy val mockGatekeeperEmailService     = mock[ComposeEmailService]
+    val csrfToken: (String, String)         = "csrfToken" -> app.injector.instanceOf[TokenProvider].generateToken
+    implicit val materializer: Materializer = app.materializer
 
     val notLoggedInRequest                  = FakeRequest("GET", "/email").withCSRFToken
     val loggedInRequest                     = FakeRequest("GET", "/email").withSession(csrfToken, authToken, userToken).withCSRFToken

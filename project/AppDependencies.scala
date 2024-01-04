@@ -24,10 +24,11 @@ object AppDependencies {
     "com.github.tomakehurst"  %   "wiremock"                  % "1.58",
     "org.seleniumhq.selenium" %   "selenium-java"             % seleniumVersion,
     "org.seleniumhq.selenium" %   "htmlunit-driver"           % seleniumVersion,
-    "org.mockito"             %%  "mockito-scala-scalatest"   % "1.7.1",
+    "org.mockito"             %%  "mockito-scala-scalatest"   % "1.17.29",
+    "org.scalatest"           %%  "scalatest"                 % "3.2.17",
     "org.scalacheck"          %%  "scalacheck"                % scalaCheckVersion,
     "uk.gov.hmrc"             %%  "bootstrap-test-play-28"    % bootstrapPlayVersion,
-    "com.vladsch.flexmark"    %   "flexmark-all"              % "0.36.8",
+    "com.vladsch.flexmark"    %   "flexmark-all"              % "0.62.2",
     "uk.gov.hmrc"             %%  "webdriver-factory"         % "0.40.0"
   ).map (_ % testScopes)
 }

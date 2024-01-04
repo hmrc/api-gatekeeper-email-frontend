@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,12 +16,12 @@
 
 package uk.gov.hmrc.gatekeepercomposeemailfrontend.models
 
-import play.api.libs.json.Json
+import play.api.libs.json.{Format, Json, OFormat}
 
 case class APICategory(value: String) extends AnyVal
 
 object APICategory {
-  implicit val formatApiCategory = Json.valueFormat[APICategory]
+  implicit val formatApiCategory: Format[APICategory] = Json.valueFormat[APICategory]
 }
 
 case class APICategoryDetails(category: String, name: String) {
@@ -32,7 +32,7 @@ case class APICategoryDetails(category: String, name: String) {
 }
 
 object APICategoryDetails {
-  implicit val formatApiCategory = Json.format[APICategoryDetails]
+  implicit val formatApiCategory: OFormat[APICategoryDetails] = Json.format[APICategoryDetails]
 }
 
 trait User {
@@ -66,7 +66,7 @@ case class DevelopersEmailQuery(
   )
 
 object DevelopersEmailQuery {
-  implicit val registeredUserFormatter    = Json.format[RegisteredUser]
-  implicit val emailOverrideFormatter     = Json.format[EmailOverride]
-  implicit val formatDevelopersEmailQuery = Json.format[DevelopersEmailQuery]
+  implicit val registeredUserFormatter: OFormat[RegisteredUser]          = Json.format[RegisteredUser]
+  implicit val emailOverrideFormatter: OFormat[EmailOverride]            = Json.format[EmailOverride]
+  implicit val formatDevelopersEmailQuery: OFormat[DevelopersEmailQuery] = Json.format[DevelopersEmailQuery]
 }

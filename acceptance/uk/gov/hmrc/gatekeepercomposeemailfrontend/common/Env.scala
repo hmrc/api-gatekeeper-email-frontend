@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,7 +19,7 @@ package uk.gov.hmrc.gatekeepercomposeemailfrontend.common
 import java.net.URL
 import org.openqa.selenium.chrome.{ChromeDriver, ChromeOptions}
 import org.openqa.selenium.firefox.{FirefoxDriver, FirefoxOptions, FirefoxProfile}
-import org.openqa.selenium.remote.{DesiredCapabilities, RemoteWebDriver}
+import org.openqa.selenium.remote.RemoteWebDriver
 import org.openqa.selenium.{Dimension, WebDriver}
 
 import scala.util.{Properties, Try}
