@@ -28,7 +28,6 @@ object AppDependencies {
     "org.scalatest"           %%  "scalatest"                 % "3.2.17",
     "org.scalacheck"          %%  "scalacheck"                % scalaCheckVersion,
     "uk.gov.hmrc"             %%  "bootstrap-test-play-28"    % bootstrapPlayVersion,
-    "com.vladsch.flexmark"    %   "flexmark-all"              % "0.62.2",
-    "uk.gov.hmrc"             %%  "webdriver-factory"         % "0.40.0"
+    "com.vladsch.flexmark"    %   "flexmark-all"              % "0.62.2"
   ).map (_ % testScopes)
 }
