@@ -110,7 +110,6 @@ coverageMinimumStmtTotal := 77
 coverageFailOnMinimum := true
 coverageExcludedPackages := Seq(
   "<empty>",
-  "com.kenshoo.play.metrics",
   ".*definition.*",
   "prod",
   "testOnlyDoNotUseInAppConf",
