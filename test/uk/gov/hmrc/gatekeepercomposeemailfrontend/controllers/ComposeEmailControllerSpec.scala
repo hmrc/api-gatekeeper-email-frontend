@@ -18,7 +18,7 @@ package uk.gov.hmrc.gatekeepercomposeemailfrontend.controllers
 
 import java.util.UUID
 
-import akka.stream.Materializer
+import org.apache.pekko.stream.Materializer
 import org.mockito.{ArgumentMatchersSugar, MockitoSugar}
 import org.scalatest.matchers.should.Matchers
 import views.html.{ComposeEmail, EmailSentConfirmation}

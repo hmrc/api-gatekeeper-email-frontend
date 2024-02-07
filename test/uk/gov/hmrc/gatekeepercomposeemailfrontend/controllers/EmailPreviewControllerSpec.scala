@@ -20,7 +20,7 @@ import java.util.UUID
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future.successful
 
-import akka.stream.Materializer
+import org.apache.pekko.stream.Materializer
 import org.scalatest.matchers.should.Matchers
 import views.html.{ComposeEmail, ForbiddenView}
 

@@ -19,7 +19,7 @@ package uk.gov.hmrc.gatekeepercomposeemailfrontend.utils
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-import akka.stream.Materializer
+import org.apache.pekko.stream.Materializer
 import org.mockito.MockitoSugar
 import org.scalatest.GivenWhenThen
 import org.scalatest.matchers.should.Matchers
