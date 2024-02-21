@@ -12,7 +12,7 @@ object AppDependencies {
 
   lazy val dependencies = Seq(
     "uk.gov.hmrc" %% "bootstrap-frontend-play-30" % bootstrapPlayVersion,
-    "uk.gov.hmrc" %% "play-frontend-hmrc-play-30" % "8.4.0"
+    "uk.gov.hmrc" %% "play-frontend-hmrc-play-30" % "8.5.0"
   )
 
   lazy val testScopes = Seq(Test.name, IntegrationTest.name, "acceptance").mkString(",")
