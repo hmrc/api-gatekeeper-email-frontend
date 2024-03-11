@@ -2,24 +2,21 @@ import com.typesafe.sbt.digest.Import._
 import com.typesafe.sbt.uglify.Import._
 import com.typesafe.sbt.web.Import._
 import net.ground5hark.sbt.concat.Import._
-import play.routes.compiler.InjectedRoutesGenerator
-import play.sbt.routes.RoutesKeys.routesGenerator
-import sbt.Keys.{baseDirectory, unmanagedSourceDirectories, _}
-import sbt._
-import uk.gov.hmrc.DefaultBuildSettings._
-import uk.gov.hmrc.sbtdistributables.SbtDistributablesPlugin
-import bloop.integrations.sbt.BloopDefaults
 
 lazy val appName = "api-gatekeeper-email-frontend"
 
-scalaVersion := "2.13.12"
+Global / bloopAggregateSourceDependencies := true
+Global / bloopExportJarClassifiers := Some(Set("sources"))
 
+ThisBuild / scalaVersion := "2.13.12"
+ThisBuild / majorVersion := 0
 ThisBuild / libraryDependencySchemes += "org.scala-lang.modules" %% "scala-xml" % VersionScheme.Always
 ThisBuild / semanticdbEnabled := true
 ThisBuild / semanticdbVersion := scalafixSemanticdb.revision
 
 lazy val microservice = Project(appName, file("."))
   .enablePlugins(PlayScala, SbtDistributablesPlugin)
+  .disablePlugins(JUnitXmlReportPlugin)
   .settings(
     Concat.groups := Seq(
       "javascripts/apis-app.js" -> group(
@@ -35,58 +32,22 @@ lazy val microservice = Project(appName, file("."))
     Assets / pipelineStages := Seq(
       concat,
       uglify
-    ),
-    routesImport += "uk.gov.hmrc.gatekeepercomposeemailfrontend.controllers.binders._"
+    )
   )
-  .settings(scalaSettings: _*)
   .settings(
-    name:= appName,
     libraryDependencies ++= AppDependencies(),
-    retrieveManaged := true,
-    routesGenerator := InjectedRoutesGenerator,
-    shellPrompt := (_ => "> "),
-    majorVersion := 0,
-    routesImport += "uk.gov.hmrc.gatekeepercomposeemailfrontend.controllers.binders._",
-    Test / testOptions := Seq(Tests.Argument(TestFrameworks.ScalaTest, "-eT")),
-    Test / unmanagedSourceDirectories += baseDirectory.value / "testCommon",
-    Test / unmanagedSourceDirectories += baseDirectory.value / "test"
-  )
-  .configs(IntegrationTest)
-  .settings(
-    Defaults.itSettings,
-    IntegrationTest / Keys.fork := false,
-    IntegrationTest / parallelExecution := false,
-    IntegrationTest / testOptions := Seq(Tests.Argument(TestFrameworks.ScalaTest, "-eT")),
-    IntegrationTest / unmanagedSourceDirectories += baseDirectory.value / "testCommon",
-    IntegrationTest / unmanagedSourceDirectories += baseDirectory.value / "it"
-  )
-  .settings(scalafixConfigSettings(IntegrationTest))
-  .configs(AcceptanceTest)
-  .settings(inConfig(AcceptanceTest)(Defaults.testSettings): _*)
-  .settings(inConfig(AcceptanceTest)(BloopDefaults.configSettings))
-  .settings(headerSettings(AcceptanceTest) ++ automateHeaderSettings(AcceptanceTest))
-  .settings(
-    AcceptanceTest / Keys.fork := false,
-    AcceptanceTest / parallelExecution := false,
-    AcceptanceTest / testOptions := Seq(Tests.Argument("-l", "SandboxTest", "-eT")),
-    AcceptanceTest / testOptions += Tests.Cleanup((loader: java.lang.ClassLoader) => loader.loadClass("uk.gov.hmrc.gatekeepercomposeemailfrontend.common.AfterHook").newInstance),
-    AcceptanceTest / unmanagedSourceDirectories += baseDirectory.value / "testCommon",
-    AcceptanceTest / unmanagedSourceDirectories += baseDirectory.value / "acceptance"
-  )
-  .configs(SandboxTest)
-  .settings(inConfig(SandboxTest)(Defaults.testSettings): _*)
-  .settings(inConfig(AcceptanceTest)(BloopDefaults.configSettings))
-  .settings(
-    SandboxTest / Keys.fork := false,
-    SandboxTest / parallelExecution := false,
-    SandboxTest / testOptions := Seq(Tests.Argument("-l", "NonSandboxTest"), Tests.Argument("-n", "SandboxTest", "-eT")),
-    SandboxTest / testOptions += Tests.Cleanup((loader: java.lang.ClassLoader) => loader.loadClass("uk.gov.hmrc.gatekeepercomposeemailfrontend.common.AfterHook").newInstance),
-    SandboxTest / unmanagedSourceDirectories += baseDirectory(_ / "acceptance").value
+    retrieveManaged := true
   )
   .settings(
-    resolvers ++= Seq(
-      Resolver.typesafeRepo("releases")
-    ),
+    Test / testOptions += Tests.Argument(TestFrameworks.ScalaTest, "-eT")
+  )
+  .settings(ScoverageSettings())
+  .settings(
+    routesImport ++= Seq(
+      "uk.gov.hmrc.gatekeepercomposeemailfrontend.controllers.binders._"
+    )
+  )
+  .settings(
     TwirlKeys.templateImports ++= Seq(
       "views.html.helper.CSPNonce",
       "uk.gov.hmrc.gatekeepercomposeemailfrontend.config.AppConfig"
@@ -95,33 +56,20 @@ lazy val microservice = Project(appName, file("."))
   .settings(
     scalacOptions ++= Seq(
       "-Wconf:cat=unused&src=views/.*\\.scala:s",
-      "-Wconf:cat=unused&src=.*RoutesPrefix\\.scala:s",
-      "-Wconf:cat=unused&src=.*Routes\\.scala:s",
-      "-Wconf:cat=unused&src=.*ReverseRoutes\\.scala:s"
+      // https://www.scala-lang.org/2021/01/12/configuring-and-suppressing-warnings.html
+      // suppress warnings in generated routes files
+      "-Wconf:src=routes/.*:s"
     )
   )
-  .disablePlugins(sbt.plugins.JUnitXmlReportPlugin)
 
-
-lazy val AcceptanceTest = config("acceptance") extend Test
-lazy val SandboxTest = config("sandbox") extend Test
-
-coverageMinimumStmtTotal := 77
-coverageFailOnMinimum := true
-coverageExcludedPackages := Seq(
-  "<empty>",
-  ".*definition.*",
-  "prod",
-  "testOnlyDoNotUseInAppConf",
-  "app",
-  "uk.gov.hmrc.BuildInfo"
-).mkString(";")
 
 commands ++= Seq(
-  Command.command("run-all-tests") { state => "test" :: "it:test" :: "acceptance:test" :: "sandbox:test" :: state },
+  Command.command("cleanAll") { state => "clean" :: state },
+  Command.command("fmtAll") { state => "scalafmtAll" :: state },
+  Command.command("fixAll") { state => "scalafixAll" :: state },
+  Command.command("testAll") { state => "test" :: state },
 
-  Command.command("clean-and-test") { state => "clean" :: "compile" :: "run-all-tests" :: state },
-
-  // Coverage does not need compile !
-  Command.command("pre-commit") { state => "clean" :: "scalafmtAll" :: "scalafixAll" :: "coverage" :: "run-all-tests" :: "coverageOff" :: "coverageAggregate" :: state }
+  Command.command("run-all-tests") { state => "testAll" :: state },
+  Command.command("clean-and-test") { state => "cleanAll" :: "compile" :: "run-all-tests" :: state },
+  Command.command("pre-commit") { state => "cleanAll" :: "fmtAll" :: "fixAll" :: "coverage" :: "testAll" :: "coverageOff" :: "coverageAggregate" :: state }
 )
