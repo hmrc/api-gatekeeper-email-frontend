@@ -2,7 +2,6 @@ import com.typesafe.sbt.digest.Import._
 import com.typesafe.sbt.uglify.Import._
 import com.typesafe.sbt.web.Import._
 import net.ground5hark.sbt.concat.Import._
-import uk.gov.hmrc.DefaultBuildSettings._
 
 lazy val appName = "api-gatekeeper-email-frontend"
 
@@ -35,7 +34,6 @@ lazy val microservice = Project(appName, file("."))
       uglify
     )
   )
-  .settings(scalaSettings: _*)
   .settings(
     libraryDependencies ++= AppDependencies(),
     retrieveManaged := true
@@ -66,10 +64,12 @@ lazy val microservice = Project(appName, file("."))
 
 
 commands ++= Seq(
-  Command.command("run-all-tests") { state => "test" :: state },
+  Command.command("cleanAll") { state => "clean" :: state },
+  Command.command("fmtAll") { state => "scalafmtAll" :: state },
+  Command.command("fixAll") { state => "scalafixAll" :: state },
+  Command.command("testAll") { state => "test" :: state },
 
-  Command.command("clean-and-test") { state => "clean" :: "compile" :: "run-all-tests" :: state },
-
-  // Coverage does not need compile !
-  Command.command("pre-commit") { state => "clean" :: "scalafmtAll" :: "scalafixAll" :: "coverage" :: "run-all-tests" :: "coverageOff" :: "coverageAggregate" :: state }
+  Command.command("run-all-tests") { state => "testAll" :: state },
+  Command.command("clean-and-test") { state => "cleanAll" :: "compile" :: "run-all-tests" :: state },
+  Command.command("pre-commit") { state => "cleanAll" :: "fmtAll" :: "fixAll" :: "coverage" :: "testAll" :: "coverageOff" :: "coverageAggregate" :: state }
 )
