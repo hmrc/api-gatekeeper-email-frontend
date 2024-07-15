@@ -107,7 +107,7 @@ class ComposeEmailController @Inject() (
       }
   }
 
-  def emailPreview(emailUUID: String, userSelection: String): Action[AnyContent] = requiresAtLeast(GatekeeperRole.USER) {
+  def emailPreview(emailUUID: String, userSelection: String, previewSent: Boolean = false): Action[AnyContent] = requiresAtLeast(GatekeeperRole.USER) {
     implicit request =>
       val userSelectionMap: Map[String, String] = Json.parse(userSelection).as[Map[String, String]]
       val fetchEmail: Future[OutgoingEmail]     = emailService.fetchEmail(emailUUID)
@@ -119,7 +119,8 @@ class ComposeEmailController @Inject() (
             ComposeEmailForm(email.subject, email.markdownEmailBody, true)
           )),
           userSelectionMap,
-          email.status
+          email.status,
+          previewSent
         ))
       }
   }
@@ -143,7 +144,8 @@ class ComposeEmailController @Inject() (
                   form
                 )),
                 userSelectionMap,
-                emailFetched.status
+                emailFetched.status,
+                false
               ))
             }
           }

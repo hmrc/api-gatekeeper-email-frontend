@@ -32,7 +32,7 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import uk.gov.hmrc.gatekeepercomposeemailfrontend.config.AppConfig
 import uk.gov.hmrc.gatekeepercomposeemailfrontend.connectors.{AuthConnector, GatekeeperEmailConnector}
-import uk.gov.hmrc.gatekeepercomposeemailfrontend.models.{GatekeeperRole, OutgoingEmail}
+import uk.gov.hmrc.gatekeepercomposeemailfrontend.models.{GatekeeperRole, OutgoingEmail, TestEmailRequest}
 import uk.gov.hmrc.gatekeepercomposeemailfrontend.services.ComposeEmailService
 import uk.gov.hmrc.gatekeepercomposeemailfrontend.utils.GatekeeperAuthWrapper
 
@@ -59,6 +59,15 @@ class EmailPreviewController @Inject() (
         } yield outgoingEmail
         outgoingEmail.map(e =>
           Redirect(uk.gov.hmrc.gatekeepercomposeemailfrontend.controllers.routes.ComposeEmailController.sentEmailConfirmation(userSelection, e.emailsCount))
+        )
+      }
+  }
+
+  def sendTestEmail(emailUUID: String, userSelection: String): Action[AnyContent] = requiresAtLeast(GatekeeperRole.USER) {
+    implicit request =>
+      {
+        emailConnector.sendTestEmail(emailUUID, TestEmailRequest(request.email.get)).map(_ =>
+          Redirect(uk.gov.hmrc.gatekeepercomposeemailfrontend.controllers.routes.ComposeEmailController.emailPreview(emailUUID, userSelection, true))
         )
       }
   }

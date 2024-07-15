@@ -32,7 +32,7 @@ object UploadDocumentsWrapper {
       attachmentDetails: Option[Seq[UploadedFile]]
     )(implicit appConfig: AppConfig
     ): UploadDocumentsWrapper = {
-    val continueUrl = uk.gov.hmrc.gatekeepercomposeemailfrontend.controllers.routes.ComposeEmailController.emailPreview(emailUUID, "")
+    val continueUrl = uk.gov.hmrc.gatekeepercomposeemailfrontend.controllers.routes.ComposeEmailController.emailPreview(emailUUID, "", false)
     val backLinkUrl = uk.gov.hmrc.gatekeepercomposeemailfrontend.controllers.routes.ComposeEmailController.upload(emailUUID, "")
     val callBack    = "/gatekeeperemail/updatefiles"
 
