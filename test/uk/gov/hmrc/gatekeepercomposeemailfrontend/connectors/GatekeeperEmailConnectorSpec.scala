@@ -26,7 +26,8 @@ import org.scalatest.{BeforeAndAfterAll, BeforeAndAfterEach}
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 
 import play.api.http.Status.{NOT_FOUND, OK}
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, UpstreamErrorResponse}
+import uk.gov.hmrc.http.test.HttpClientV2Support
+import uk.gov.hmrc.http.{HeaderCarrier, UpstreamErrorResponse}
 
 import uk.gov.hmrc.gatekeepercomposeemailfrontend.common.AsyncHmrcSpec
 import uk.gov.hmrc.gatekeepercomposeemailfrontend.config.EmailConnectorConfig
@@ -65,8 +66,7 @@ class GatekeeperEmailConnectorSpec extends AsyncHmrcSpec with BeforeAndAfterEach
   val fetchEmailUrl            = s"/gatekeeper-email/fetch-email/$emailUUID"
   val emailBody                = "Body to be used in the email template"
 
-  trait Setup {
-    val httpClient = app.injector.instanceOf[HttpClient]
+  trait Setup extends HttpClientV2Support {
 
     val fakeEmailConnectorConfig = new EmailConnectorConfig {
       val emailBaseUrl                  = wireMockUrl
@@ -75,7 +75,7 @@ class GatekeeperEmailConnectorSpec extends AsyncHmrcSpec with BeforeAndAfterEach
 
     implicit val hc: HeaderCarrier = HeaderCarrier()
 
-    lazy val underTest                     = new GatekeeperEmailConnector(httpClient, fakeEmailConnectorConfig)
+    lazy val underTest                     = new GatekeeperEmailConnector(httpClientV2, fakeEmailConnectorConfig)
     val composeEmailForm: ComposeEmailForm = ComposeEmailForm(subject, emailBody, true)
     val emailPreviewForm: EmailPreviewForm = EmailPreviewForm(emailUUID, composeEmailForm)
     val email                              = "example@example.com"

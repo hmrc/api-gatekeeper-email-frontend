@@ -30,7 +30,7 @@ import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.ws.WSClient
 import play.api.test.CSRFTokenHelper.CSRFFRequestHeader
 import play.api.test.FakeRequest
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
+import uk.gov.hmrc.http.HeaderCarrier
 
 import uk.gov.hmrc.gatekeepercomposeemailfrontend.common.ControllerBaseSpec
 import uk.gov.hmrc.gatekeepercomposeemailfrontend.connectors.{AuthConnector, GatekeeperEmailConnector}
@@ -63,7 +63,6 @@ object ComposeEmailControllerSpecHelpers extends ControllerBaseSpec with Matcher
   lazy val deleteConfirmEmail                      = app.injector.instanceOf[EmailDeleteConfirmation]
   lazy val deleteEmail                             = app.injector.instanceOf[RemoveEmailView]
   lazy val formProvider                            = app.injector.instanceOf[RemoveUploadedFileFormProvider]
-  lazy val httpClient                              = mock[HttpClient]
   val su                                           = List(RegisteredUser("sawd", "efef", "eff", true))
   val userSelectionQuery                           = new DevelopersEmailQuery(None, None, None, false, None, false, None)
 
