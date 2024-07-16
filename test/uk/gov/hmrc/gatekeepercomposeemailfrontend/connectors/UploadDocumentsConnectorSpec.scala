@@ -23,7 +23,7 @@ import org.scalatest.{BeforeAndAfterAll, BeforeAndAfterEach}
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 
 import play.api.libs.json.Json
-import uk.gov.hmrc.http.client.HttpClientV2
+import uk.gov.hmrc.http.test.HttpClientV2Support
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 
 import uk.gov.hmrc.gatekeepercomposeemailfrontend.common.AsyncHmrcSpec
@@ -66,15 +66,13 @@ class UploadDocumentsConnectorSpec extends AsyncHmrcSpec with BeforeAndAfterEach
   }
   val composEmailServieStub = new ComposeEmailServiceStub
 
-  trait Setup {
-    val httpClient = app.injector.instanceOf[HttpClientV2]
-
+  trait Setup extends HttpClientV2Support {
     implicit val hc: HeaderCarrier    = HeaderCarrier()
     implicit val appConfig: AppConfig = mock[AppConfig]
     val CREATED                       = 201
     val OK                            = 200
 
-    class UploadDocumentsConnectorSuccess extends UploadDocumentsConnector(httpClient, composEmailServieStub) {
+    class UploadDocumentsConnectorSuccess extends UploadDocumentsConnector(httpClientV2, composEmailServieStub) {
 
       override def actualPost(request: UploadDocumentsWrapper)(implicit hc: HeaderCarrier): Future[HttpResponse] = {
         Future.successful(HttpResponse.apply(CREATED, "", Map[String, Seq[String]]("Location" -> Seq("/upload-documents"))))
@@ -82,7 +80,7 @@ class UploadDocumentsConnectorSpec extends AsyncHmrcSpec with BeforeAndAfterEach
     }
     lazy val underTestSuccess = new UploadDocumentsConnectorSuccess
 
-    class UploadDocumentsConnectorFailure extends UploadDocumentsConnector(httpClient, composEmailServieStub) {
+    class UploadDocumentsConnectorFailure extends UploadDocumentsConnector(httpClientV2, composEmailServieStub) {
 
       override def actualPost(request: UploadDocumentsWrapper)(implicit hc: HeaderCarrier): Future[HttpResponse] = {
         Future.successful(HttpResponse.apply(OK, "", Map.empty[String, Seq[String]]))
