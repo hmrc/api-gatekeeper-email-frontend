@@ -16,7 +16,10 @@
 
 package uk.gov.hmrc.gatekeepercomposeemailfrontend.models
 
-import play.api.mvc.{Request, WrappedRequest}
-import uk.gov.hmrc.auth.core.Enrolments
+import play.api.libs.json.Json
 
-case class LoggedInRequest[A](name: Option[String], email: Option[String], authorisedEnrolments: Enrolments, request: Request[A]) extends WrappedRequest(request)
+case class TestEmailRequest(email: String)
+
+object TestEmailRequest {
+  implicit val format = Json.format[TestEmailRequest]
+}

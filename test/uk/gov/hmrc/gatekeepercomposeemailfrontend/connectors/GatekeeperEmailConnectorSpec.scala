@@ -31,7 +31,7 @@ import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, UpstreamErrorResponse}
 import uk.gov.hmrc.gatekeepercomposeemailfrontend.common.AsyncHmrcSpec
 import uk.gov.hmrc.gatekeepercomposeemailfrontend.config.EmailConnectorConfig
 import uk.gov.hmrc.gatekeepercomposeemailfrontend.controllers.{ComposeEmailForm, EmailPreviewForm}
-import uk.gov.hmrc.gatekeepercomposeemailfrontend.models.{DevelopersEmailQuery, RegisteredUser}
+import uk.gov.hmrc.gatekeepercomposeemailfrontend.models.{DevelopersEmailQuery, RegisteredUser, TestEmailRequest}
 
 class GatekeeperEmailConnectorSpec extends AsyncHmrcSpec with BeforeAndAfterEach with BeforeAndAfterAll with GuiceOneAppPerSuite {
 
@@ -56,13 +56,14 @@ class GatekeeperEmailConnectorSpec extends AsyncHmrcSpec with BeforeAndAfterEach
     super.afterAll()
   }
 
-  val subject                = "Email subject"
-  val emailUUID              = "email-uuid"
-  val emailSendServicePath   = s"/gatekeeper-email/send-email/$emailUUID"
-  val emailSaveServicePath   = s"/gatekeeper-email/save-email?emailUUID=$emailUUID"
-  val emailUpdateServicePath = s"/gatekeeper-email/update-email?emailUUID=$emailUUID"
-  val fetchEmailUrl          = s"/gatekeeper-email/fetch-email/$emailUUID"
-  val emailBody              = "Body to be used in the email template"
+  val subject                  = "Email subject"
+  val emailUUID                = "email-uuid"
+  val emailSendServicePath     = s"/gatekeeper-email/send-email/$emailUUID"
+  val testEmailSendServicePath = s"/gatekeeper-email/send-test-email/$emailUUID"
+  val emailSaveServicePath     = s"/gatekeeper-email/save-email?emailUUID=$emailUUID"
+  val emailUpdateServicePath   = s"/gatekeeper-email/update-email?emailUUID=$emailUUID"
+  val fetchEmailUrl            = s"/gatekeeper-email/fetch-email/$emailUUID"
+  val emailBody                = "Body to be used in the email template"
 
   trait Setup {
     val httpClient = app.injector.instanceOf[HttpClient]
@@ -77,7 +78,9 @@ class GatekeeperEmailConnectorSpec extends AsyncHmrcSpec with BeforeAndAfterEach
     lazy val underTest                     = new GatekeeperEmailConnector(httpClient, fakeEmailConnectorConfig)
     val composeEmailForm: ComposeEmailForm = ComposeEmailForm(subject, emailBody, true)
     val emailPreviewForm: EmailPreviewForm = EmailPreviewForm(emailUUID, composeEmailForm)
-    val users                              = List(RegisteredUser("example@example.com", "first name", "last name", true), RegisteredUser("example2@example2.com", "first name2", "last name2", true))
+    val email                              = "example@example.com"
+    val testEmailRequest                   = TestEmailRequest("example@example.com")
+    val users                              = List(RegisteredUser(email, "first name", "last name", true), RegisteredUser("example2@example2.com", "first name2", "last name2", true))
     val userSelectionQuery                 = new DevelopersEmailQuery(Some("topic-dev"), None, None, false, Some("apiVersionFilter"), false, None)
 
   }
@@ -108,6 +111,10 @@ class GatekeeperEmailConnectorSpec extends AsyncHmrcSpec with BeforeAndAfterEach
       .withHeader("Content-type", "application/json")
       .withBody(outgoingEmail)
       .withStatus(OK)))
+    stubFor(post(urlEqualTo(testEmailSendServicePath)).willReturn(aResponse()
+      .withHeader("Content-type", "application/json")
+      .withBody(outgoingEmail)
+      .withStatus(OK)))
     stubFor(post(urlEqualTo(emailSaveServicePath)).willReturn(aResponse()
       .withHeader("Content-type", "application/json")
       .withBody(outgoingEmail)
@@ -125,6 +132,7 @@ class GatekeeperEmailConnectorSpec extends AsyncHmrcSpec with BeforeAndAfterEach
   trait FailingHttp {
     self: Setup =>
     stubFor(post(urlEqualTo(emailSendServicePath)).willReturn(aResponse().withStatus(NOT_FOUND)))
+    stubFor(post(urlEqualTo(testEmailSendServicePath)).willReturn(aResponse().withStatus(NOT_FOUND)))
     stubFor(post(urlEqualTo(emailSaveServicePath)).willReturn(aResponse().withStatus(NOT_FOUND)))
   }
 
@@ -144,6 +152,23 @@ class GatekeeperEmailConnectorSpec extends AsyncHmrcSpec with BeforeAndAfterEach
     "fail to send gatekeeper email" in new Setup with FailingHttp {
       intercept[UpstreamErrorResponse] {
         await(underTest.sendEmail(emailPreviewForm))
+      }
+    }
+
+    "send gatekeeper test email" in new Setup with WorkingHttp {
+      await(underTest.sendTestEmail(emailUUID, testEmailRequest))
+
+      wireMockVerify(
+        1,
+        postRequestedFor(
+          urlEqualTo(testEmailSendServicePath)
+        )
+      )
+    }
+
+    "fail to send test gatekeeper email" in new Setup with FailingHttp {
+      intercept[UpstreamErrorResponse] {
+        await(underTest.sendTestEmail(emailUUID, testEmailRequest))
       }
     }
 

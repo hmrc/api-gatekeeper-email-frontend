@@ -43,11 +43,11 @@ trait GatekeeperAuthWrapper extends I18nSupport {
     Action.async {
       implicit request: Request[AnyContent] =>
         val predicate = authPredicate(minimumRoleRequired)
-        val retrieval = Retrievals.name and Retrievals.authorisedEnrolments
+        val retrieval = Retrievals.name and Retrievals.authorisedEnrolments and Retrievals.email
 
         authConnector.authorise(predicate, retrieval) flatMap {
-          case Some(name) ~ authorisedEnrolments => body(LoggedInRequest(name.name, authorisedEnrolments, request))
-          case None ~ authorisedEnrolments       => Future.successful(Forbidden(forbiddenView()))
+          case Some(name) ~ authorisedEnrolments ~ email => body(LoggedInRequest(name.name, email, authorisedEnrolments, request))
+          case None ~ _ ~ _                              => Future.successful(Forbidden(forbiddenView()))
         } recoverWith {
           case _: NoActiveSession        => Future.successful(toStrideLogin)
           case _: InsufficientEnrolments => Future.successful(Forbidden(forbiddenView()))

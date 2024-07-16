@@ -25,8 +25,8 @@ import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpErrorFunctions, Upstream
 import uk.gov.hmrc.gatekeepercomposeemailfrontend.config.EmailConnectorConfig
 import uk.gov.hmrc.gatekeepercomposeemailfrontend.controllers.{ComposeEmailForm, EmailPreviewForm}
 import uk.gov.hmrc.gatekeepercomposeemailfrontend.models.EmailRequest.{createEmailRequest, updateEmailRequest}
+import uk.gov.hmrc.gatekeepercomposeemailfrontend.models._
 import uk.gov.hmrc.gatekeepercomposeemailfrontend.models.file_upload.UploadedFile
-import uk.gov.hmrc.gatekeepercomposeemailfrontend.models.{DevelopersEmailQuery, EmailRequest, OutgoingEmail}
 import uk.gov.hmrc.gatekeepercomposeemailfrontend.utils.ApplicationLogger
 
 @Singleton
@@ -62,6 +62,14 @@ class GatekeeperEmailConnector @Inject() (http: HttpClient, config: EmailConnect
 
   def sendEmail(emailPreviewForm: EmailPreviewForm)(implicit hc: HeaderCarrier): Future[OutgoingEmail] = {
     http.POSTEmpty[OutgoingEmail](s"$serviceUrl/gatekeeper-email/send-email/${emailPreviewForm.emailUUID}")
+  }
+
+  def sendTestEmail(emailUUID: String, testEmailRequest: TestEmailRequest)(implicit hc: HeaderCarrier): Future[OutgoingEmail] = {
+    http.POST[TestEmailRequest, Either[UpstreamErrorResponse, OutgoingEmail]](s"$serviceUrl/gatekeeper-email/send-test-email/$emailUUID", testEmailRequest)
+      .map {
+        case resp @ Right(_) => resp.value
+        case Left(err)       => throw err
+      }
   }
 
   private def postSaveEmail(request: EmailRequest, emailUUID: String)(implicit hc: HeaderCarrier) = {

@@ -30,6 +30,7 @@ trait AuthConnectorMock {
   self: MockitoSugar with ArgumentMatchersSugar =>
 
   val userName      = "userName"
+  val email         = "test@email.com"
   val superUserName = "superUserName"
   val adminName     = "adminName"
 
@@ -40,9 +41,9 @@ trait AuthConnectorMock {
   }
 
   def givenTheGKUserIsAuthorisedAndIsANormalUser(): Unit = {
-    val response = successful(new ~(Some(Name(Some(userName), None)), Enrolments(Set(Enrolment(userRole)))))
+    val response = successful(new ~(new ~(Some(Name(Some(userName), None)), Enrolments(Set(Enrolment(userRole)))), Some(email)))
 
-    when(mockAuthConnector.authorise(*, any[Retrieval[~[Option[Name], Enrolments]]])(*, *))
+    when(mockAuthConnector.authorise(*, any[Retrieval[Option[Name] ~ Enrolments ~ Option[String]]])(*, *))
       .thenReturn(response)
   }
 
@@ -52,16 +53,16 @@ trait AuthConnectorMock {
   }
 
   def givenTheGKUserIsAuthorisedAndIsASuperUser(): Unit = {
-    val response = successful(new ~(Some(Name(Some(superUserName), None)), Enrolments(Set(Enrolment(superUserRole)))))
+    val response = successful(new ~(new ~(Some(Name(Some(superUserName), None)), Enrolments(Set(Enrolment(superUserRole)))), Some(email)))
 
-    when(mockAuthConnector.authorise(*, any[Retrieval[~[Option[Name], Enrolments]]])(*, *))
+    when(mockAuthConnector.authorise(*, any[Retrieval[Option[Name] ~ Enrolments ~ Option[String]]])(*, *))
       .thenReturn(response)
   }
 
   def givenTheGKUserIsAuthorisedAndIsAnAdmin(): Unit = {
-    val response = successful(new ~(Some(Name(Some(adminName), None)), Enrolments(Set(Enrolment(adminRole)))))
+    val response = successful(new ~(new ~(Some(Name(Some(adminName), None)), Enrolments(Set(Enrolment(adminRole)))), Some(email)))
 
-    when(mockAuthConnector.authorise(*, any[Retrieval[~[Option[Name], Enrolments]]])(*, *))
+    when(mockAuthConnector.authorise(*, any[Retrieval[Option[Name] ~ Enrolments ~ Option[String]]])(*, *))
       .thenReturn(response)
   }
 

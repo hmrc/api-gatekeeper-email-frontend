@@ -83,6 +83,9 @@ class EmailPreviewControllerSpec extends ControllerBaseSpec with Matchers {
     when(mockGatekeeperEmailConnector.sendEmail(*)(*))
       .thenReturn(successful(Json.parse(outgoingEmail).as[OutgoingEmail]))
 
+    when(mockGatekeeperEmailConnector.sendTestEmail(*, *)(*))
+      .thenReturn(successful(Json.parse(outgoingEmail).as[OutgoingEmail]))
+
     when(mockGatekeeperEmailConnector.fetchEmail(*)(*))
       .thenReturn(successful(Json.parse(outgoingEmail).as[OutgoingEmail]))
 
@@ -123,6 +126,32 @@ class EmailPreviewControllerSpec extends ControllerBaseSpec with Matchers {
       val fakeRequest = FakeRequest("POST", s"/send-email/$emailUUID")
         .withSession(csrfToken, authToken, userToken).withCSRFToken
       val result      = controller.sendEmail(emailUUID, "{}")(fakeRequest)
+      status(result) shouldBe Status.FORBIDDEN
+    }
+  }
+
+  "POST /send-test-email" should {
+
+    "send an email upon receiving a valid form submission" in new Setup {
+      givenTheGKUserIsAuthorisedAndIsANormalUser()
+      val fakeRequest = FakeRequest("POST", s"/send-test-email/$emailUUID")
+        .withSession(csrfToken, authToken, userToken).withCSRFToken
+      val result      = controller.sendTestEmail(emailUUID, "{}")(fakeRequest)
+      status(result) shouldBe SEE_OTHER
+    }
+
+    "redirect to login page for a user that is not authenticated" in new Setup {
+      givenFailedLogin()
+      val fakeRequest = FakeRequest("POST", s"/send-test-email/$emailUUID")
+        .withSession(csrfToken, authToken, userToken).withCSRFToken
+      val result      = controller.sendTestEmail(emailUUID, "{}")(fakeRequest)
+      status(result) shouldBe SEE_OTHER
+    }
+    "deny user with incorrect privileges" in new Setup {
+      givenTheGKUserHasInsufficientEnrolments()
+      val fakeRequest = FakeRequest("POST", s"/send-test-email/$emailUUID")
+        .withSession(csrfToken, authToken, userToken).withCSRFToken
+      val result      = controller.sendTestEmail(emailUUID, "{}")(fakeRequest)
       status(result) shouldBe Status.FORBIDDEN
     }
   }
