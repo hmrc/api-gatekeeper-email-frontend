@@ -23,7 +23,8 @@ import org.scalatest.{BeforeAndAfterAll, BeforeAndAfterEach}
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 
 import play.api.libs.json.Json
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
+import uk.gov.hmrc.http.client.HttpClientV2
+import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 
 import uk.gov.hmrc.gatekeepercomposeemailfrontend.common.AsyncHmrcSpec
 import uk.gov.hmrc.gatekeepercomposeemailfrontend.config.AppConfig
@@ -66,7 +67,7 @@ class UploadDocumentsConnectorSpec extends AsyncHmrcSpec with BeforeAndAfterEach
   val composEmailServieStub = new ComposeEmailServiceStub
 
   trait Setup {
-    val httpClient = app.injector.instanceOf[HttpClient]
+    val httpClient = app.injector.instanceOf[HttpClientV2]
 
     implicit val hc: HeaderCarrier    = HeaderCarrier()
     implicit val appConfig: AppConfig = mock[AppConfig]

@@ -19,11 +19,11 @@ package uk.gov.hmrc.gatekeepercomposeemailfrontend.connectors
 import javax.inject.{Inject, Singleton}
 
 import uk.gov.hmrc.auth.core._
-import uk.gov.hmrc.http.HttpClient
+import uk.gov.hmrc.http.client.HttpClientV2
 
 import uk.gov.hmrc.gatekeepercomposeemailfrontend.config.AppConfig
 
 @Singleton
-class AuthConnector @Inject() (val http: HttpClient, appConfig: AppConfig) extends PlayAuthConnector {
+class AuthConnector @Inject() (val httpClientV2: HttpClientV2, appConfig: AppConfig) extends PlayAuthConnector {
   lazy val serviceUrl = appConfig.authBaseUrl
 }

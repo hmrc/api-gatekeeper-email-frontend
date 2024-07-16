@@ -31,7 +31,7 @@
       appConfig: AppConfig)
 
 @(pageTitle: Option[String] = None,
-        scriptsBlock: Option[Html] = None)(contentBlock: Html)(implicit request: Request[_], messages: Messages)
+        scriptsBlock: Option[Html] = None)(contentBlock: Html)(implicit requestHeader: RequestHeader, messages: Messages)
 
 
 @scriptElem = {

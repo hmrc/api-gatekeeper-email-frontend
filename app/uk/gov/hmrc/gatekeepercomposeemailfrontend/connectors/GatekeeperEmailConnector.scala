@@ -19,8 +19,10 @@ package uk.gov.hmrc.gatekeepercomposeemailfrontend.connectors
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
+import play.api.libs.json.Json
 import uk.gov.hmrc.http.HttpReads.Implicits._
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpErrorFunctions, UpstreamErrorResponse}
+import uk.gov.hmrc.http.client.HttpClientV2
+import uk.gov.hmrc.http.{HeaderCarrier, HttpErrorFunctions, StringContextOps, UpstreamErrorResponse}
 
 import uk.gov.hmrc.gatekeepercomposeemailfrontend.config.EmailConnectorConfig
 import uk.gov.hmrc.gatekeepercomposeemailfrontend.controllers.{ComposeEmailForm, EmailPreviewForm}
@@ -30,7 +32,7 @@ import uk.gov.hmrc.gatekeepercomposeemailfrontend.models.{DevelopersEmailQuery, 
 import uk.gov.hmrc.gatekeepercomposeemailfrontend.utils.ApplicationLogger
 
 @Singleton
-class GatekeeperEmailConnector @Inject() (http: HttpClient, config: EmailConnectorConfig)(implicit ec: ExecutionContext)
+class GatekeeperEmailConnector @Inject() (http: HttpClientV2, config: EmailConnectorConfig)(implicit ec: ExecutionContext)
     extends HttpErrorFunctions
     with ApplicationLogger {
 
@@ -51,21 +53,28 @@ class GatekeeperEmailConnector @Inject() (http: HttpClient, config: EmailConnect
   }
 
   def fetchEmail(emailUUID: String)(implicit hc: HeaderCarrier): Future[OutgoingEmail] = {
-    val url = s"$serviceUrl/gatekeeper-email/fetch-email/$emailUUID"
-    http.GET[OutgoingEmail](url)
+    http
+      .get(url"$serviceUrl/gatekeeper-email/fetch-email/$emailUUID")
+      .execute[OutgoingEmail]
   }
 
   def deleteEmail(emailUUID: String)(implicit hc: HeaderCarrier): Future[Boolean] = {
-    val url = s"$serviceUrl/gatekeeper-email/delete-email/$emailUUID"
-    http.POSTEmpty[Boolean](url)
+    http
+      .post(url"$serviceUrl/gatekeeper-email/delete-email/$emailUUID")
+      .execute[Boolean]
   }
 
   def sendEmail(emailPreviewForm: EmailPreviewForm)(implicit hc: HeaderCarrier): Future[OutgoingEmail] = {
-    http.POSTEmpty[OutgoingEmail](s"$serviceUrl/gatekeeper-email/send-email/${emailPreviewForm.emailUUID}")
+    http
+      .post(url"$serviceUrl/gatekeeper-email/send-email/${emailPreviewForm.emailUUID}")
+      .execute[OutgoingEmail]
   }
 
   private def postSaveEmail(request: EmailRequest, emailUUID: String)(implicit hc: HeaderCarrier) = {
-    http.POST[EmailRequest, Either[UpstreamErrorResponse, OutgoingEmail]](s"$serviceUrl/gatekeeper-email/save-email?emailUUID=$emailUUID", request)
+    http
+      .post(url"$serviceUrl/gatekeeper-email/save-email?emailUUID=$emailUUID")
+      .withBody(Json.toJson(request))
+      .execute[Either[UpstreamErrorResponse, OutgoingEmail]]
       .map {
         case resp @ Right(_) => resp.value
         case Left(err)       => throw err
@@ -73,7 +82,10 @@ class GatekeeperEmailConnector @Inject() (http: HttpClient, config: EmailConnect
   }
 
   private def postUpdateEmail(request: EmailRequest, emailUUID: String)(implicit hc: HeaderCarrier) = {
-    http.POST[EmailRequest, Either[UpstreamErrorResponse, OutgoingEmail]](s"$serviceUrl/gatekeeper-email/update-email?emailUUID=$emailUUID", request)
+    http
+      .post(url"$serviceUrl/gatekeeper-email/update-email?emailUUID=$emailUUID")
+      .withBody(Json.toJson(request))
+      .execute[Either[UpstreamErrorResponse, OutgoingEmail]]
       .map {
         case resp @ Right(_) => resp.value
         case Left(err)       => throw err

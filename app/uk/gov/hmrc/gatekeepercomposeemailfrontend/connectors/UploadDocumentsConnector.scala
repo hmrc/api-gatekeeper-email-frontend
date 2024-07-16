@@ -21,17 +21,18 @@ import scala.concurrent.{ExecutionContext, Future}
 
 import play.api.http.Status.CREATED
 import play.api.libs.json.{Format, Json}
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
+import uk.gov.hmrc.http.HttpReads.Implicits._
+import uk.gov.hmrc.http.client.HttpClientV2
+import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, StringContextOps}
 
 import uk.gov.hmrc.gatekeepercomposeemailfrontend.config.AppConfig
 import uk.gov.hmrc.gatekeepercomposeemailfrontend.models.file_upload.{Nonce, UploadDocumentsWrapper, UploadedFile}
 import uk.gov.hmrc.gatekeepercomposeemailfrontend.services.ComposeEmailService
 
-class UploadDocumentsConnector @Inject() (httpClient: HttpClient, emailService: ComposeEmailService)(implicit executionContext: ExecutionContext, appConfig: AppConfig) {
+class UploadDocumentsConnector @Inject() (httpClient: HttpClientV2, emailService: ComposeEmailService)(implicit executionContext: ExecutionContext, appConfig: AppConfig) {
 
   def initializeNewFileUpload(emailUUID: String, searched: Boolean, multipleUpload: Boolean)(implicit hc: HeaderCarrier): Future[Option[String]] = {
     val nonce = Nonce.random
-//    val payload = UploadDocumentsWrapper.createPayload(nonce, emailUUID, searched, multipleUpload)
     for {
       emailInfo <- emailService.fetchEmail(emailUUID)
       payload    = UploadDocumentsWrapper.createPayload(nonce, emailUUID, searched, multipleUpload, emailInfo.attachmentDetails)
@@ -51,7 +52,10 @@ class UploadDocumentsConnector @Inject() (httpClient: HttpClient, emailService: 
   }
 
   def actualPost(request: UploadDocumentsWrapper)(implicit hc: HeaderCarrier) = {
-    httpClient.POST[UploadDocumentsWrapper, HttpResponse](appConfig.fileUploadInitializationUrl, request)
+    httpClient
+      .post(url"${appConfig.fileUploadInitializationUrl}")
+      .withBody(Json.toJson(request))
+      .execute[HttpResponse]
   }
 
 }

@@ -17,18 +17,19 @@
 package uk.gov.hmrc.gatekeepercomposeemailfrontend.config
 
 import javax.inject.{Inject, Singleton}
+import scala.concurrent.{ExecutionContext, Future}
 
 import views.html.ErrorTemplate
 
 import play.api.i18n.MessagesApi
-import play.api.mvc.Request
+import play.api.mvc.RequestHeader
 import play.twirl.api.Html
 import uk.gov.hmrc.play.bootstrap.frontend.http.FrontendErrorHandler
 
 @Singleton
-class ErrorHandler @Inject() (errorTemplate: ErrorTemplate, val messagesApi: MessagesApi)(implicit appConfig: AppConfig)
+class ErrorHandler @Inject() (errorTemplate: ErrorTemplate, val messagesApi: MessagesApi)(implicit appConfig: AppConfig, val ec: ExecutionContext)
     extends FrontendErrorHandler {
 
-  override def standardErrorTemplate(pageTitle: String, heading: String, message: String)(implicit request: Request[_]): Html =
-    errorTemplate(pageTitle, heading, message)
+  override def standardErrorTemplate(pageTitle: String, heading: String, message: String)(implicit requestHeader: RequestHeader): Future[Html] =
+    Future.successful(errorTemplate(pageTitle, heading, message))
 }
