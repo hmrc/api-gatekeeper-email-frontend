@@ -64,7 +64,7 @@ class UploadDocumentsConnectorSpec extends AsyncHmrcSpec with BeforeAndAfterEach
       Future.successful(Json.parse(outgoingEmail).as[OutgoingEmail])
     }
   }
-  val composeEmailServieStub = new ComposeEmailServiceStub
+  val composeEmailServiceStub = new ComposeEmailServiceStub
 
   trait Setup extends HttpClientV2Support {
     implicit val hc: HeaderCarrier    = HeaderCarrier()
@@ -72,7 +72,7 @@ class UploadDocumentsConnectorSpec extends AsyncHmrcSpec with BeforeAndAfterEach
     val CREATED                       = 201
     val OK                            = 200
 
-    class UploadDocumentsConnectorSuccess extends UploadDocumentsConnector(httpClientV2, composeEmailServieStub) {
+    class UploadDocumentsConnectorSuccess extends UploadDocumentsConnector(httpClientV2, composeEmailServiceStub) {
 
       override def actualPost(request: UploadDocumentsWrapper)(implicit hc: HeaderCarrier): Future[HttpResponse] = {
         Future.successful(HttpResponse.apply(CREATED, "", Map[String, Seq[String]]("Location" -> Seq("/upload-documents"))))
@@ -80,7 +80,7 @@ class UploadDocumentsConnectorSpec extends AsyncHmrcSpec with BeforeAndAfterEach
     }
     lazy val underTestSuccess = new UploadDocumentsConnectorSuccess
 
-    class UploadDocumentsConnectorFailure extends UploadDocumentsConnector(httpClientV2, composeEmailServieStub) {
+    class UploadDocumentsConnectorFailure extends UploadDocumentsConnector(httpClientV2, composeEmailServiceStub) {
 
       override def actualPost(request: UploadDocumentsWrapper)(implicit hc: HeaderCarrier): Future[HttpResponse] = {
         Future.successful(HttpResponse.apply(OK, "", Map.empty[String, Seq[String]]))
