@@ -16,10 +16,10 @@
 
 package uk.gov.hmrc.gatekeepercomposeemailfrontend.models
 
-import play.api.libs.json.Json
+import play.api.libs.json.{Json, OFormat}
 
 case class TestEmailRequest(email: String)
 
 object TestEmailRequest {
-  implicit val format = Json.format[TestEmailRequest]
+  implicit val format: OFormat[TestEmailRequest] = Json.format[TestEmailRequest]
 }

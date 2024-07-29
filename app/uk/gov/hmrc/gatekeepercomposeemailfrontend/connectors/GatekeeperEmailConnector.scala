@@ -71,7 +71,10 @@ class GatekeeperEmailConnector @Inject() (http: HttpClientV2, config: EmailConne
   }
 
   def sendTestEmail(emailUUID: String, testEmailRequest: TestEmailRequest)(implicit hc: HeaderCarrier): Future[OutgoingEmail] = {
-    http.POST[TestEmailRequest, Either[UpstreamErrorResponse, OutgoingEmail]](s"$serviceUrl/gatekeeper-email/send-test-email/$emailUUID", testEmailRequest)
+    http
+      .post(url"$serviceUrl/gatekeeper-email/send-test-email/$emailUUID")
+      .withBody(Json.toJson(testEmailRequest))
+      .execute[Either[UpstreamErrorResponse, OutgoingEmail]]
       .map {
         case resp @ Right(_) => resp.value
         case Left(err)       => throw err
