@@ -18,6 +18,7 @@ package uk.gov.hmrc.gatekeepercomposeemailfrontend.models
 
 import uk.gov.hmrc.http.SessionKeys
 
+//TODO make sealed trait
 object GatekeeperRole extends Enumeration {
   type GatekeeperRole = Value
   val USER, SUPERUSER, ADMIN = Value

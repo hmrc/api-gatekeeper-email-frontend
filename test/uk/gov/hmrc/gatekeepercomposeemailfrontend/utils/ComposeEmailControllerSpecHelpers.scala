@@ -35,7 +35,6 @@ import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.gatekeepercomposeemailfrontend.common.ControllerBaseSpec
 import uk.gov.hmrc.gatekeepercomposeemailfrontend.connectors.{AuthConnector, GatekeeperEmailConnector}
 import uk.gov.hmrc.gatekeepercomposeemailfrontend.controllers.{ComposeEmailController, ComposeEmailForm, RemoveUploadedFileFormProvider}
-import uk.gov.hmrc.gatekeepercomposeemailfrontend.models.file_upload.UploadedFile
 import uk.gov.hmrc.gatekeepercomposeemailfrontend.models.{DevelopersEmailQuery, OutgoingEmail, RegisteredUser}
 import uk.gov.hmrc.gatekeepercomposeemailfrontend.services.ComposeEmailService
 
@@ -69,20 +68,19 @@ object ComposeEmailControllerSpecHelpers extends ControllerBaseSpec with Matcher
   class ComposeEmailServiceTest extends ComposeEmailService(mock[GatekeeperEmailConnector]) {
 
     override def saveEmail(composeEmailForm: ComposeEmailForm, emailUUID: String, userSelectionQuery: DevelopersEmailQuery)(implicit hc: HeaderCarrier): Future[OutgoingEmail] =
-      Future.successful(OutgoingEmail("srinivasalu.munagala@digital.hmrc.gov.uk", "Hello", None, "*test email body*", "", "", "", "", None, userSelectionQuery, 1))
+      Future.successful(OutgoingEmail("srinivasalu.munagala@digital.hmrc.gov.uk", "Hello", "*test email body*", "", "", "", "", None, userSelectionQuery, 1))
 
     override def fetchEmail(emailUUID: String)(implicit hc: HeaderCarrier): Future[OutgoingEmail] = {
-      Future.successful(OutgoingEmail("srinivasalu.munagala@digital.hmrc.gov.uk", "Hello", None, "*test email body*", "", "", "", "", None, userSelectionQuery, 1))
+      Future.successful(OutgoingEmail("srinivasalu.munagala@digital.hmrc.gov.uk", "Hello", "*test email body*", "", "", "", "", None, userSelectionQuery, 1))
     }
 
     override def updateEmail(
         composeEmailForm: ComposeEmailForm,
         emailUUID: String,
-        userSelectionQuery: Option[DevelopersEmailQuery],
-        attachmentDetails: Option[Seq[UploadedFile]]
+        userSelectionQuery: Option[DevelopersEmailQuery]
       )(implicit hc: HeaderCarrier
       ): Future[OutgoingEmail] = {
-      Future.successful(OutgoingEmail("srinivasalu.munagala@digital.hmrc.gov.uk", "Hello", None, "*test email body*", "", "", "", "", None, userSelectionQuery.get, 1))
+      Future.successful(OutgoingEmail("srinivasalu.munagala@digital.hmrc.gov.uk", "Hello", "*test email body*", "", "", "", "", None, userSelectionQuery.get, 1))
     }
 
     override def deleteEmail(emailUUID: String)(implicit hc: HeaderCarrier): Future[Boolean] = Future.successful(true)

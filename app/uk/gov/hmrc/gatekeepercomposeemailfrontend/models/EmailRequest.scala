@@ -19,7 +19,6 @@ package uk.gov.hmrc.gatekeepercomposeemailfrontend.models
 import play.api.libs.json.{Json, OFormat}
 
 import uk.gov.hmrc.gatekeepercomposeemailfrontend.controllers.ComposeEmailForm
-import uk.gov.hmrc.gatekeepercomposeemailfrontend.models.file_upload.{UploadCargo, UploadedFile}
 
 case class EmailData(emailSubject: String, emailBody: String)
 
@@ -30,16 +29,13 @@ case class EmailRequest(
     force: Boolean = false,
     auditData: Map[String, String] = Map.empty,
     eventUrl: Option[String] = None,
-    attachmentDetails: Option[Seq[UploadedFile]] = None,
     userSelectionQuery: Option[DevelopersEmailQuery] = None
   )
 
 object EmailRequest {
-  implicit val emailDataFmt: OFormat[EmailData]               = Json.format[EmailData]
-  implicit val userFmt: OFormat[RegisteredUser]               = Json.format[RegisteredUser]
-  implicit val format: OFormat[UploadCargo]                   = Json.format[UploadCargo]
-  implicit val attachmentDetailsFormat: OFormat[UploadedFile] = Json.format[UploadedFile]
-  implicit val sendEmailRequestFmt: OFormat[EmailRequest]     = Json.format[EmailRequest]
+  implicit val emailDataFmt: OFormat[EmailData]           = Json.format[EmailData]
+  implicit val userFmt: OFormat[RegisteredUser]           = Json.format[RegisteredUser]
+  implicit val sendEmailRequestFmt: OFormat[EmailRequest] = Json.format[EmailRequest]
 
   def createEmailRequest(form: ComposeEmailForm, developersEmailQuery: DevelopersEmailQuery) = {
 
@@ -51,13 +47,12 @@ object EmailRequest {
     )
   }
 
-  def updateEmailRequest(composeEmailForm: ComposeEmailForm, developersEmailQuery: Option[DevelopersEmailQuery], attachmentDetails: Option[Seq[UploadedFile]] = None) = {
+  def updateEmailRequest(composeEmailForm: ComposeEmailForm, developersEmailQuery: Option[DevelopersEmailQuery]) = {
 
     EmailRequest(
       List(),
       templateId = "gatekeeper",
       EmailData(composeEmailForm.emailSubject, composeEmailForm.emailBody),
-      attachmentDetails = attachmentDetails,
       userSelectionQuery = developersEmailQuery
     )
   }

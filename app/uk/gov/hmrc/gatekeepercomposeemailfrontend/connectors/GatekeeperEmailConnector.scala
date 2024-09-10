@@ -28,7 +28,6 @@ import uk.gov.hmrc.gatekeepercomposeemailfrontend.config.EmailConnectorConfig
 import uk.gov.hmrc.gatekeepercomposeemailfrontend.controllers.{ComposeEmailForm, EmailPreviewForm}
 import uk.gov.hmrc.gatekeepercomposeemailfrontend.models.EmailRequest.{createEmailRequest, updateEmailRequest}
 import uk.gov.hmrc.gatekeepercomposeemailfrontend.models._
-import uk.gov.hmrc.gatekeepercomposeemailfrontend.models.file_upload.UploadedFile
 import uk.gov.hmrc.gatekeepercomposeemailfrontend.utils.ApplicationLogger
 
 @Singleton
@@ -45,11 +44,10 @@ class GatekeeperEmailConnector @Inject() (http: HttpClientV2, config: EmailConne
   def updateEmail(
       composeEmailForm: ComposeEmailForm,
       emailUUID: String,
-      userSelectionQuery: Option[DevelopersEmailQuery],
-      attachmentDetails: Option[Seq[UploadedFile]] = None
+      userSelectionQuery: Option[DevelopersEmailQuery]
     )(implicit hc: HeaderCarrier
     ): Future[OutgoingEmail] = {
-    postUpdateEmail(updateEmailRequest(composeEmailForm, userSelectionQuery, attachmentDetails), emailUUID)
+    postUpdateEmail(updateEmailRequest(composeEmailForm, userSelectionQuery), emailUUID)
   }
 
   def fetchEmail(emailUUID: String)(implicit hc: HeaderCarrier): Future[OutgoingEmail] = {

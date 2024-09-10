@@ -53,7 +53,7 @@ class EmailPreviewController @Inject() (
       {
         val outgoingEmail = for {
           fetchEmail    <- emailService.fetchEmail(emailUUID)
-          outgoingEmail <- emailConnector.sendEmail(EmailPreviewForm(emailUUID, ComposeEmailForm(fetchEmail.subject, fetchEmail.htmlEmailBody, true)))
+          outgoingEmail <- emailConnector.sendEmail(EmailPreviewForm(emailUUID, ComposeEmailForm(fetchEmail.subject, fetchEmail.htmlEmailBody)))
 
           _ = logger.info(s"outgoingEmail count is ${outgoingEmail.emailsCount}")
         } yield outgoingEmail
@@ -81,7 +81,7 @@ class EmailPreviewController @Inject() (
           val txtEmailBody = base64Decode(email.markdownEmailBody).substring(1)
           Ok(composeEmail(
             emailUUID,
-            uk.gov.hmrc.gatekeepercomposeemailfrontend.controllers.ComposeEmailForm.form.fill(ComposeEmailForm(email.subject, txtEmailBody, true)),
+            uk.gov.hmrc.gatekeepercomposeemailfrontend.controllers.ComposeEmailForm.form.fill(ComposeEmailForm(email.subject, txtEmailBody)),
             userSelectionMap
           ))
         }
