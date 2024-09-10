@@ -45,7 +45,7 @@ class ComposeEmailController @Inject() (
     emailService: ComposeEmailService,
     sentEmail: EmailSentConfirmation,
     deleteConfirmEmail: EmailDeleteConfirmation,
-    deleteEmail: RemoveEmailView,
+    deleteEmail: EmailDelete,
     override val forbiddenView: ForbiddenView,
     formProvider: RemoveUploadedFileFormProvider,
     override val authConnector: AuthConnector

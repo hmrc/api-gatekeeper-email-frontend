@@ -61,7 +61,7 @@ object ComposeEmailControllerSpecHelpers extends ControllerBaseSpec with Matcher
   lazy val emailPreviewTemplateView                = app.injector.instanceOf[EmailPreview]
   lazy val emailSentTemplateView                   = app.injector.instanceOf[EmailSentConfirmation]
   lazy val deleteConfirmEmail                      = app.injector.instanceOf[EmailDeleteConfirmation]
-  lazy val deleteEmail                             = app.injector.instanceOf[RemoveEmailView]
+  lazy val deleteEmail                             = app.injector.instanceOf[EmailDelete]
   lazy val formProvider                            = app.injector.instanceOf[RemoveUploadedFileFormProvider]
   val su                                           = List(RegisteredUser("sawd", "efef", "eff", true))
   val userSelectionQuery                           = new DevelopersEmailQuery(None, None, None, false, None, false, None)

@@ -22,7 +22,7 @@
 @import uk.gov.hmrc.gatekeepercomposeemailfrontend.models.LoggedInRequest
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 
-@this(layout: Layout, appConfig: AppConfig, govukNotificationBanner: GovukNotificationBanner)
+@this(layout: Layout, appConfig: AppConfig, govukNotificationBanner: GovukNotificationBanner, errorSummary: components.errorSummary)
 
 @(emailPreview: String, form: Form[EmailPreviewForm], userSelection: Map[String, String], status: String, previewSent: Boolean)(implicit request: LoggedInRequest[_], messages: Messages)
 @html = {
@@ -34,7 +34,7 @@
     </div>
 }
 @layout(pageTitle = Some(s"${appConfig.title} - Email preview")) {
-    @errorSummary(form)
+    @errorSummary(form.errors)
 
     <div>
         @if(previewSent) {
