@@ -28,17 +28,17 @@
 @layout(pageTitle = Some(s"${appConfig.title} - Compose Email")) {
   @errorSummary(form.errors)
 
-  <h2 class="govuk-heading-l">Compose email</h2>
+  <h2 class="govuk-heading-l" id="page-heading">Compose email</h2>
 
   <form name="compose-email" method="post" action="@controllers.routes.ComposeEmailController.emailPreviewAction(emailUUID, Json.toJson(userSelection).toString())">
     @helper.CSRF.formField
     <dl class="govuk-summary-list email-summary">
-    @for((key, value) <- userSelection) {
+    @for(((key, value) ,index) <- userSelection.zipWithIndex) {
       <div class="govuk-summary-list__row">
-        <dt class="govuk-summary-list__key email-summary-key govuk-!-font-weight-regular">
+        <dt class="govuk-summary-list__key email-summary-key govuk-!-font-weight-regular" id="data-key-@index">
           @key
         </dt>
-        <dd class="govuk-summary-list__value email-summary-data">
+        <dd class="govuk-summary-list__value email-summary-data" id="data-value-@index">
           @Html(value)
         </dd>
       </div>
