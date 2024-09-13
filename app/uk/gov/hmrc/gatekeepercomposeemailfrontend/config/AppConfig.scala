@@ -26,18 +26,10 @@ class AppConfig @Inject() (config: Configuration, servicesConfig: ServicesConfig
     extends ServicesConfig(config) with EmailConnectorConfig {
   val welshLanguageSupportEnabled = config.getOptional[Boolean]("features.welsh-language-support").getOrElse(false)
 
-  val appName                     = "HMRC API Gatekeeper"
-  lazy val initiateUrl            = baseUrl("upscan-initiate") + "/upscan/initiate"
-  lazy val initiateV2Url          = baseUrl("upscan-initiate") + "/upscan/v2/initiate"
-  lazy val callbackEndpointTarget = getString("upscan.callback-endpoint")
-  val title                       = "HMRC API Gatekeeper"
-  val emailBaseUrl                = baseUrl("gatekeeper-email")
-  val emailSubject                = getString("emailSubject")
-  val maxFileSize                 = getString("file-formats.max-file-size-mb")
-  val approvedFileExtensions      = getString("file-formats.approved-file-extensions")
-  val approvedFileTypes           = getString("file-formats.approved-file-types")
-
-  val uploadRedirectTargetBase = getString("upload-redirect-target-base")
+  val appName      = "HMRC API Gatekeeper"
+  val title        = "HMRC API Gatekeeper"
+  val emailBaseUrl = baseUrl("gatekeeper-email")
+  val emailSubject = getString("emailSubject")
 
   def gatekeeperSuccessUrl: String = getString("api-gatekeeper-email-success-url")
 
@@ -69,38 +61,12 @@ class AppConfig @Inject() (config: Configuration, servicesConfig: ServicesConfig
 
   lazy val selfUrl: String = servicesConfig.getString("self.url")
 
-  lazy val fileUploadBaseUrl: String =
-    servicesConfig.baseUrl("upload-documents-frontend")
-
-  lazy val fileUploadCallbackUrlPrefix: String =
-    servicesConfig.getConfString("upload-documents-frontend.callback-url-prefix", "")
-
-  lazy val fileUploadContinueUrlPrefix: String =
-    servicesConfig.getConfString("upload-documents-frontend.continue-url-prefix", "")
-
-  lazy val fileUploadContextPath: String =
-    servicesConfig.getConfString("upload-documents-frontend.context-path", "/internal")
-
-  lazy val fileUploadPublicUrl: String         =
-    servicesConfig.getConfString("upload-documents-frontend.public-url", "")
-  lazy val fileUploadInitializationUrl: String = s"$fileUploadBaseUrl$fileUploadContextPath/initialize"
-  lazy val fileUploadWipeOutUrl: String        = s"$fileUploadBaseUrl$fileUploadContextPath/wipe-out"
-  lazy val fileUploadServiceName: String       = config.get[String]("microservice.services.upload-documents-frontend.serviceName")
-  lazy val fileUploadPhase: String             = config.get[String]("microservice.services.upload-documents-frontend.phaseBanner")
-  lazy val fileUploadPhaseUrl: String          = config.get[String]("microservice.services.upload-documents-frontend.phaseBannerUrl")
-  lazy val fileUploadAccessibilityUrl: String  = config.get[String]("microservice.services.upload-documents-frontend.accessibilityStatement")
-
   lazy val timeout: Int      = config.get[Int]("timeout.timeout")
   lazy val countdown: Int    = config.get[Int]("timeout.countdown")
   lazy val itemsPerPage: Int = config.get[Int]("pagination.itemsPerPage")
 
-  lazy val customsDataStore: String = servicesConfig.baseUrl("customs-data-store") +
-    config.get[String]("microservice.services.customs-data-store.context")
-
   lazy val emailFrontendUrl: String = config.get[String]("urls.emailFrontend")
 
-  lazy val customsFinancialsApi: String = servicesConfig.baseUrl("customs-financials-api") +
-    config.getOptional[String]("customs-financials-api.context").getOrElse("/customs-financials-api")
 }
 
 trait EmailConnectorConfig {

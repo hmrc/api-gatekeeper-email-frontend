@@ -6,12 +6,15 @@ object AppDependencies {
   lazy val jsoupVersion         = "1.13.1"
   lazy val scalaCheckVersion    = "1.14.0"
   lazy val seleniumVersion      = "4.8.3"
+  lazy val apiDomainVersion     = "0.19.0"
+  lazy val hmrcFrontendVersion = "10.11.0"
 
   def apply(): Seq[ModuleID] = dependencies ++ testDependencies
 
   lazy val dependencies = Seq(
     "uk.gov.hmrc" %% "bootstrap-frontend-play-30" % bootstrapPlayVersion,
-    "uk.gov.hmrc" %% "play-frontend-hmrc-play-30" % "9.0.0"
+    "uk.gov.hmrc" %% "play-frontend-hmrc-play-30" % hmrcFrontendVersion,
+    "uk.gov.hmrc" %% "api-platform-api-domain"    % apiDomainVersion
   )
 
   lazy val testDependencies: Seq[ModuleID] = Seq(

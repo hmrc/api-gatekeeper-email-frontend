@@ -45,7 +45,7 @@ class ComposeEmailController @Inject() (
     emailService: ComposeEmailService,
     sentEmail: EmailSentConfirmation,
     deleteConfirmEmail: EmailDeleteConfirmation,
-    deleteEmail: RemoveEmailView,
+    deleteEmail: EmailDelete,
     override val forbiddenView: ForbiddenView,
     formProvider: RemoveUploadedFileFormProvider,
     override val authConnector: AuthConnector
@@ -57,10 +57,10 @@ class ComposeEmailController @Inject() (
     def persistEmailDetails(userSelectionQuery: DevelopersEmailQuery, userSelection: String): Future[Result] = {
       val emailUUID = UUID.randomUUID().toString
       for {
-        email <- emailService.saveEmail(ComposeEmailForm("", "", false), emailUUID, userSelectionQuery)
+        email <- emailService.saveEmail(ComposeEmailForm("", ""), emailUUID, userSelectionQuery)
       } yield Ok(composeEmail(
         email.emailUUID,
-        uk.gov.hmrc.gatekeepercomposeemailfrontend.controllers.ComposeEmailForm.form.fill(ComposeEmailForm("", "", false)),
+        uk.gov.hmrc.gatekeepercomposeemailfrontend.controllers.ComposeEmailForm.form.fill(ComposeEmailForm("", "")),
         Json.parse(userSelection).as[Map[String, String]]
       ))
     }
@@ -116,7 +116,7 @@ class ComposeEmailController @Inject() (
           base64Decode(email.htmlEmailBody),
           uk.gov.hmrc.gatekeepercomposeemailfrontend.controllers.EmailPreviewForm.form.fill(EmailPreviewForm(
             email.emailUUID,
-            ComposeEmailForm(email.subject, email.markdownEmailBody, true)
+            ComposeEmailForm(email.subject, email.markdownEmailBody)
           )),
           userSelectionMap,
           email.status,
@@ -125,29 +125,25 @@ class ComposeEmailController @Inject() (
       }
   }
 
-  def upload(emailUUID: String, userSelection: String): Action[AnyContent] = requiresAtLeast(GatekeeperRole.USER) {
+  def emailPreviewAction(emailUUID: String, userSelection: String): Action[AnyContent] = requiresAtLeast(GatekeeperRole.USER) {
     implicit request =>
       def handleValidForm(form: ComposeEmailForm) = {
         val fetchEmail: Future[OutgoingEmail]     = emailService.fetchEmail(emailUUID)
         val userSelectionMap: Map[String, String] = Json.parse(userSelection).as[Map[String, String]]
         fetchEmail.flatMap { emailFetched =>
-          val outgoingEmail = emailService.updateEmail(form, emailUUID, Some(emailFetched.userSelectionQuery), emailFetched.attachmentDetails)
+          val outgoingEmail = emailService.updateEmail(form, emailUUID, Some(emailFetched.userSelectionQuery))
           outgoingEmail.map { email =>
-            if (form.attachFiles) {
-              Redirect(uk.gov.hmrc.gatekeepercomposeemailfrontend.controllers.routes.FileUploadController.start(emailUUID, false, true))
-            } else {
-              logger.info(s"Fetched email status:${emailFetched.status}")
-              Ok(emailPreview(
-                base64Decode(email.htmlEmailBody),
-                uk.gov.hmrc.gatekeepercomposeemailfrontend.controllers.EmailPreviewForm.form.fill(uk.gov.hmrc.gatekeepercomposeemailfrontend.controllers.EmailPreviewForm(
-                  email.emailUUID,
-                  form
-                )),
-                userSelectionMap,
-                emailFetched.status,
-                false
-              ))
-            }
+            logger.info(s"Fetched email status:${emailFetched.status}")
+            Ok(emailPreview(
+              base64Decode(email.htmlEmailBody),
+              uk.gov.hmrc.gatekeepercomposeemailfrontend.controllers.EmailPreviewForm.form.fill(uk.gov.hmrc.gatekeepercomposeemailfrontend.controllers.EmailPreviewForm(
+                email.emailUUID,
+                form
+              )),
+              userSelectionMap,
+              emailFetched.status,
+              false
+            ))
           }
         }
       }
@@ -181,7 +177,7 @@ class ComposeEmailController @Inject() (
           } else {
             Future.successful(Ok(composeEmail(
               emailUUID,
-              uk.gov.hmrc.gatekeepercomposeemailfrontend.controllers.ComposeEmailForm.form.fill(ComposeEmailForm("", "", false)),
+              uk.gov.hmrc.gatekeepercomposeemailfrontend.controllers.ComposeEmailForm.form.fill(ComposeEmailForm("", "")),
               Json.parse(userSelection).as[Map[String, String]]
             )))
           }

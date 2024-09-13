@@ -51,7 +51,6 @@ class ComposeEmailControllerSpec extends ControllerBaseSpec with Matchers with M
 
     implicit val hc: HeaderCarrier = HeaderCarrier()
 
-    val composeEmailForm: ComposeEmailForm           = ComposeEmailForm("dfasd", "asdfasf", true)
     val composeEmail: ComposeEmail                   = fakeApp.injector.instanceOf[ComposeEmail]
     val emailSentConfirmation: EmailSentConfirmation = fakeApp.injector.instanceOf[EmailSentConfirmation]
     val controller                                   = buildController(mockGateKeeperService, mockAuthConnector)
@@ -183,13 +182,12 @@ class ComposeEmailControllerSpec extends ControllerBaseSpec with Matchers with M
     }
   }
 
-  "POST /upload" should {
+  "POST /emailpreview" should {
 
     "reject a form submission with missing emailSubject" in new Setup {
       givenTheGKUserIsAuthorisedAndIsANormalUser()
-      val uploadRequest = FakeRequest().withBody(composeEmailForm).withCSRFToken
 
-      val result = controller.upload(emailUUID, "{}")(uploadRequest)
+      val result = controller.emailPreviewAction(emailUUID, "{}")(FakeRequest().withFormUrlEncodedBody("emailBody" -> "SomeBody").withCSRFToken)
       status(result) shouldBe BAD_REQUEST
       verifyAuthConnectorCalledForUser
       verifyZeroInteractions(mockGatekeeperEmailService)
@@ -198,9 +196,7 @@ class ComposeEmailControllerSpec extends ControllerBaseSpec with Matchers with M
     "reject a form submission with missing emailBody" in new Setup {
       givenTheGKUserIsAuthorisedAndIsANormalUser()
 
-      val uploadRequest = FakeRequest().withBody(composeEmailForm).withCSRFToken
-
-      val result = controller.upload(emailUUID, "{}")(uploadRequest)
+      val result = controller.emailPreviewAction(emailUUID, "{}")(FakeRequest().withFormUrlEncodedBody("emailSubject" -> "SomeSubject").withCSRFToken)
       status(result) shouldBe BAD_REQUEST
       verifyAuthConnectorCalledForUser
       verifyZeroInteractions(mockGatekeeperEmailService)
@@ -212,9 +208,9 @@ class ComposeEmailControllerSpec extends ControllerBaseSpec with Matchers with M
 
     "reject a form submission with missing radio button yesNo selection" in new Setup {
       givenTheGKUserIsAuthorisedAndIsANormalUser()
-      val uploadRequest = FakeRequest().withCSRFToken
+      val request = FakeRequest().withCSRFToken
 
-      val result = controller.delete(emailUUID, "{}")(uploadRequest)
+      val result = controller.delete(emailUUID, "{}")(request)
       status(result) shouldBe BAD_REQUEST
       verifyAuthConnectorCalledForUser
       verifyZeroInteractions(mockGatekeeperEmailService)
@@ -223,9 +219,9 @@ class ComposeEmailControllerSpec extends ControllerBaseSpec with Matchers with M
     "accept a form submission with Yes selected" in new Setup {
       givenTheGKUserIsAuthorisedAndIsANormalUser()
 
-      val uploadRequest = FakeRequest().withFormUrlEncodedBody("value" -> "true").withCSRFToken
+      val request = FakeRequest().withFormUrlEncodedBody("value" -> "true").withCSRFToken
 
-      val result = controller.delete(emailUUID, "{}")(uploadRequest)
+      val result = controller.delete(emailUUID, "{}")(request)
       contentType(result) shouldBe Some("text/html")
       charset(result) shouldBe Some("utf-8")
     }
@@ -233,9 +229,9 @@ class ComposeEmailControllerSpec extends ControllerBaseSpec with Matchers with M
     "accept a form submission with No selected" in new Setup {
       givenTheGKUserIsAuthorisedAndIsANormalUser()
 
-      val uploadRequest = FakeRequest().withFormUrlEncodedBody("value" -> "false").withCSRFToken
+      val request = FakeRequest().withFormUrlEncodedBody("value" -> "false").withCSRFToken
 
-      val result = controller.delete(emailUUID, "{}")(uploadRequest)
+      val result = controller.delete(emailUUID, "{}")(request)
       contentType(result) shouldBe Some("text/html")
       charset(result) shouldBe Some("utf-8")
       verifyZeroInteractions(mockGatekeeperEmailService)
@@ -247,9 +243,9 @@ class ComposeEmailControllerSpec extends ControllerBaseSpec with Matchers with M
 
     "a form submission on click on deleteEmail button" in new Setup {
       givenTheGKUserIsAuthorisedAndIsANormalUser()
-      val uploadRequest = FakeRequest().withCSRFToken
+      val request = FakeRequest().withCSRFToken
 
-      val result = controller.deleteOption(emailUUID, "{}")(uploadRequest)
+      val result = controller.deleteOption(emailUUID, "{}")(request)
       status(result) shouldBe OK
       verifyAuthConnectorCalledForUser
       verifyZeroInteractions(mockGatekeeperEmailService)

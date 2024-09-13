@@ -43,11 +43,6 @@ lazy val microservice = Project(appName, file("."))
   )
   .settings(ScoverageSettings())
   .settings(
-    routesImport ++= Seq(
-      "uk.gov.hmrc.gatekeepercomposeemailfrontend.controllers.binders._"
-    )
-  )
-  .settings(
     TwirlKeys.templateImports ++= Seq(
       "views.html.helper.CSPNonce",
       "uk.gov.hmrc.gatekeepercomposeemailfrontend.config.AppConfig"

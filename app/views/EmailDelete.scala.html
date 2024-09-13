@@ -19,50 +19,43 @@
 @this(
         layout: Layout,
         formHelper: FormWithCSRF,
-        h1: components.h1,
-        p: components.p,
         errorSummary: components.errorSummary,
         yesNoRadio: components.yesNoRadio,
-        button: components.button
+        govukButton: GovukButton
 )
 
 @(form: Form[_], action: Call)(implicit request: Request[_], messages: Messages)
 
-@legendContent = {
-    @messages("Are you sure you want to delete the email?")
-}
-
-@layout(pageTitle = Some("Are you sure you want to delete the email?")) {
+@layout(pageTitle = Some(messages("email.confirmation"))) {
 
     @errorSummary(form.errors)
 
-
     @formHelper(action = action) {
 
-        @h1("Are you sure you want to delete the email?")
+        <h1 class="govuk-heading-l">@messages("email.confirmation")</h1>
         <div id="are-you-sure-hint" class="govuk-hint">
             Deleted emails cannot be recovered.
         </div>
         @defining({
             Some(Legend(
-                content = HtmlContent(legendContent.toString()),
+                content = HtmlContent(messages("email.confirmation")),
                 isPageHeading = false,
                 classes = "govuk-visually-hidden"
             ))
         }) { legend =>
             @yesNoRadio(
                 form,
-                headingKey = "Are you sure you want to delete the email?",
+                headingKey = messages("email.confirmation"),
                 classes = "govuk-visually-hidden",
                 inline = true,
                 customLegend = legend
             )
         }
-
-        @button("Continue")
+        @govukButton(Button(
+            content = {
+                Text("Continue")
+            },
+            preventDoubleClick = Option(true)
+        ))
     }
-}
-
-@{
-//$COVERAGE-OFF$
 }

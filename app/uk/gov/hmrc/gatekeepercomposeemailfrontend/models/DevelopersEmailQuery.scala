@@ -16,24 +16,8 @@
 
 package uk.gov.hmrc.gatekeepercomposeemailfrontend.models
 
-import play.api.libs.json.{Format, Json, OFormat}
-
-case class APICategory(value: String) extends AnyVal
-
-object APICategory {
-  implicit val formatApiCategory: Format[APICategory] = Json.valueFormat[APICategory]
-}
-
-case class APICategoryDetails(category: String, name: String) {
-
-  def toAPICategory: APICategory = {
-    APICategory(category)
-  }
-}
-
-object APICategoryDetails {
-  implicit val formatApiCategory: OFormat[APICategoryDetails] = Json.format[APICategoryDetails]
-}
+import play.api.libs.json.{Json, OFormat}
+import uk.gov.hmrc.apiplatform.modules.apis.domain.models.ApiCategory
 
 trait User {
   def email: String
@@ -58,7 +42,7 @@ case class EmailOverride(email: List[RegisteredUser], isOverride: Boolean = fals
 case class DevelopersEmailQuery(
     topic: Option[String] = None,
     apis: Option[Seq[String]] = None,
-    apiCategories: Option[Seq[APICategory]] = None,
+    apiCategories: Option[Seq[ApiCategory]] = None,
     privateapimatch: Boolean = false,
     apiVersionFilter: Option[String] = None,
     allUsers: Boolean = false,

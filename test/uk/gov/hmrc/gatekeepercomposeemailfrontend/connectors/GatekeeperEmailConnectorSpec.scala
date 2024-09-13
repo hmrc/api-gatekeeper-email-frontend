@@ -76,7 +76,7 @@ class GatekeeperEmailConnectorSpec extends AsyncHmrcSpec with BeforeAndAfterEach
     implicit val hc: HeaderCarrier = HeaderCarrier()
 
     lazy val underTest                     = new GatekeeperEmailConnector(httpClientV2, fakeEmailConnectorConfig)
-    val composeEmailForm: ComposeEmailForm = ComposeEmailForm(subject, emailBody, true)
+    val composeEmailForm: ComposeEmailForm = ComposeEmailForm(subject, emailBody)
     val emailPreviewForm: EmailPreviewForm = EmailPreviewForm(emailUUID, composeEmailForm)
     val email                              = "example@example.com"
     val testEmailRequest                   = TestEmailRequest("example@example.com")
