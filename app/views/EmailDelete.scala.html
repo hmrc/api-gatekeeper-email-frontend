@@ -26,28 +26,30 @@
 
 @(form: Form[_], action: Call)(implicit request: Request[_], messages: Messages)
 
-@layout(pageTitle = Some(messages("email.confirmation"))) {
+@layout(pageTitle = Some(messages("deleteemail.confirmation"))) {
 
     @errorSummary(form.errors)
 
     @formHelper(action = action) {
 
-        <h1 class="govuk-heading-l">@messages("email.confirmation")</h1>
+        <h1 class="govuk-heading-l">@messages("deleteemail.confirmation")</h1>
         <div id="are-you-sure-hint" class="govuk-hint">
             Deleted emails cannot be recovered.
         </div>
         @defining({
             Some(Legend(
-                content = HtmlContent(messages("email.confirmation")),
+                content = HtmlContent(messages("deleteemail.confirmation")),
                 isPageHeading = false,
                 classes = "govuk-visually-hidden"
             ))
         }) { legend =>
             @yesNoRadio(
                 form,
-                headingKey = messages("email.confirmation"),
+                headingKey = messages("deleteemail.confirmation"),
                 classes = "govuk-visually-hidden",
                 inline = true,
+                yesRadioMsg = messages("deleteemail.option.yes"),
+                noRadioMsg = messages("deleteemail.option.no"),
                 customLegend = legend
             )
         }

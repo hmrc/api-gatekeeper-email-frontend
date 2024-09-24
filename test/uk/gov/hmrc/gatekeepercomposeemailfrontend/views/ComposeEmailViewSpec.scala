@@ -16,10 +16,13 @@
 
 package uk.gov.hmrc.gatekeepercomposeemailfrontend.views
 
+import scala.jdk.CollectionConverters._
+
 import org.jsoup.Jsoup
-import org.jsoup.nodes.Document
+import org.jsoup.nodes.{Document, Element}
 import views.html.ComposeEmail
 
+import play.api.data.FormError
 import play.api.test.CSRFTokenHelper.CSRFRequest
 import play.api.test.FakeRequest
 import play.twirl.api.Html
@@ -30,9 +33,10 @@ import uk.gov.hmrc.gatekeepercomposeemailfrontend.views.helpers.CommonViewSpec
 class ComposeEmailViewSpec extends CommonViewSpec {
 
   trait Setup {
-    val composeEmail  = app.injector.instanceOf[ComposeEmail]
-    val request       = FakeRequest().withCSRFToken
-    val userSelection = Map("To" -> "Everyone")
+    val composeEmail   = app.injector.instanceOf[ComposeEmail]
+    val request        = FakeRequest().withCSRFToken
+    val userSelection  = Map("To" -> "Everyone")
+    val formWithErrors = ComposeEmailForm.form.withError(FormError("emailSubject", "email.subject.required")).withError(FormError("emailBody", "email.body.required"))
   }
 
   "ComposeEmail" should {
@@ -49,6 +53,19 @@ class ComposeEmailViewSpec extends CommonViewSpec {
       document.getElementById("data-value-0").text() shouldBe "Everyone"
       document.getElementById("emailSubject").text() shouldBe "Subject"
       document.getElementById("emailBody").text() shouldBe "Email Body"
+    }
+
+    "display errors correctly" in new Setup {
+
+      val page: Html         =
+        composeEmail.render("emailUUID", formWithErrors, userSelection, request, messagesProvider.messages, appConfig)
+      val document: Document = Jsoup.parse(page.body)
+
+      val errorLinks = document.getElementsByClass("govuk-error-summary__list").first().getElementsByTag("a").asScala.toList
+      errorLinks.size shouldBe 2
+      errorLinks.map(_.text()) should contain only ("Provide an email subject", "Provide an email body")
+      document.getElementById("field-error-emailSubject").text() shouldBe "Error: Provide an email subject"
+      document.getElementById("field-error-emailBody").text() shouldBe "Error: Provide an email body"
     }
   }
 

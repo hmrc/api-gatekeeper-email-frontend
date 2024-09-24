@@ -9,21 +9,20 @@ object AppDependencies {
   lazy val apiDomainVersion     = "0.19.0"
   lazy val hmrcFrontendVersion = "10.11.0"
 
-  def apply(): Seq[ModuleID] = dependencies ++ testDependencies
+  def apply(): Seq[ModuleID] = compile ++ test
 
-  lazy val dependencies = Seq(
+  lazy val compile = Seq(
     "uk.gov.hmrc" %% "bootstrap-frontend-play-30" % bootstrapPlayVersion,
     "uk.gov.hmrc" %% "play-frontend-hmrc-play-30" % hmrcFrontendVersion,
     "uk.gov.hmrc" %% "api-platform-api-domain"    % apiDomainVersion
   )
 
-  lazy val testDependencies: Seq[ModuleID] = Seq(
-    "org.pegdown"             % "pegdown"                 % "1.6.0",
-    "org.jsoup"               % "jsoup"                   % jsoupVersion,
-    "org.seleniumhq.selenium" % "selenium-java"           % seleniumVersion,
-    "org.seleniumhq.selenium" % "htmlunit-driver"         % seleniumVersion,
-    "org.mockito"            %% "mockito-scala-scalatest" % "1.17.30",
-    "org.scalacheck"         %% "scalacheck"              % scalaCheckVersion,
-    "uk.gov.hmrc"            %% "bootstrap-test-play-30"  % bootstrapPlayVersion
+  lazy val test: Seq[ModuleID] = Seq(
+    "uk.gov.hmrc"            %% "bootstrap-test-play-30"          % bootstrapPlayVersion,
+    "org.jsoup"               % "jsoup"                           % jsoupVersion,
+    "uk.gov.hmrc"            %% "ui-test-runner"                  % "0.33.0",
+    "org.mockito"            %% "mockito-scala-scalatest"         % "1.17.30",
+    "org.scalacheck"         %% "scalacheck"                      % scalaCheckVersion
   ).map(_ % "test")
+
 }

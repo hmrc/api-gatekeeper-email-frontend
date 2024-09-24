@@ -34,7 +34,7 @@ import uk.gov.hmrc.http.HeaderCarrier
 
 import uk.gov.hmrc.gatekeepercomposeemailfrontend.common.ControllerBaseSpec
 import uk.gov.hmrc.gatekeepercomposeemailfrontend.connectors.{AuthConnector, GatekeeperEmailConnector}
-import uk.gov.hmrc.gatekeepercomposeemailfrontend.controllers.{ComposeEmailController, ComposeEmailForm, RemoveUploadedFileFormProvider}
+import uk.gov.hmrc.gatekeepercomposeemailfrontend.controllers.{ComposeEmailController, ComposeEmailForm}
 import uk.gov.hmrc.gatekeepercomposeemailfrontend.models.{DevelopersEmailQuery, OutgoingEmail, RegisteredUser}
 import uk.gov.hmrc.gatekeepercomposeemailfrontend.services.ComposeEmailService
 
@@ -61,7 +61,6 @@ object ComposeEmailControllerSpecHelpers extends ControllerBaseSpec with Matcher
   lazy val emailSentTemplateView                   = app.injector.instanceOf[EmailSentConfirmation]
   lazy val deleteConfirmEmail                      = app.injector.instanceOf[EmailDeleteConfirmation]
   lazy val deleteEmail                             = app.injector.instanceOf[EmailDelete]
-  lazy val formProvider                            = app.injector.instanceOf[RemoveUploadedFileFormProvider]
   val su                                           = List(RegisteredUser("sawd", "efef", "eff", true))
   val userSelectionQuery                           = new DevelopersEmailQuery(None, None, None, false, None, false, None)
 
@@ -97,7 +96,6 @@ object ComposeEmailControllerSpecHelpers extends ControllerBaseSpec with Matcher
       deleteConfirmEmail,
       deleteEmail,
       forbiddenView,
-      formProvider,
       mockAuthConnector
     )
   }

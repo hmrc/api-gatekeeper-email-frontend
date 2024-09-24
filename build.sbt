@@ -1,7 +1,8 @@
-import com.typesafe.sbt.digest.Import._
-import com.typesafe.sbt.uglify.Import._
-import com.typesafe.sbt.web.Import._
-import net.ground5hark.sbt.concat.Import._
+import com.typesafe.sbt.digest.Import.*
+import com.typesafe.sbt.uglify.Import.*
+import com.typesafe.sbt.web.Import.*
+import net.ground5hark.sbt.concat.Import.*
+import uk.gov.hmrc.DefaultBuildSettings
 
 lazy val appName = "api-gatekeeper-email-frontend"
 
@@ -57,14 +58,34 @@ lazy val microservice = Project(appName, file("."))
     )
   )
 
+lazy val it = (project in file("it"))
+  .enablePlugins(PlayScala)
+  .dependsOn(microservice % "test->test")
+  .settings(
+    name := "integration-tests",
+    DefaultBuildSettings.itSettings()
+  )
+
+
+
+lazy val component = (project in file("component"))
+  .dependsOn(microservice % "test->test")
+  .settings(
+    name := "component-tests",
+    libraryDependencies ++= AppDependencies(),
+    Test / unmanagedResourceDirectories += baseDirectory.value / "resources",
+    DefaultBuildSettings.itSettings(),
+    Test / testOptions := Seq(Tests.Argument(TestFrameworks.JUnit, "-a"))
+  )
 
 commands ++= Seq(
-  Command.command("cleanAll") { state => "clean" :: state },
-  Command.command("fmtAll") { state => "scalafmtAll" :: state },
-  Command.command("fixAll") { state => "scalafixAll" :: state },
-  Command.command("testAll") { state => "test" :: state },
-
+  Command.command("cleanAll") { state => "clean" :: "it/clean"  :: "component/clean" :: state },
+  Command.command("fmtAll") { state => "scalafmtAll" :: "it/scalafmtAll"  :: "component/scalafmtAll" ::state },
+  Command.command("fixAll") { state => "scalafixAll" :: "it/scalafixAll"  ::  "component/scalafixAll" ::state },
+  Command.command("testAllIncludedInCoverage") { state => "testOnly * -- -l ExcludeFromCoverage" :: "it/test" :: "component/test" :: state },
+  Command.command("testAllExcludedFromCoverage") { state => "testOnly * -- -n ExcludeFromCoverage" :: state },
+  Command.command("testAll") { state => "test" :: "it/test" :: "component/test" :: state },
   Command.command("run-all-tests") { state => "testAll" :: state },
   Command.command("clean-and-test") { state => "cleanAll" :: "compile" :: "run-all-tests" :: state },
-  Command.command("pre-commit") { state => "cleanAll" :: "fmtAll" :: "fixAll" :: "coverage" :: "testAll" :: "coverageOff" :: "coverageAggregate" :: state }
+  Command.command("pre-commit") { state => "cleanAll" :: "fmtAll" :: "fixAll" :: "testAllExcludedFromCoverage" :: "coverage" :: "testAllIncludedInCoverage" :: "coverageOff" :: "coverageAggregate" :: state }
 )

@@ -28,7 +28,6 @@ import play.api.Logging
 import play.api.data.Form
 import play.api.libs.json.{JsError, JsSuccess, Json}
 import play.api.mvc._
-import uk.gov.hmrc.play.bootstrap.controller.WithUnsafeDefaultFormBinding
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import uk.gov.hmrc.gatekeepercomposeemailfrontend.config.AppConfig
@@ -47,11 +46,10 @@ class ComposeEmailController @Inject() (
     deleteConfirmEmail: EmailDeleteConfirmation,
     deleteEmail: EmailDelete,
     override val forbiddenView: ForbiddenView,
-    formProvider: RemoveUploadedFileFormProvider,
     override val authConnector: AuthConnector
   )(implicit val appConfig: AppConfig,
     val ec: ExecutionContext
-  ) extends FrontendController(mcc) with GatekeeperAuthWrapper with Logging with WithUnsafeDefaultFormBinding {
+  ) extends FrontendController(mcc) with GatekeeperAuthWrapper with Logging {
 
   def initialiseEmail: Action[AnyContent] = requiresAtLeast(GatekeeperRole.USER) { implicit request =>
     def persistEmailDetails(userSelectionQuery: DevelopersEmailQuery, userSelection: String): Future[Result] = {
@@ -109,15 +107,15 @@ class ComposeEmailController @Inject() (
 
   def emailPreview(emailUUID: String, userSelection: String, previewSent: Boolean = false): Action[AnyContent] = requiresAtLeast(GatekeeperRole.USER) {
     implicit request =>
-      val userSelectionMap: Map[String, String] = Json.parse(userSelection).as[Map[String, String]]
-      val fetchEmail: Future[OutgoingEmail]     = emailService.fetchEmail(emailUUID)
-      fetchEmail.map { email =>
+      val userSelectionMap: Map[String, String]                       = Json.parse(userSelection).as[Map[String, String]]
+      def getFilledForm(email: OutgoingEmail): Form[EmailPreviewForm] = uk.gov.hmrc.gatekeepercomposeemailfrontend.controllers.EmailPreviewForm.form.fill(EmailPreviewForm(
+        email.emailUUID,
+        ComposeEmailForm(email.subject, email.markdownEmailBody)
+      ))
+      emailService.fetchEmail(emailUUID).map { email =>
         Ok(emailPreview(
           base64Decode(email.htmlEmailBody),
-          uk.gov.hmrc.gatekeepercomposeemailfrontend.controllers.EmailPreviewForm.form.fill(EmailPreviewForm(
-            email.emailUUID,
-            ComposeEmailForm(email.subject, email.markdownEmailBody)
-          )),
+          getFilledForm(email),
           userSelectionMap,
           email.status,
           previewSent
@@ -158,21 +156,21 @@ class ComposeEmailController @Inject() (
 
   def deleteOption(emailUUID: String, userSelection: String): Action[AnyContent] = requiresAtLeast(GatekeeperRole.USER) {
     implicit request =>
-      Future.successful(Ok(deleteEmail(formProvider(), submitLink(emailUUID, userSelection))))
+      Future.successful(Ok(deleteEmail(DeleteEmailOptionForm.form, submitLink(emailUUID, userSelection))))
   }
 
   def delete(emailUUID: String, userSelection: String): Action[AnyContent] = requiresAtLeast(GatekeeperRole.USER) {
     implicit request =>
-      formProvider().bindFromRequest().fold(
+      DeleteEmailOptionForm.form.bindFromRequest().fold(
         formWithErrors => {
           Future.successful(
             BadRequest(deleteEmail(formWithErrors, submitLink(emailUUID, userSelection)))
           )
         },
-        value => {
-          if (value) {
+        form => {
+          if (form.value.equalsIgnoreCase("true")) {
             emailService.deleteEmail(emailUUID) map {
-              result => Ok(deleteConfirmEmail())
+              _ => Ok(deleteConfirmEmail())
             }
           } else {
             Future.successful(Ok(composeEmail(

@@ -18,7 +18,7 @@ package uk.gov.hmrc.gatekeepercomposeemailfrontend.controllers
 
 import java.util.Base64
 import javax.inject.{Inject, Singleton}
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.ExecutionContext
 
 import com.google.common.base.Charsets
 import views.html.{ComposeEmail, ForbiddenView}
@@ -27,12 +27,11 @@ import play.api.Logging
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import uk.gov.hmrc.play.bootstrap.controller.WithUnsafeDefaultFormBinding
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import uk.gov.hmrc.gatekeepercomposeemailfrontend.config.AppConfig
 import uk.gov.hmrc.gatekeepercomposeemailfrontend.connectors.{AuthConnector, GatekeeperEmailConnector}
-import uk.gov.hmrc.gatekeepercomposeemailfrontend.models.{GatekeeperRole, OutgoingEmail, TestEmailRequest}
+import uk.gov.hmrc.gatekeepercomposeemailfrontend.models.{GatekeeperRole, TestEmailRequest}
 import uk.gov.hmrc.gatekeepercomposeemailfrontend.services.ComposeEmailService
 import uk.gov.hmrc.gatekeepercomposeemailfrontend.utils.GatekeeperAuthWrapper
 
@@ -46,21 +45,16 @@ class EmailPreviewController @Inject() (
     emailConnector: GatekeeperEmailConnector
   )(implicit val appConfig: AppConfig,
     val ec: ExecutionContext
-  ) extends FrontendController(mcc) with GatekeeperAuthWrapper with I18nSupport with Logging with WithUnsafeDefaultFormBinding {
+  ) extends FrontendController(mcc) with GatekeeperAuthWrapper with I18nSupport with Logging {
 
   def sendEmail(emailUUID: String, userSelection: String): Action[AnyContent] = requiresAtLeast(GatekeeperRole.USER) {
     implicit request =>
-      {
-        val outgoingEmail = for {
-          fetchEmail    <- emailService.fetchEmail(emailUUID)
-          outgoingEmail <- emailConnector.sendEmail(EmailPreviewForm(emailUUID, ComposeEmailForm(fetchEmail.subject, fetchEmail.htmlEmailBody)))
-
-          _ = logger.info(s"outgoingEmail count is ${outgoingEmail.emailsCount}")
-        } yield outgoingEmail
-        outgoingEmail.map(e =>
-          Redirect(uk.gov.hmrc.gatekeepercomposeemailfrontend.controllers.routes.ComposeEmailController.sentEmailConfirmation(userSelection, e.emailsCount))
-        )
-      }
+      for {
+        fetchEmail    <- emailService.fetchEmail(emailUUID)
+        outgoingEmail <- emailConnector.sendEmail(EmailPreviewForm(emailUUID, ComposeEmailForm(fetchEmail.subject, fetchEmail.htmlEmailBody)))
+        emailsCount    = outgoingEmail.emailsCount
+        _              = logger.info(s"outgoingEmail count is ${emailsCount}")
+      } yield Redirect(uk.gov.hmrc.gatekeepercomposeemailfrontend.controllers.routes.ComposeEmailController.sentEmailConfirmation(userSelection, emailsCount))
   }
 
   def sendTestEmail(emailUUID: String, userSelection: String): Action[AnyContent] = requiresAtLeast(GatekeeperRole.USER) {
@@ -76,8 +70,7 @@ class EmailPreviewController @Inject() (
     implicit request =>
       {
         val userSelectionMap: Map[String, String] = Json.parse(userSelection).as[Map[String, String]]
-        val fetchEmail: Future[OutgoingEmail]     = emailService.fetchEmail(emailUUID)
-        fetchEmail.map { email =>
+        emailService.fetchEmail(emailUUID).map { email =>
           val txtEmailBody = base64Decode(email.markdownEmailBody).substring(1)
           Ok(composeEmail(
             emailUUID,
