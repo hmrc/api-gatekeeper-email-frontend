@@ -64,6 +64,7 @@ trait GatekeeperAuthWrapper extends I18nSupport {
     )
   }
 
+  // $COVERAGE-OFF$
   def authPredicate(minimumRoleRequired: GatekeeperRole)(implicit appConfig: AppConfig): Predicate = {
 
     val adminEnrolment     = Enrolment(appConfig.adminRole)
@@ -77,6 +78,7 @@ trait GatekeeperAuthWrapper extends I18nSupport {
     }
   }
 
+  // these are here for future use and copies logic from Gatekeeper
   def isAtLeastSuperUser(implicit request: LoggedInRequest[_], appConfig: AppConfig): Boolean = {
     request.authorisedEnrolments.getEnrolment(appConfig.superUserRole).isDefined || request.authorisedEnrolments.getEnrolment(appConfig.adminRole).isDefined
   }
@@ -84,4 +86,6 @@ trait GatekeeperAuthWrapper extends I18nSupport {
   def isAdmin(implicit request: LoggedInRequest[_], appConfig: AppConfig): Boolean = {
     request.authorisedEnrolments.getEnrolment(appConfig.adminRole).isDefined
   }
+
+  // $COVERAGE-ON$
 }

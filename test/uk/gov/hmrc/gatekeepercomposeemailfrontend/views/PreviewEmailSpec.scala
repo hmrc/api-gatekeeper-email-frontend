@@ -38,7 +38,7 @@ class PreviewEmailSpec extends CommonViewSpec {
 
   trait Setup {
     val previewEmail: PreviewEmail               = app.injector.instanceOf[PreviewEmail]
-    val request: Request[AnyContentAsEmpty.type] = FakeRequest().withCSRFToken
+    val request: Request[AnyContentAsEmpty.type] = FakeRequest("POST", "/preview-email").withCSRFToken
 
     val adminEnrolment: Enrolment        = Enrolment(key = "admin-role", Seq.empty, state = "Activated")
     val superUserEnrolment: Enrolment    = Enrolment(key = "super-user-role", Seq.empty, state = "Activated")

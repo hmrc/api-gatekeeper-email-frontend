@@ -18,7 +18,7 @@ package uk.gov.hmrc.apigatekeeperemailfrontend.pages
 
 import uk.gov.hmrc.apigatekeeperemailfrontend.common.Env
 
-case object EmailPreviewPage extends FormPage {
+case object PreviewEmailPage extends FormPage {
   override val pageHeading: String = "Email preview"
   override val url: String         = s"http://localhost:${Env.port}/api-gatekeeper-email/emailpreview/"
 

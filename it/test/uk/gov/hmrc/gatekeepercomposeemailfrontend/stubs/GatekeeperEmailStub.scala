@@ -21,6 +21,7 @@ import java.util.UUID
 import com.github.tomakehurst.wiremock.client.WireMock.{verify => wireMockVerify, _}
 
 import play.api.http.Status.OK
+import play.api.libs.json.Json
 
 trait GatekeeperEmailStub {
   val selectionQuery = """{"topic":"topic-dev", "privateapimatch": false, "apiVersionFilter": "apiVersionFilter", "allUsers": false}""".stripMargin
@@ -151,6 +152,20 @@ trait GatekeeperEmailStub {
       verifyGetFromURL(s"$path$emailUUid")
     }
 
+  }
+
+  object DeleteEmail {
+    val path = s"/gatekeeper-email/delete-email/"
+
+    def success(emailUUid: String) = {
+      stubFor(post(urlEqualTo(s"$path$emailUUid")).willReturn(aResponse()
+        .withHeader("Content-type", "application/json")
+        .withBody(Json.toJson(true).toString())
+        .withStatus(OK)))
+    }
+
+    def verify(emailUUid: String) =
+      verifyPostToURL(s"$path$emailUUid")
   }
 
 }

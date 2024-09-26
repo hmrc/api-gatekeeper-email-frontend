@@ -101,6 +101,10 @@ trait BaseSpec extends AnyFeatureSpec
     Driver.instance.findElements(By.cssSelector(s".$attributeName")).get(index).getText should include(expected)
   }
 
+  protected def verifyTextById(id: String, expected: String, index: Int = 0)        = {
+    Driver.instance.findElements(By.id(id)).get(index).getText should include(expected)
+  }
+
   def onTechDifficultiesFor(page: WebPage) = {
     val element = eventually {
       Driver.instance.findElement(By.tagName("body"))

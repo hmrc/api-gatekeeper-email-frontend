@@ -49,7 +49,7 @@
         @if(request.email.nonEmpty && request.email.get != "") {
             <div class="govuk-grid-column-half govuk-!-padding-left-0 govuk-!-margin-bottom-8">
                 <p class="govuk-body">You can test this email by sending it to @{
-                    request.email.getOrElse("No email address set in request")
+                    request.email.get
                 }</p>
                 <div class="govuk-button-group govuk-grid-column-half govuk-!-padding-left-0 govuk-!-margin-bottom-8">
                     @helper.form(action = controllers.routes.PreviewEmailController.sendTestEmail(form.data.getOrElse("emailUUID", ""), Json.toJson(userSelection).toString())) {
@@ -73,7 +73,7 @@
                         @if(status == null || status != "SENT") {
                             <button draggable="false"
                             class="govuk-button govuk-button--secondary"
-                            data-module="govuk-button">Edit email</button>
+                            data-module="govuk-button"  id="edit-email-button">Edit email</button>
                         }
                     }
 
@@ -87,7 +87,7 @@
                 <input type="hidden" name="composeEmailForm.emailBody" value="@form.data.getOrElse("composeEmailForm.emailBody", "")" />
                 @if(status == null || status != "SENT") {
                     <div class="govuk-!-padding-left-0">
-                        <button class="govuk-button govuk-!-width-two-thirds" data-module="govuk-button" value="send">
+                        <button class="govuk-button govuk-!-width-two-thirds" data-module="govuk-button" value="send" id="send-email-button">
                             Send email
                         </button>
                     </div>
@@ -105,7 +105,7 @@
                         <div class="govuk-grid-column-one-half govuk-!-padding-left-0">
                             <div class="govuk-button-group">
 
-                                <button class="govuk-button" data-module="govuk-button" value="send">
+                                <button class="govuk-button" data-module="govuk-button" value="send" id="send-email-button">
                                     Send email
                                 </button>
 
@@ -124,7 +124,7 @@
                         @if(status == null || status != "SENT") {
                             <button draggable="false"
                             class="govuk-button govuk-button--secondary govuk-!-width-full"
-                            data-module="govuk-button">
+                            data-module="govuk-button" id="edit-email-button">
                                 Edit email
                             </button>
                         }
@@ -177,7 +177,7 @@
         @helper.form(action = controllers.routes.ComposeEmailController.deleteOption(form.data.getOrElse("emailUUID", ""), Json.toJson(userSelection).toString())) {
             @helper.CSRF.formField
             <button draggable="false"
-            class="govuk-button   govuk-button--secondary" data-module="govuk-button">
+            class="govuk-button   govuk-button--secondary" data-module="govuk-button" id="delete-email-button">
                 Delete email
             </button>
         }

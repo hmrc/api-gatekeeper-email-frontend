@@ -169,7 +169,7 @@ class ComposeEmailControllerSpec extends ControllerBaseSpec with Matchers with M
 
     "reject a form submission with missing radio button yesNo selection" in new Setup {
       givenTheGKUserIsAuthorisedAndIsANormalUser()
-      val request = FakeRequest().withCSRFToken
+      val request = FakeRequest("POST", s"/delete/${emailUUID}/:userSelection").withCSRFToken
 
       val result = controller.delete(emailUUID, "{}")(request)
       status(result) shouldBe BAD_REQUEST
@@ -180,9 +180,13 @@ class ComposeEmailControllerSpec extends ControllerBaseSpec with Matchers with M
     "accept a form submission with Yes selected" in new Setup {
       givenTheGKUserIsAuthorisedAndIsANormalUser()
 
-      val request = FakeRequest().withFormUrlEncodedBody("value" -> "true").withCSRFToken
+      val request = FakeRequest("POST", s"/delete/${emailUUID}/:userSelection").withSession(csrfToken, authToken, userToken).withFormUrlEncodedBody("value" -> "true").withCSRFToken
 
       val result = controller.delete(emailUUID, "{}")(request)
+      println(contentAsString(result))
+
+      status(result) shouldBe OK
+
       contentType(result) shouldBe Some("text/html")
       charset(result) shouldBe Some("utf-8")
     }
@@ -190,9 +194,10 @@ class ComposeEmailControllerSpec extends ControllerBaseSpec with Matchers with M
     "accept a form submission with No selected" in new Setup {
       givenTheGKUserIsAuthorisedAndIsANormalUser()
 
-      val request = FakeRequest().withFormUrlEncodedBody("value" -> "false").withCSRFToken
+      val request = FakeRequest("POST", s"/delete/${emailUUID}/:userSelection").withFormUrlEncodedBody("value" -> "false").withCSRFToken
 
       val result = controller.delete(emailUUID, "{}")(request)
+      status(result) shouldBe OK
       contentType(result) shouldBe Some("text/html")
       charset(result) shouldBe Some("utf-8")
       verifyZeroInteractions(mockEmailService)
@@ -204,7 +209,7 @@ class ComposeEmailControllerSpec extends ControllerBaseSpec with Matchers with M
 
     "a form submission on click on deleteEmail button" in new Setup {
       givenTheGKUserIsAuthorisedAndIsANormalUser()
-      val request = FakeRequest().withCSRFToken
+      val request = FakeRequest("POST", s"/deleteOption/${emailUUID}/:userSelection").withCSRFToken
 
       val result = controller.deleteOption(emailUUID, "{}")(request)
       status(result) shouldBe OK

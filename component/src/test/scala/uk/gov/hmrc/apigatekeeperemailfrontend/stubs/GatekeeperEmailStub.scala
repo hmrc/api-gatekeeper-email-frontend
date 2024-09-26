@@ -35,7 +35,7 @@ trait GatekeeperEmailStub {
        |    "markdownEmailBody": "",
        |    "htmlEmailBody": "",
        |    "subject": "",
-       |    "status": "",
+       |    "status": "PENDING",
        |    "composedBy": "auto-emailer",
        |    "approvedBy": "auto-emailer",
        |    "userSelectionQuery": $selectionQuery,

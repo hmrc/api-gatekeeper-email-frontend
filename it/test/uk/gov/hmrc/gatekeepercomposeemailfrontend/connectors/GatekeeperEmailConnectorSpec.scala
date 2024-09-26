@@ -182,5 +182,16 @@ class GatekeeperEmailConnectorSpec extends AsyncHmrcSpec with BeforeAndAfterEach
         FetchEmail.verify(emailUUIDString)
       }
     }
+
+    "Delete email" should {
+
+      "delete the request email" in new Setup {
+        DeleteEmail.success(emailUUIDString)
+
+        await(underTest.deleteEmail(emailUUIDString))
+
+        DeleteEmail.verify(emailUUIDString)
+      }
+    }
   }
 }
