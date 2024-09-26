@@ -30,7 +30,7 @@ import play.twirl.api.Html
 import uk.gov.hmrc.gatekeepercomposeemailfrontend.controllers.ComposeEmailForm
 import uk.gov.hmrc.gatekeepercomposeemailfrontend.views.helpers.CommonViewSpec
 
-class ComposeEmailViewSpec extends CommonViewSpec {
+class ComposeEmailSpec extends CommonViewSpec {
 
   trait Setup {
     val composeEmail   = app.injector.instanceOf[ComposeEmail]
@@ -43,7 +43,7 @@ class ComposeEmailViewSpec extends CommonViewSpec {
 
     "render the  page correctly" in new Setup {
       val page: Html =
-        composeEmail.render("emailUUID", ComposeEmailForm.form.fill(ComposeEmailForm("Subject", "Email Body")), userSelection, request, messagesProvider.messages, appConfig)
+        composeEmail.render("emailUUID", ComposeEmailForm.form.fill(ComposeEmailForm("Subject", "Email Body")), userSelection, request, messages, appConfig)
 
       val document: Document = Jsoup.parse(page.body)
 
@@ -58,10 +58,10 @@ class ComposeEmailViewSpec extends CommonViewSpec {
     "display errors correctly" in new Setup {
 
       val page: Html         =
-        composeEmail.render("emailUUID", formWithErrors, userSelection, request, messagesProvider.messages, appConfig)
+        composeEmail.render("emailUUID", formWithErrors, userSelection, request, messages, appConfig)
       val document: Document = Jsoup.parse(page.body)
 
-      val errorLinks = document.getElementsByClass("govuk-error-summary__list").first().getElementsByTag("a").asScala.toList
+      val errorLinks: List[Element] = document.getElementsByClass("govuk-error-summary__list").first().getElementsByTag("a").asScala.toList
       errorLinks.size shouldBe 2
       errorLinks.map(_.text()) should contain only ("Provide an email subject", "Provide an email body")
       document.getElementById("field-error-emailSubject").text() shouldBe "Error: Provide an email subject"

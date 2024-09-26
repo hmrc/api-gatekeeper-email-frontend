@@ -31,7 +31,7 @@ import uk.gov.hmrc.http.{HeaderCarrier, UpstreamErrorResponse}
 
 import uk.gov.hmrc.gatekeepercomposeemailfrontend.common.AsyncHmrcSpec
 import uk.gov.hmrc.gatekeepercomposeemailfrontend.config.EmailConnectorConfig
-import uk.gov.hmrc.gatekeepercomposeemailfrontend.controllers.{ComposeEmailForm, EmailPreviewForm}
+import uk.gov.hmrc.gatekeepercomposeemailfrontend.controllers.{ComposeEmailForm, PreviewEmailForm}
 import uk.gov.hmrc.gatekeepercomposeemailfrontend.models.{DevelopersEmailQuery, RegisteredUser, TestEmailRequest}
 import uk.gov.hmrc.gatekeepercomposeemailfrontend.stubs.GatekeeperEmailStub
 
@@ -72,7 +72,7 @@ class GatekeeperEmailConnectorSpec extends AsyncHmrcSpec with BeforeAndAfterEach
 
     lazy val underTest                     = new GatekeeperEmailConnector(httpClientV2, fakeEmailConnectorConfig)
     val composeEmailForm: ComposeEmailForm = ComposeEmailForm(subject, "emailBody La La LAS")
-    val emailPreviewForm: EmailPreviewForm = EmailPreviewForm(emailUUIDString, composeEmailForm)
+    val emailPreviewForm: PreviewEmailForm = PreviewEmailForm(emailUUIDString, composeEmailForm)
     val email                              = "example@example.com"
     val testEmailRequest                   = TestEmailRequest("example@example.com")
     val users                              = List(RegisteredUser(email, "first name", "last name", verified = true), RegisteredUser("example2@example2.com", "first name2", "last name2", true))

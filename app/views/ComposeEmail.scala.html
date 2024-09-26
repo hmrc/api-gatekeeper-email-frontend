@@ -30,7 +30,7 @@
 
   <h2 class="govuk-heading-l" id="page-heading">Compose email</h2>
 
-  <form name="compose-email" method="post" action="@controllers.routes.ComposeEmailController.emailPreviewAction(emailUUID, Json.toJson(userSelection).toString())">
+  <form name="compose-email" method="post" action="@controllers.routes.PreviewEmailController.previewEmailAction(emailUUID, Json.toJson(userSelection).toString())">
     @helper.CSRF.formField
     <dl class="govuk-summary-list email-summary">
     @for(((key, value) ,index) <- userSelection.zipWithIndex) {
@@ -64,7 +64,7 @@
     </div>
 
     <div class="govuk-button-group" style="float: left; margin-top: 0; margin-left: 0;">
-      <button class="govuk-button" data-module="govuk-button">
+      <button class="govuk-button" data-module="govuk-button" type="submit" id="preview-button">
         Preview email
       </button>
     </div>
@@ -74,7 +74,7 @@
     @helper.form(action = controllers.routes.ComposeEmailController.deleteOption(emailUUID, Json.toJson(userSelection).toString())) {
       @helper.CSRF.formField
       <button draggable="false"
-      class="govuk-button  govuk-button--secondary"  data-module="govuk-button">
+      class="govuk-button  govuk-button--secondary"  data-module="govuk-button" type="submit" id="delete-button">
         Delete email
       </button>
     }

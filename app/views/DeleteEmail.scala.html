@@ -24,15 +24,15 @@
         govukButton: GovukButton
 )
 
-@(form: Form[_], action: Call)(implicit request: Request[_], messages: Messages)
+@(form: Form[_], emailUUID: String, userSelection: String)(implicit request: Request[_], messages: Messages)
 
 @layout(pageTitle = Some(messages("deleteemail.confirmation"))) {
 
     @errorSummary(form.errors)
 
-    @formHelper(action = action) {
+    @formHelper(action =  uk.gov.hmrc.gatekeepercomposeemailfrontend.controllers.routes.ComposeEmailController.delete(emailUUID, userSelection)) {
 
-        <h1 class="govuk-heading-l">@messages("deleteemail.confirmation")</h1>
+        <h1 class="govuk-heading-l" id="page-heading">@messages("deleteemail.confirmation")</h1>
         <div id="are-you-sure-hint" class="govuk-hint">
             Deleted emails cannot be recovered.
         </div>
@@ -54,6 +54,7 @@
             )
         }
         @govukButton(Button(
+           id= Some("delete-action-button"),
             content = {
                 Text("Continue")
             },

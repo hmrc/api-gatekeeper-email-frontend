@@ -18,18 +18,20 @@
 @import play.api.libs.json._
 @import uk.gov.hmrc.gatekeepercomposeemailfrontend.config.AppConfig
 @import uk.gov.hmrc.gatekeepercomposeemailfrontend.controllers
-@import uk.gov.hmrc.gatekeepercomposeemailfrontend.controllers.EmailPreviewForm
+@import uk.gov.hmrc.gatekeepercomposeemailfrontend.controllers.PreviewEmailForm
 @import uk.gov.hmrc.gatekeepercomposeemailfrontend.models.LoggedInRequest
 @import uk.gov.hmrc.govukfrontend.views.html.components._
+@import uk.gov.hmrc.govukfrontend.views.viewmodels.notificationbanner.NotificationBanner
+@import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
 
 @this(layout: Layout, appConfig: AppConfig, govukNotificationBanner: GovukNotificationBanner, errorSummary: components.errorSummary)
 
-@(emailPreview: String, form: Form[EmailPreviewForm], userSelection: Map[String, String], status: String, previewSent: Boolean)(implicit request: LoggedInRequest[_], messages: Messages)
+@(emailPreview: String, form: Form[PreviewEmailForm], userSelection: Map[String, String], status: String, previewSent: Boolean)(implicit request: LoggedInRequest[_], messages: Messages)
 @html = {
     <div>
-        <h3 class="govuk-notification-banner__heading">Test email sent</h3>
-        <p>We have sent a test email to @{
-            request.email.get
+        <h3 class="govuk-notification-banner__heading" id="email-sent-banner">Test email sent</h3>
+        <p id="email-sent-text">We have sent a test email to @{
+            request.email.getOrElse("No email address set in request")
         }</p>
     </div>
 }
@@ -43,27 +45,27 @@
                 bannerType = Some("success")
             ))
         }
-        <h1 class="govuk-heading-l">Email preview</h1>
+        <h1 class="govuk-heading-l" id="page-heading">Email preview</h1>
         @if(request.email.nonEmpty && request.email.get != "") {
             <div class="govuk-grid-column-half govuk-!-padding-left-0 govuk-!-margin-bottom-8">
                 <p class="govuk-body">You can test this email by sending it to @{
-                    request.email.get
+                    request.email.getOrElse("No email address set in request")
                 }</p>
                 <div class="govuk-button-group govuk-grid-column-half govuk-!-padding-left-0 govuk-!-margin-bottom-8">
-                    @helper.form(action = controllers.routes.EmailPreviewController.sendTestEmail(form.data.getOrElse("emailUUID", ""), Json.toJson(userSelection).toString())) {
+                    @helper.form(action = controllers.routes.PreviewEmailController.sendTestEmail(form.data.getOrElse("emailUUID", ""), Json.toJson(userSelection).toString())) {
                         @helper.CSRF.formField
                         <input type="hidden" name="emailId" value="@form.data.getOrElse("emailUUID", "")" />
                         <input type="hidden" name="composeEmailForm.emailSubject" value="@form.data.getOrElse("composeEmailForm.emailSubject", "")" />
                         <input type="hidden" name="composeEmailForm.emailBody" value="@form.data.getOrElse("composeEmailForm.emailBody", "")" />
                         <button draggable="false"
                         class="govuk-button govuk-button--secondary"
-                        data-module="govuk-button">
+                        data-module="govuk-button" id="send-test-email-button">
                             Send test email
                         </button>
 
                     }
 
-                    @helper.form(action = controllers.routes.EmailPreviewController.editEmail(form.data.getOrElse("emailUUID", ""), Json.toJson(userSelection).toString())) {
+                    @helper.form(action = controllers.routes.PreviewEmailController.editEmail(form.data.getOrElse("emailUUID", ""), Json.toJson(userSelection).toString())) {
                         @helper.CSRF.formField
                         <input type="hidden" name="emailId" value="@form.data.getOrElse("emailUUID", "")" />
                         <input type="hidden" name="composeEmailForm.emailSubject" value="@form.data.getOrElse("composeEmailForm.emailSubject", "")" />
@@ -78,7 +80,7 @@
                 </div>
                 <hr>
             </div>
-            @helper.form(controllers.routes.EmailPreviewController.sendEmail(form.data.getOrElse("emailUUID", ""), Json.toJson(userSelection).toString())) {
+            @helper.form(controllers.routes.PreviewEmailController.sendEmail(form.data.getOrElse("emailUUID", ""), Json.toJson(userSelection).toString())) {
                 @helper.CSRF.formField
                 <input type="hidden" name="emailUUID" value="@form.data.getOrElse("emailUUID", "")" />
                 <input type="hidden" name="composeEmailForm.emailSubject" value="@form.data.getOrElse("composeEmailForm.emailSubject", "")" />
@@ -94,7 +96,7 @@
         } else {
             <div class="govuk-grid-column-two-thirds">
 
-                @helper.form(controllers.routes.EmailPreviewController.sendEmail(form.data.getOrElse("emailUUID", ""), Json.toJson(userSelection).toString())) {
+                @helper.form(controllers.routes.PreviewEmailController.sendEmail(form.data.getOrElse("emailUUID", ""), Json.toJson(userSelection).toString())) {
                     @helper.CSRF.formField
                     <input type="hidden" name="emailUUID" value="@form.data.getOrElse("emailUUID", "")" />
                     <input type="hidden" name="composeEmailForm.emailSubject" value="@form.data.getOrElse("composeEmailForm.emailSubject", "")" />
@@ -114,7 +116,7 @@
 
                 <div class="govuk-grid-column-one-half govuk-!-padding-right-0">
                     <div class="govuk-button-group">
-                    @helper.form(action = controllers.routes.EmailPreviewController.editEmail(form.data.getOrElse("emailUUID", ""), Json.toJson(userSelection).toString())) {
+                    @helper.form(action = controllers.routes.PreviewEmailController.editEmail(form.data.getOrElse("emailUUID", ""), Json.toJson(userSelection).toString())) {
                         @helper.CSRF.formField
                         <input type="hidden" name="emailId" value="@form.data.getOrElse("emailUUID", "")" />
                         <input type="hidden" name="composeEmailForm.emailSubject" value="@form.data.getOrElse("composeEmailForm.emailSubject", "")" />

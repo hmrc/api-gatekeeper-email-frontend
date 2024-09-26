@@ -5,10 +5,10 @@ GET         /sent-email/:userSelection/:users                 uk.gov.hmrc.gateke
 GET         /assets/*file                                     @controllers.Assets.versioned(path = "/public", file: Asset)
 POST        /deleteOption/:emailUUID/:userSelection           uk.gov.hmrc.gatekeepercomposeemailfrontend.controllers.ComposeEmailController.deleteOption(emailUUID: String, userSelection: String)
 POST        /delete/:emailUUID/:userSelection                 uk.gov.hmrc.gatekeepercomposeemailfrontend.controllers.ComposeEmailController.delete(emailUUID: String, userSelection: String)
-GET         /emailpreview/:emailUUID/:userSelection           uk.gov.hmrc.gatekeepercomposeemailfrontend.controllers.ComposeEmailController.emailPreview(emailUUID: String, userSelection: String, previewSent: Boolean)
-POST        /emailpreview/:emailUUID/:userSelection           uk.gov.hmrc.gatekeepercomposeemailfrontend.controllers.ComposeEmailController.emailPreviewAction(emailUUID: String, userSelection: String)
-POST        /send-email/:emailUUID/:userSelection             uk.gov.hmrc.gatekeepercomposeemailfrontend.controllers.EmailPreviewController.sendEmail(emailUUID: String, userSelection: String)
-POST        /send-test-email/:emailUUID/:userSelection        uk.gov.hmrc.gatekeepercomposeemailfrontend.controllers.EmailPreviewController.sendTestEmail(emailUUID: String, userSelection: String)
-POST        /edit-email/:emailUUID/:userSelection             uk.gov.hmrc.gatekeepercomposeemailfrontend.controllers.EmailPreviewController.editEmail(emailUUID: String, userSelection: String)
+GET         /preview-email/:emailUUID/:userSelection          uk.gov.hmrc.gatekeepercomposeemailfrontend.controllers.PreviewEmailController.previewEmail(emailUUID: String, userSelection: String, previewSent: Boolean)
+POST        /preview-email/:emailUUID/:userSelection          uk.gov.hmrc.gatekeepercomposeemailfrontend.controllers.PreviewEmailController.previewEmailAction(emailUUID: String, userSelection: String)
+POST        /send-email/:emailUUID/:userSelection             uk.gov.hmrc.gatekeepercomposeemailfrontend.controllers.PreviewEmailController.sendEmail(emailUUID: String, userSelection: String)
+POST        /send-test-email/:emailUUID/:userSelection        uk.gov.hmrc.gatekeepercomposeemailfrontend.controllers.PreviewEmailController.sendTestEmail(emailUUID: String, userSelection: String)
+POST        /edit-email/:emailUUID/:userSelection             uk.gov.hmrc.gatekeepercomposeemailfrontend.controllers.PreviewEmailController.editEmail(emailUUID: String, userSelection: String)
 POST        /email                                            uk.gov.hmrc.gatekeepercomposeemailfrontend.controllers.ComposeEmailController.initialiseEmail
 

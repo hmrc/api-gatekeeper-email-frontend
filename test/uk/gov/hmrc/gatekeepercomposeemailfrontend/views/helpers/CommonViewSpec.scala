@@ -40,18 +40,27 @@ import org.scalatest.Assertion
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 
 import play.api.Application
-import play.api.i18n.{Lang, MessagesImpl, MessagesProvider}
+import play.api.i18n.{Lang, Messages, MessagesApi, MessagesImpl, MessagesProvider}
 import play.api.inject.guice.GuiceApplicationBuilder
-import play.api.mvc.MessagesControllerComponents
+import play.api.mvc.request.RequestAttrKey
+import play.api.mvc.{AnyContentAsEmpty, MessagesControllerComponents, Request}
+import play.api.test.CSRFTokenHelper.CSRFRequest
+import play.api.test.{FakeRequest, StubMessagesFactory}
+import play.test.Helpers
 
 import uk.gov.hmrc.gatekeepercomposeemailfrontend.common.AsyncHmrcSpec
 import uk.gov.hmrc.gatekeepercomposeemailfrontend.config.AppConfig
+import uk.gov.hmrc.gatekeepercomposeemailfrontend.models.LoggedInUser
+import uk.gov.hmrc.gatekeepercomposeemailfrontend.utils.WithCSRFAddToken
 
 trait CommonViewSpec extends AsyncHmrcSpec with GuiceOneAppPerSuite {
-  val mcc                                         = app.injector.instanceOf[MessagesControllerComponents]
-  val messagesApi                                 = mcc.messagesApi
-  implicit val messagesProvider: MessagesProvider = MessagesImpl(Lang(Locale.ENGLISH), messagesApi)
-  implicit val appConfig: AppConfig               = mock[AppConfig]
+
+  implicit val fakeRequest: Request[AnyContentAsEmpty.type] = FakeRequest().withCSRFToken
+
+  implicit val userName: LoggedInUser = LoggedInUser(Some("gate.keeper"))
+  implicit val messages: Messages     = app.injector.instanceOf[MessagesControllerComponents].messagesApi.preferred(fakeRequest)
+
+  implicit val appConfig: AppConfig = mock[AppConfig]
 
   override def fakeApplication(): Application =
     GuiceApplicationBuilder()

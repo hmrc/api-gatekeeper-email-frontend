@@ -25,7 +25,7 @@ import uk.gov.hmrc.http.client.HttpClientV2
 import uk.gov.hmrc.http.{HeaderCarrier, HttpErrorFunctions, StringContextOps, UpstreamErrorResponse}
 
 import uk.gov.hmrc.gatekeepercomposeemailfrontend.config.EmailConnectorConfig
-import uk.gov.hmrc.gatekeepercomposeemailfrontend.controllers.{ComposeEmailForm, EmailPreviewForm}
+import uk.gov.hmrc.gatekeepercomposeemailfrontend.controllers.{ComposeEmailForm, PreviewEmailForm}
 import uk.gov.hmrc.gatekeepercomposeemailfrontend.models.EmailRequest.{createEmailRequest, updateEmailRequest}
 import uk.gov.hmrc.gatekeepercomposeemailfrontend.models._
 import uk.gov.hmrc.gatekeepercomposeemailfrontend.utils.ApplicationLogger
@@ -62,7 +62,7 @@ class GatekeeperEmailConnector @Inject() (http: HttpClientV2, config: EmailConne
       .execute[Boolean]
   }
 
-  def sendEmail(emailPreviewForm: EmailPreviewForm)(implicit hc: HeaderCarrier): Future[OutgoingEmail] = {
+  def sendEmail(emailPreviewForm: PreviewEmailForm)(implicit hc: HeaderCarrier): Future[OutgoingEmail] = {
     http
       .post(url"$serviceUrl/gatekeeper-email/send-email/${emailPreviewForm.emailUUID}")
       .execute[OutgoingEmail]

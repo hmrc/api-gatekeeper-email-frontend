@@ -18,23 +18,8 @@ package uk.gov.hmrc.apigatekeeperemailfrontend.pages
 
 import uk.gov.hmrc.apigatekeeperemailfrontend.common.Env
 
-case object ComposeEmailPage extends FormPage {
-  override val pageHeading: String = "Compose email"
-  override val url: String         = s"http://localhost:${Env.port}/api-gatekeeper-email/email"
+case object EmailPreviewPage extends FormPage {
+  override val pageHeading: String = "Email preview"
+  override val url: String         = s"http://localhost:${Env.port}/api-gatekeeper-email/emailpreview/"
 
-  def writeInSubjectField(text: String) = {
-    writeInTextArea(text, "emailSubject")
-  }
-
-  def writeInBodyField(text: String) = {
-    writeInTextArea(text, "emailBody")
-  }
-
-  def clickPreviewSubmit() = {
-    clickById("preview-button")
-  }
-
-  def clickDeleteSubmit() = {
-    clickById("delete-button")
-  }
 }

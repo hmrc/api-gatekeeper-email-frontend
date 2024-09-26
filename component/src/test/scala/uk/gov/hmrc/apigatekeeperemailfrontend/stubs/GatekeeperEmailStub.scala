@@ -130,6 +130,13 @@ trait GatekeeperEmailStub {
       stubPost(emailUUid, s"$path$emailUUid")
     }
 
+    def success() = {
+      stubFor(post(urlPathMatching("/gatekeeper-email/update-email.*")).willReturn(aResponse()
+        .withHeader("Content-type", "application/json")
+        .withBody(responseBody(UUID.randomUUID().toString))
+        .withStatus(OK)))
+    }
+
     def failsWithStatus(emailUUid: String, status: Int) = {
       stubFor(post(urlEqualTo(s"$path$emailUUid")).willReturn(aResponse().withStatus(status)))
     }
@@ -145,6 +152,13 @@ trait GatekeeperEmailStub {
 
     def success(emailUUid: String) = {
       stubFor(get(urlEqualTo(s"$path$emailUUid")).willReturn(aResponse()
+        .withHeader("Content-type", "application/json")
+        .withBody(responseBody(UUID.randomUUID().toString))
+        .withStatus(OK)))
+    }
+
+    def success() = {
+      stubFor(get(urlPathMatching("/gatekeeper-email/fetch-email.*")).willReturn(aResponse()
         .withHeader("Content-type", "application/json")
         .withBody(responseBody(UUID.randomUUID().toString))
         .withStatus(OK)))

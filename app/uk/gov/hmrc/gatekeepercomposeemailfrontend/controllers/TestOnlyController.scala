@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+// $COVERAGE-OFF$
 package uk.gov.hmrc.gatekeepercomposeemailfrontend.controllers
 
 import javax.inject.{Inject, Singleton}
@@ -30,8 +31,6 @@ import uk.gov.hmrc.gatekeepercomposeemailfrontend.config.AppConfig
 import uk.gov.hmrc.gatekeepercomposeemailfrontend.connectors.AuthConnector
 import uk.gov.hmrc.gatekeepercomposeemailfrontend.models.GatekeeperRole
 import uk.gov.hmrc.gatekeepercomposeemailfrontend.utils.GatekeeperAuthWrapper
-
-// $COVERAGE-OFF$
 
 @Singleton
 class TestOnlyController @Inject() (

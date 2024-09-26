@@ -16,10 +16,26 @@
 
 package uk.gov.hmrc.apigatekeeperemailfrontend.specs
 
-import uk.gov.hmrc.apigatekeeperemailfrontend.pages.{ComposeEmailPage, DummyStartPage}
+import uk.gov.hmrc.apigatekeeperemailfrontend.pages.{ComposeEmailPage, DummyStartPage, EmailPreviewPage}
 import uk.gov.hmrc.apigatekeeperemailfrontend.stubs.GatekeeperEmailStub
 
 class ComposeEmailSpec extends ApiGatekeeperEmailBaseSpec with GatekeeperEmailStub {
+
+  def verifyPage() = {
+    verifyText("email-summary-key", "API")
+    verifyText("email-summary-key", "Topic", 1)
+    verifyText("email-summary-data", "Agent Authorisation")
+    verifyText("email-summary-data", "Business and policy", 1)
+  }
+
+  def primePageForTesting() = {
+    signInGatekeeper(app)
+    SaveEmail.success()
+
+    And("I've selected to compose an email")
+    on(DummyStartPage)
+    DummyStartPage.clickSubmit()
+  }
 
   Feature("Compose Email Page") {
     info("AS A Product Owner")
@@ -28,19 +44,37 @@ class ComposeEmailSpec extends ApiGatekeeperEmailBaseSpec with GatekeeperEmailSt
 
     Scenario("Ensure a user can see the compose email page") {
       Given("I have successfully logged in to the API Gatekeeper")
-
-      signInGatekeeper(app)
-      When("I hit submit on the Test Dummy start page")
-      on(DummyStartPage)
-      SaveEmail.success()
-      DummyStartPage.clickSubmit()
+      primePageForTesting()
 
       Then("I am successfully navigated to the Compose email page")
       on(ComposeEmailPage)
-      verifyText("email-summary-key", "API")
-      verifyText("email-summary-key", "Topic", 1)
-      verifyText("email-summary-data", "Agent Authorisation")
-      verifyText("email-summary-data", "Business and policy", 1)
+
+      And("The page renders the posted form data correctly")
+      verifyPage()
+    }
+
+    Scenario("Ensure a user can enter data the compose email page") {
+      Given("I have successfully logged in to the API Gatekeeper and on the compose email page")
+      primePageForTesting()
+      on(ComposeEmailPage)
+
+      Then("The page renders the posted form data correctly")
+      verifyPage()
+
+      Then("The user can fill in `Api Version Change` in the emailSubject field")
+      ComposeEmailPage.writeInSubjectField("Api Version Change")
+
+      And("The user can fill in `Times they are a changin` in the emailBody field")
+      ComposeEmailPage.writeInBodyField("Times they are a changin")
+
+      When("The user clicks on the preview button")
+      FetchEmail.success()
+      UpdateEmail.success()
+      ComposeEmailPage.clickPreviewSubmit()
+
+      Then("They are navigated to preview email page")
+
+      on(EmailPreviewPage)
     }
   }
 

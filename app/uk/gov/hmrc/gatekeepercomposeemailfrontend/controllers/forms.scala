@@ -31,18 +31,18 @@ object ComposeEmailForm {
   )
 }
 
-case class EmailPreviewForm(emailUUID: String, composeEmailForm: ComposeEmailForm)
+case class PreviewEmailForm(emailUUID: String, composeEmailForm: ComposeEmailForm)
 
-object EmailPreviewForm {
+object PreviewEmailForm {
 
-  val form: Form[EmailPreviewForm] = Form(
+  val form: Form[PreviewEmailForm] = Form(
     mapping(
       "emailUUID"        -> text.verifying("email.uid.required", _.nonEmpty),
       "composeEmailForm" -> mapping(
         "emailSubject" -> text.verifying("email.subject.required", _.nonEmpty),
         "emailBody"    -> text.verifying("email.body.required", _.nonEmpty)
       )(ComposeEmailForm.apply)(ComposeEmailForm.unapply)
-    )(EmailPreviewForm.apply)(EmailPreviewForm.unapply)
+    )(PreviewEmailForm.apply)(PreviewEmailForm.unapply)
   )
 }
 

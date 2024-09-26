@@ -36,7 +36,7 @@ import uk.gov.hmrc.gatekeepercomposeemailfrontend.common.ControllerBaseSpec
 import uk.gov.hmrc.gatekeepercomposeemailfrontend.connectors.{AuthConnector, GatekeeperEmailConnector}
 import uk.gov.hmrc.gatekeepercomposeemailfrontend.controllers.{ComposeEmailController, ComposeEmailForm}
 import uk.gov.hmrc.gatekeepercomposeemailfrontend.models.{DevelopersEmailQuery, OutgoingEmail, RegisteredUser}
-import uk.gov.hmrc.gatekeepercomposeemailfrontend.services.ComposeEmailService
+import uk.gov.hmrc.gatekeepercomposeemailfrontend.services.EmailService
 
 object ComposeEmailControllerSpecHelpers extends ControllerBaseSpec with Matchers with GivenWhenThen
     with MockitoSugar {
@@ -57,14 +57,14 @@ object ComposeEmailControllerSpecHelpers extends ControllerBaseSpec with Matcher
   val mockEmailConnector: GatekeeperEmailConnector = mock[GatekeeperEmailConnector]
   val mockWSClient: WSClient                       = mock[WSClient]
   lazy val composeEmailTemplateView                = app.injector.instanceOf[ComposeEmail]
-  lazy val emailPreviewTemplateView                = app.injector.instanceOf[EmailPreview]
+  lazy val emailPreviewTemplateView                = app.injector.instanceOf[PreviewEmail]
   lazy val emailSentTemplateView                   = app.injector.instanceOf[EmailSentConfirmation]
-  lazy val deleteConfirmEmail                      = app.injector.instanceOf[EmailDeleteConfirmation]
-  lazy val deleteEmail                             = app.injector.instanceOf[EmailDelete]
+  lazy val deleteConfirmEmail                      = app.injector.instanceOf[DeleteEmailConfirmation]
+  lazy val deleteEmail                             = app.injector.instanceOf[DeleteEmail]
   val su                                           = List(RegisteredUser("sawd", "efef", "eff", true))
   val userSelectionQuery                           = new DevelopersEmailQuery(None, None, None, false, None, false, None)
 
-  class ComposeEmailServiceTest extends ComposeEmailService(mock[GatekeeperEmailConnector]) {
+  class EmailServiceTest extends EmailService(mock[GatekeeperEmailConnector]) {
 
     override def saveEmail(composeEmailForm: ComposeEmailForm, emailUUID: String, userSelectionQuery: DevelopersEmailQuery)(implicit hc: HeaderCarrier): Future[OutgoingEmail] =
       Future.successful(OutgoingEmail("srinivasalu.munagala@digital.hmrc.gov.uk", "Hello", "*test email body*", "", "", "", "", None, userSelectionQuery, 1))
@@ -84,13 +84,12 @@ object ComposeEmailControllerSpecHelpers extends ControllerBaseSpec with Matcher
 
     override def deleteEmail(emailUUID: String)(implicit hc: HeaderCarrier): Future[Boolean] = Future.successful(true)
   }
-  val mockGateKeeperService = new ComposeEmailServiceTest
+  val mockGateKeeperService = new EmailServiceTest
 
-  def buildController(mockGateKeeperService: ComposeEmailService, mockAuthConnector: AuthConnector): ComposeEmailController = {
+  def buildController(mockGateKeeperService: EmailService, mockAuthConnector: AuthConnector): ComposeEmailController = {
     new ComposeEmailController(
       mcc,
       composeEmailTemplateView,
-      emailPreviewTemplateView,
       mockGateKeeperService,
       emailSentTemplateView,
       deleteConfirmEmail,

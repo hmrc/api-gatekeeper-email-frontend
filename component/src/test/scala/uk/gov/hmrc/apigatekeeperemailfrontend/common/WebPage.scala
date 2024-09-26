@@ -44,12 +44,16 @@ trait WebPage extends PageObject {
     this.heading == this.pageHeading
   }
 
-  def clickSubmit(): Unit = {
-    click(By.id("submit"))
+  def clickById(id: String) = {
+    click(By.id(id))
   }
 
-  protected def writeInTextBox(input: String, id: String) = {
-    sendKeys(By.cssSelector(s"input[id='$id']"), input)
+  def clickSubmit(): Unit = {
+    clickById("submit")
+  }
+
+  protected def writeInTextArea(input: String, id: String) = {
+    sendKeys(By.cssSelector(s"textArea[id='$id']"), input)
   }
 
   protected def getSelectBoxSelectedItemValue(id: By): String = {
