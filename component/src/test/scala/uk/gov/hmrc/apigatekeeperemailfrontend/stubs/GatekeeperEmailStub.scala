@@ -25,7 +25,7 @@ import play.api.http.Status.OK
 trait GatekeeperEmailStub {
   val selectionQuery = """{"topic":"topic-dev", "privateapimatch": false, "apiVersionFilter": "apiVersionFilter", "allUsers": false}""".stripMargin
 
-  def responseBody(emailUUIDString: String) =
+  def responseBody(emailUUIDString: String, emailStatus: String = "") =
     s"""
        |  {
        |    "emailUUID": "$emailUUIDString",
@@ -35,7 +35,7 @@ trait GatekeeperEmailStub {
        |    "markdownEmailBody": "",
        |    "htmlEmailBody": "",
        |    "subject": "",
-       |    "status": "PENDING",
+       |    "status": "$emailStatus",
        |    "composedBy": "auto-emailer",
        |    "approvedBy": "auto-emailer",
        |    "userSelectionQuery": $selectionQuery,
@@ -157,10 +157,10 @@ trait GatekeeperEmailStub {
         .withStatus(OK)))
     }
 
-    def success() = {
+    def successWithEmailStatus(emailStatus: String) = {
       stubFor(get(urlPathMatching("/gatekeeper-email/fetch-email.*")).willReturn(aResponse()
         .withHeader("Content-type", "application/json")
-        .withBody(responseBody(UUID.randomUUID().toString))
+        .withBody(responseBody(UUID.randomUUID().toString, emailStatus))
         .withStatus(OK)))
     }
 

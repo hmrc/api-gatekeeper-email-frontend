@@ -68,7 +68,7 @@ class ComposeEmailSpec extends ApiGatekeeperEmailBaseSpec with GatekeeperEmailSt
       ComposeEmailPage.writeInBodyField("Times they are a changin")
 
       When("The user clicks on the preview button")
-      FetchEmail.success()
+      FetchEmail.successWithEmailStatus("")
       UpdateEmail.success()
       ComposeEmailPage.clickPreviewSubmit()
 

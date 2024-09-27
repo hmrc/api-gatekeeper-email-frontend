@@ -63,10 +63,6 @@ class PreviewEmailSpec extends CommonViewSpec {
       document.getElementById("page-heading").text() shouldBe "Email preview"
     }
 
-    def validateSendTestElement(document: Document) = {
-      document.getElementById("send-test-email-button") shouldBe "something"
-    }
-
     def validateNotificationBanner(document: Document) = {
       document.getElementById("email-sent-banner").text() shouldBe "Test email sent"
       document.getElementById("email-sent-text").text() shouldBe s"We have sent a test email to $emailAddr"
@@ -76,19 +72,41 @@ class PreviewEmailSpec extends CommonViewSpec {
 
   "PreviewEmail" should {
 
-    "render the  page correctly when preview sent is false" in new Setup {
+    "render the  page correctly when preview sent is false, email status is NOT SENT, request has emailaddress" in new Setup {
       val previewSent = false
       val page: Html  = previewEmail.apply(
         emailUUidStr,
         PreviewEmailForm.form.fill(PreviewEmailForm(emailUUidStr, ComposeEmailForm("Subject", "Email Body"))),
         userSelection,
-        "status",
+        "",
+        previewSent
+      )(loggedInRequestWithEmail, messages)
+
+      val document = Jsoup.parse(page.body)
+      validateStardardPageElements(document)
+      document.getElementById("send-test-email-button").text() shouldBe "Send test email"
+      document.getElementById("send-email-button").text() shouldBe "Send email"
+      document.getElementById("edit-email-button").text() shouldBe "Edit email"
+      document.getElementById("delete-email-button").text() shouldBe "Delete email"
+
+    }
+
+    "render the  page correctly when preview sent is false, email status is SENT, request has no email" in new Setup {
+      val previewSent = false
+      val page: Html  = previewEmail.apply(
+        emailUUidStr,
+        PreviewEmailForm.form.fill(PreviewEmailForm(emailUUidStr, ComposeEmailForm("Subject", "Email Body"))),
+        userSelection,
+        "SENT",
         previewSent
       )(loggedInRequestWithOutEmail, messages)
 
       val document = Jsoup.parse(page.body)
       validateStardardPageElements(document)
       Option(document.getElementById("send-test-email-button")) shouldBe None
+      Option(document.getElementById("send-email-button")) shouldBe None
+      Option(document.getElementById("edit-email-button")) shouldBe None
+      document.getElementById("delete-email-button").text() shouldBe "Delete email"
 
     }
 
@@ -98,7 +116,7 @@ class PreviewEmailSpec extends CommonViewSpec {
         emailUUidStr,
         PreviewEmailForm.form.fill(PreviewEmailForm(emailUUidStr, ComposeEmailForm("Subject", "Email Body"))),
         userSelection,
-        "status",
+        "PENDING",
         previewSent
       )(
         loggedInRequestWithEmail,
@@ -110,7 +128,9 @@ class PreviewEmailSpec extends CommonViewSpec {
       validateNotificationBanner(document)
 
       document.getElementById("send-test-email-button").text() shouldBe "Send test email"
-
+      document.getElementById("send-email-button").text() shouldBe "Send email"
+      document.getElementById("edit-email-button").text() shouldBe "Edit email"
+      document.getElementById("delete-email-button").text() shouldBe "Delete email"
     }
 
     "display errors correctly" in new Setup {

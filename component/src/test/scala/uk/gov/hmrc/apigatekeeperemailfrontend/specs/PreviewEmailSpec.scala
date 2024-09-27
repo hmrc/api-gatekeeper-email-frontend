@@ -35,13 +35,14 @@ class PreviewEmailSpec extends ApiGatekeeperEmailBaseSpec with GatekeeperEmailSt
     on(DummyStartPage)
     DummyStartPage.clickSubmit()
     on(ComposeEmailPage)
+  }
 
+  def completeComposeEMailPage() = {
     ComposeEmailPage.writeInSubjectField("Api Version Change")
     ComposeEmailPage.writeInBodyField("Times they are a changin")
 
-    FetchEmail.success()
     UpdateEmail.success()
-    ComposeEmailPage.clickPreviewSubmit()
+
   }
 
   Feature("Preview Email Page") {
@@ -53,7 +54,14 @@ class PreviewEmailSpec extends ApiGatekeeperEmailBaseSpec with GatekeeperEmailSt
       Given("I have successfully logged in to the API Gatekeeper")
       primePageForTesting()
 
-      Then("I am successfully navigated to the Compose email page")
+      And("I have completed the compose email page ")
+      completeComposeEMailPage()
+
+      When("I click on preview email")
+      FetchEmail.successWithEmailStatus("PENDING")
+      ComposeEmailPage.clickPreviewSubmit()
+
+      Then("I am successfully navigated to the Preview email page")
       on(PreviewEmailPage)
 
       And("The page renders the posted form data correctly")
