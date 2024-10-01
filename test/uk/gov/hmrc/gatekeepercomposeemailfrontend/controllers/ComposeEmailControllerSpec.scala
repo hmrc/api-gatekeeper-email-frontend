@@ -31,7 +31,7 @@ import play.filters.csrf.CSRF.TokenProvider
 import uk.gov.hmrc.http.HeaderCarrier
 
 import uk.gov.hmrc.gatekeepercomposeemailfrontend.models._
-import uk.gov.hmrc.gatekeepercomposeemailfrontend.services.ComposeEmailService
+import uk.gov.hmrc.gatekeepercomposeemailfrontend.services.EmailService
 import uk.gov.hmrc.gatekeepercomposeemailfrontend.utils.ComposeEmailControllerSpecHelpers._
 
 class ComposeEmailControllerSpec extends ControllerBaseSpec with Matchers with MockitoSugar with ArgumentMatchersSugar {
@@ -39,15 +39,15 @@ class ComposeEmailControllerSpec extends ControllerBaseSpec with Matchers with M
   trait Setup extends ControllerSetupBase {
     val su                                  = List(RegisteredUser("sawd", "efef", "eff", true))
     val emailUUID                           = UUID.randomUUID().toString
-    lazy val mockGatekeeperEmailService     = mock[ComposeEmailService]
+    lazy val mockEmailService               = mock[EmailService]
     val csrfToken: (String, String)         = "csrfToken" -> app.injector.instanceOf[TokenProvider].generateToken
     implicit val materializer: Materializer = app.materializer
 
-    val notLoggedInRequest                  = FakeRequest("GET", "/email").withCSRFToken
-    val loggedInRequest                     = FakeRequest("GET", "/email").withSession(csrfToken, authToken, userToken).withCSRFToken
-    val fakeConfirmationGetRequest          = FakeRequest("GET", "/sent-email").withSession(csrfToken, authToken, userToken).withCSRFToken
-    val fakeConfirmationEmailPreviewRequest = FakeRequest("GET", "/emailpreview").withSession(csrfToken, authToken, userToken).withCSRFToken
-    val fakePostFormRequest                 = FakeRequest("POST", "/email").withSession(csrfToken, authToken, userToken).withCSRFToken
+    val notLoggedInRequest         = FakeRequest("GET", "/email").withCSRFToken
+    val loggedInRequest            = FakeRequest("GET", "/email").withSession(csrfToken, authToken, userToken).withCSRFToken
+    val fakeConfirmationGetRequest = FakeRequest("GET", "/sent-email").withSession(csrfToken, authToken, userToken).withCSRFToken
+
+    val fakePostFormRequest = FakeRequest("POST", "/email").withSession(csrfToken, authToken, userToken).withCSRFToken
 
     implicit val hc: HeaderCarrier = HeaderCarrier()
 
@@ -105,6 +105,7 @@ class ComposeEmailControllerSpec extends ControllerBaseSpec with Matchers with M
       status(result) shouldBe BAD_REQUEST
       (contentAsJson(result) \ "code").as[String] shouldBe "INVALID_REQUEST_PAYLOAD"
       (contentAsJson(result) \ "message").as[String] should startWith("Request payload does not appear to be JSON")
+      verifyAuthConnectorCalledForUser
     }
 
     "handle a form which contains selection query which contains valid JSON but which does not have mandatory attributes" in new Setup {
@@ -152,7 +153,7 @@ class ComposeEmailControllerSpec extends ControllerBaseSpec with Matchers with M
       val result = controller.sentEmailConfirmation("{}", 1)(fakeConfirmationGetRequest)
       verifyAuthConnectorCalledForUser
       status(result) shouldBe Status.OK
-      verifyZeroInteractions(mockGatekeeperEmailService)
+      verifyZeroInteractions(mockEmailService)
     }
 
     "return HTML" in new Setup {
@@ -160,68 +161,32 @@ class ComposeEmailControllerSpec extends ControllerBaseSpec with Matchers with M
       val result = controller.sentEmailConfirmation("{}", 1)(fakeConfirmationGetRequest)
       contentType(result) shouldBe Some("text/html")
       charset(result) shouldBe Some("utf-8")
-      verifyZeroInteractions(mockGatekeeperEmailService)
+      verifyZeroInteractions(mockEmailService)
     }
-  }
-
-  "GET /emailpreview/emailUUID" should {
-    "return 200" in new Setup {
-      givenTheGKUserIsAuthorisedAndIsANormalUser()
-      val result = controller.emailPreview(emailUUID, "{}")(loggedInRequest)
-      verifyAuthConnectorCalledForUser
-      status(result) shouldBe OK
-      verifyZeroInteractions(mockGatekeeperEmailService)
-    }
-
-    "return HTML" in new Setup {
-      givenTheGKUserIsAuthorisedAndIsANormalUser()
-      val result = controller.emailPreview(emailUUID, "{}")(loggedInRequest)
-      contentType(result) shouldBe Some("text/html")
-      charset(result) shouldBe Some("utf-8")
-      verifyZeroInteractions(mockGatekeeperEmailService)
-    }
-  }
-
-  "POST /emailpreview" should {
-
-    "reject a form submission with missing emailSubject" in new Setup {
-      givenTheGKUserIsAuthorisedAndIsANormalUser()
-
-      val result = controller.emailPreviewAction(emailUUID, "{}")(FakeRequest().withFormUrlEncodedBody("emailBody" -> "SomeBody").withCSRFToken)
-      status(result) shouldBe BAD_REQUEST
-      verifyAuthConnectorCalledForUser
-      verifyZeroInteractions(mockGatekeeperEmailService)
-    }
-
-    "reject a form submission with missing emailBody" in new Setup {
-      givenTheGKUserIsAuthorisedAndIsANormalUser()
-
-      val result = controller.emailPreviewAction(emailUUID, "{}")(FakeRequest().withFormUrlEncodedBody("emailSubject" -> "SomeSubject").withCSRFToken)
-      status(result) shouldBe BAD_REQUEST
-      verifyAuthConnectorCalledForUser
-      verifyZeroInteractions(mockGatekeeperEmailService)
-    }
-
   }
 
   "POST /delete" should {
 
     "reject a form submission with missing radio button yesNo selection" in new Setup {
       givenTheGKUserIsAuthorisedAndIsANormalUser()
-      val request = FakeRequest().withCSRFToken
+      val request = FakeRequest("POST", s"/delete/${emailUUID}/:userSelection").withCSRFToken
 
       val result = controller.delete(emailUUID, "{}")(request)
       status(result) shouldBe BAD_REQUEST
       verifyAuthConnectorCalledForUser
-      verifyZeroInteractions(mockGatekeeperEmailService)
+      verifyZeroInteractions(mockEmailService)
     }
 
     "accept a form submission with Yes selected" in new Setup {
       givenTheGKUserIsAuthorisedAndIsANormalUser()
 
-      val request = FakeRequest().withFormUrlEncodedBody("value" -> "true").withCSRFToken
+      val request = FakeRequest("POST", s"/delete/${emailUUID}/:userSelection").withSession(csrfToken, authToken, userToken).withFormUrlEncodedBody("value" -> "true").withCSRFToken
 
       val result = controller.delete(emailUUID, "{}")(request)
+      println(contentAsString(result))
+
+      status(result) shouldBe OK
+
       contentType(result) shouldBe Some("text/html")
       charset(result) shouldBe Some("utf-8")
     }
@@ -229,12 +194,13 @@ class ComposeEmailControllerSpec extends ControllerBaseSpec with Matchers with M
     "accept a form submission with No selected" in new Setup {
       givenTheGKUserIsAuthorisedAndIsANormalUser()
 
-      val request = FakeRequest().withFormUrlEncodedBody("value" -> "false").withCSRFToken
+      val request = FakeRequest("POST", s"/delete/${emailUUID}/:userSelection").withFormUrlEncodedBody("value" -> "false").withCSRFToken
 
       val result = controller.delete(emailUUID, "{}")(request)
+      status(result) shouldBe OK
       contentType(result) shouldBe Some("text/html")
       charset(result) shouldBe Some("utf-8")
-      verifyZeroInteractions(mockGatekeeperEmailService)
+      verifyZeroInteractions(mockEmailService)
     }
 
   }
@@ -243,12 +209,12 @@ class ComposeEmailControllerSpec extends ControllerBaseSpec with Matchers with M
 
     "a form submission on click on deleteEmail button" in new Setup {
       givenTheGKUserIsAuthorisedAndIsANormalUser()
-      val request = FakeRequest().withCSRFToken
+      val request = FakeRequest("POST", s"/deleteOption/${emailUUID}/:userSelection").withCSRFToken
 
       val result = controller.deleteOption(emailUUID, "{}")(request)
       status(result) shouldBe OK
       verifyAuthConnectorCalledForUser
-      verifyZeroInteractions(mockGatekeeperEmailService)
+      verifyZeroInteractions(mockEmailService)
     }
 
   }

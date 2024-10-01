@@ -1,7 +1,14 @@
 service.name = HMRC API Gatekeeper
 service.text = This is your new service
+
 email.recipient.required = Provide an email recipient
 email.subject.required = Provide an email subject
 email.body.required = Provide an email body
-email.confirmation = Are you sure you want to delete the email?
+email.uid.required = Email UUID is required
+
+deleteemail.confirmation = Are you sure you want to delete the email?
+deleteemail.option.yes = Yes
+deleteemail.option.no = No
+
 error.summary.title = There is a problem
+error.required = Select yes if you want to remove this file

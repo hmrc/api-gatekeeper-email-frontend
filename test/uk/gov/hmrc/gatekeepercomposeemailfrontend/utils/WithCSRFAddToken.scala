@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,18 +14,14 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.gatekeepercomposeemailfrontend.forms
+package uk.gov.hmrc.gatekeepercomposeemailfrontend.utils
 
-import play.api.data.FieldMapping
-import play.api.data.Forms.of
+import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 
-trait Mappings extends Formatters {
+import play.filters.csrf.CSRFAddToken
 
-  protected def boolean(
-      requiredKey: String = "error.required",
-      invalidKey: String = "error.boolean",
-      args: Seq[Any] = Seq.empty
-    ): FieldMapping[Boolean] =
-    of(booleanFormatter(requiredKey, invalidKey, args))
+trait WithCSRFAddToken {
+  self: GuiceOneAppPerSuite =>
 
+  val addToken = app.injector.instanceOf[CSRFAddToken]
 }

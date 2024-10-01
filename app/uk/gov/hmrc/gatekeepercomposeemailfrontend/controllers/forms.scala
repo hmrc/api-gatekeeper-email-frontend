@@ -16,14 +16,10 @@
 
 package uk.gov.hmrc.gatekeepercomposeemailfrontend.controllers
 
-import javax.inject.Inject
-
 import play.api.data.Form
 import play.api.data.Forms.{mapping, text}
 
-import uk.gov.hmrc.gatekeepercomposeemailfrontend.forms.Mappings
-
-case class ComposeEmailForm(emailSubject: String, emailBody: String) {}
+case class ComposeEmailForm(emailSubject: String, emailBody: String)
 
 object ComposeEmailForm {
 
@@ -35,25 +31,26 @@ object ComposeEmailForm {
   )
 }
 
-case class EmailPreviewForm(emailUUID: String, composeEmailForm: ComposeEmailForm) {}
+case class PreviewEmailForm(emailUUID: String, composeEmailForm: ComposeEmailForm)
 
-object EmailPreviewForm {
+object PreviewEmailForm {
 
-  val form: Form[EmailPreviewForm] = Form(
+  val form: Form[PreviewEmailForm] = Form(
     mapping(
       "emailUUID"        -> text.verifying("email.uid.required", _.nonEmpty),
       "composeEmailForm" -> mapping(
         "emailSubject" -> text.verifying("email.subject.required", _.nonEmpty),
         "emailBody"    -> text.verifying("email.body.required", _.nonEmpty)
       )(ComposeEmailForm.apply)(ComposeEmailForm.unapply)
-    )(EmailPreviewForm.apply)(EmailPreviewForm.unapply)
+    )(PreviewEmailForm.apply)(PreviewEmailForm.unapply)
   )
 }
 
-class RemoveUploadedFileFormProvider @Inject() extends Mappings {
+case class DeleteEmailOptionForm(value: String)
 
-  def apply(): Form[Boolean] =
-    Form(
-      "value" -> boolean("Select yes if you want to remove this file")
-    )
+object DeleteEmailOptionForm {
+
+  val form: Form[DeleteEmailOptionForm] = Form(mapping(
+    "value" -> text.verifying("error.required", _.nonEmpty)
+  )(DeleteEmailOptionForm.apply)(DeleteEmailOptionForm.unapply))
 }

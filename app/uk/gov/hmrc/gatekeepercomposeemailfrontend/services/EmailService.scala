@@ -25,7 +25,7 @@ import uk.gov.hmrc.gatekeepercomposeemailfrontend.connectors.GatekeeperEmailConn
 import uk.gov.hmrc.gatekeepercomposeemailfrontend.controllers.ComposeEmailForm
 import uk.gov.hmrc.gatekeepercomposeemailfrontend.models.{DevelopersEmailQuery, OutgoingEmail}
 
-class ComposeEmailService @Inject() (emailConnector: GatekeeperEmailConnector)(implicit val ec: ExecutionContext) {
+class EmailService @Inject() (emailConnector: GatekeeperEmailConnector)(implicit val ec: ExecutionContext) {
 
   def saveEmail(composeEmailForm: ComposeEmailForm, emailUUID: String, userSelectionQuery: DevelopersEmailQuery)(implicit hc: HeaderCarrier): Future[OutgoingEmail] = {
     emailConnector.saveEmail(composeEmailForm, emailUUID, userSelectionQuery)

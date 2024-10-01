@@ -32,13 +32,13 @@ import uk.gov.hmrc.gatekeepercomposeemailfrontend.connectors.GatekeeperEmailConn
 import uk.gov.hmrc.gatekeepercomposeemailfrontend.controllers.ComposeEmailForm
 import uk.gov.hmrc.gatekeepercomposeemailfrontend.models.{DevelopersEmailQuery, OutgoingEmail, RegisteredUser}
 
-class ComposeEmailServiceSpec extends AnyWordSpec with Matchers with GuiceOneAppPerSuite with MockitoSugar with ArgumentMatchersSugar {
+class EmailServiceSpec extends AnyWordSpec with Matchers with GuiceOneAppPerSuite with MockitoSugar with ArgumentMatchersSugar {
 
   implicit val hc: HeaderCarrier = HeaderCarrier()
 
   trait Setup {
     val mockEmailConnector = mock[GatekeeperEmailConnector]
-    val underTest          = new ComposeEmailService(mockEmailConnector)
+    val underTest          = new EmailService(mockEmailConnector)
     val su                 = List(RegisteredUser("sawd", "efef", "eff", true))
     val emailUUID          = "emailUUID"
     val userSelectionQuery = new DevelopersEmailQuery(None, None, None, false, None, false, None)

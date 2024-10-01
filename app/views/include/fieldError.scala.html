@@ -19,7 +19,7 @@
 @if(errors.exists(_.key == fieldName)) {
     @defining(errors.filter(_.key == fieldName)) { errors =>
         @if(errors.nonEmpty) {
-        <p class="govuk-error-message" data-field-error-@fieldName>
+        <p class="govuk-error-message" data-field-error-@fieldName id="field-error-@fieldName">
             <span class="govuk-visually-hidden">Error:</span>
             @if(errors.last.args.nonEmpty) {
                 @Messages(errors.last.message, errors.last.args.head)

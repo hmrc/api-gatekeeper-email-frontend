@@ -22,39 +22,45 @@ import scala.concurrent.Future.successful
 
 import org.apache.pekko.stream.Materializer
 import org.scalatest.matchers.should.Matchers
-import views.html.{ComposeEmail, ForbiddenView}
+import views.html.{ComposeEmail, ForbiddenView, PreviewEmail}
 
 import play.api.Application
 import play.api.http.Status
-import play.api.http.Status.{OK, SEE_OTHER}
+import play.api.http.Status.{BAD_REQUEST, FORBIDDEN, OK, SEE_OTHER}
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.Json
 import play.api.test.CSRFTokenHelper.CSRFFRequestHeader
-import play.api.test.FakeRequest
 import play.api.test.Helpers.status
+import play.api.test.{DefaultAwaitTimeout, FakeRequest, FutureAwaits}
 import play.filters.csrf.CSRF.TokenProvider
 import uk.gov.hmrc.http.HeaderCarrier
 
 import uk.gov.hmrc.gatekeepercomposeemailfrontend.connectors.GatekeeperEmailConnector
 import uk.gov.hmrc.gatekeepercomposeemailfrontend.models.OutgoingEmail
-import uk.gov.hmrc.gatekeepercomposeemailfrontend.services.ComposeEmailService
+import uk.gov.hmrc.gatekeepercomposeemailfrontend.services.EmailService
 import uk.gov.hmrc.gatekeepercomposeemailfrontend.utils.ComposeEmailControllerSpecHelpers.mcc
+import uk.gov.hmrc.gatekeepercomposeemailfrontend.utils.WithCSRFAddToken
 
-class EmailPreviewControllerSpec extends ControllerBaseSpec with Matchers {
+class PreviewEmailControllerSpec extends ControllerBaseSpec with Matchers with FutureAwaits with DefaultAwaitTimeout with WithCSRFAddToken {
   implicit val materializer: Materializer = app.materializer
 
   trait Setup extends ControllerSetupBase {
     val emailUUID                                                      = UUID.randomUUID().toString
     lazy val forbiddenView                                             = app.injector.instanceOf[ForbiddenView]
+    lazy val previewEmail                                              = app.injector.instanceOf[PreviewEmail]
     val csrfToken: (String, String)                                    = "csrfToken" -> app.injector.instanceOf[TokenProvider].generateToken
     private val mockGatekeeperEmailConnector: GatekeeperEmailConnector = mock[GatekeeperEmailConnector]
-    private val mockComposeEmailService: ComposeEmailService           = mock[ComposeEmailService]
+    val mockEmailService: EmailService                                 = mock[EmailService]
     private lazy val composeEmailTemplateView                          = app.injector.instanceOf[ComposeEmail]
+    val loggedInRequest                                                = FakeRequest("GET", "/email").withSession(csrfToken, authToken, userToken)
 
-    val controller                 = new EmailPreviewController(
+    val request = FakeRequest().withCSRFToken
+
+    val controller                 = new PreviewEmailController(
       mcc,
       composeEmailTemplateView,
-      mockComposeEmailService,
+      mockEmailService,
+      previewEmail,
       forbiddenView,
       mockAuthConnector,
       mockGatekeeperEmailConnector
@@ -89,7 +95,7 @@ class EmailPreviewControllerSpec extends ControllerBaseSpec with Matchers {
     when(mockGatekeeperEmailConnector.fetchEmail(*)(*))
       .thenReturn(successful(Json.parse(outgoingEmail).as[OutgoingEmail]))
 
-    when(mockComposeEmailService.fetchEmail(*)(*))
+    when(mockEmailService.fetchEmail(*)(*))
       .thenReturn(successful(Json.parse(outgoingEmail).as[OutgoingEmail]))
 
     when(mockGatekeeperEmailConnector.updateEmail(*, *, *)(*))
@@ -102,6 +108,55 @@ class EmailPreviewControllerSpec extends ControllerBaseSpec with Matchers {
           "metrics.enabled" -> false
         )
         .build()
+  }
+
+  "GET /preview-email/emailUUID" should {
+
+    "return 200" in new Setup {
+      givenTheGKUserIsAuthorisedAndIsANormalUser()
+      val result = await(addToken(controller.previewEmail(emailUUID, "{}"))(loggedInRequest))
+      verifyAuthConnectorCalledForUser
+      result.header.status shouldBe OK
+      result.body.contentType shouldBe Some("text/html; charset=utf-8")
+
+    }
+
+    "be forbidden if unauthorised" in new Setup {
+      givenTheGKUserHasInsufficientEnrolments()
+      val result = await(addToken(controller.previewEmail(emailUUID, "{}"))(loggedInRequest))
+      verifyAuthConnectorCalledForUser
+      result.header.status shouldBe FORBIDDEN
+    }
+  }
+
+  "POST /preview-email" should {
+
+    "reject a form submission with missing emailSubject" in new Setup {
+      givenTheGKUserIsAuthorisedAndIsANormalUser()
+
+      val result = controller.previewEmailAction(emailUUID, "{}")(FakeRequest().withFormUrlEncodedBody("emailBody" -> "SomeBody").withCSRFToken)
+      status(result) shouldBe BAD_REQUEST
+      verifyAuthConnectorCalledForUser
+      verifyZeroInteractions(mockEmailService)
+    }
+
+    "reject a form submission with missing emailBody" in new Setup {
+      givenTheGKUserIsAuthorisedAndIsANormalUser()
+
+      val result = controller.previewEmailAction(emailUUID, "{}")(FakeRequest().withFormUrlEncodedBody("emailSubject" -> "SomeSubject").withCSRFToken)
+      status(result) shouldBe BAD_REQUEST
+      verifyAuthConnectorCalledForUser
+      verifyZeroInteractions(mockEmailService)
+    }
+
+    "be forbidden if unauthorised" in new Setup {
+      givenTheGKUserHasInsufficientEnrolments()
+      val result = controller.previewEmailAction(emailUUID, "{}")(FakeRequest().withFormUrlEncodedBody("emailSubject" -> "SomeSubject").withCSRFToken)
+      status(result) shouldBe FORBIDDEN
+      verifyAuthConnectorCalledForUser
+      verifyZeroInteractions(mockEmailService)
+    }
+
   }
 
   "POST /send-email" should {
