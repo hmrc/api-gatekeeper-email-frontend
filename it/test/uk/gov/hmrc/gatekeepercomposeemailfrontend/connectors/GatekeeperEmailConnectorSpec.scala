@@ -26,6 +26,7 @@ import org.scalatest.{BeforeAndAfterAll, BeforeAndAfterEach}
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 
 import play.api.http.Status.UNAUTHORIZED
+import uk.gov.hmrc.apiplatform.modules.common.domain.models.Actors
 import uk.gov.hmrc.http.test.HttpClientV2Support
 import uk.gov.hmrc.http.{HeaderCarrier, UpstreamErrorResponse}
 
@@ -77,7 +78,7 @@ class GatekeeperEmailConnectorSpec extends AsyncHmrcSpec with BeforeAndAfterEach
     val testEmailRequest                   = TestEmailRequest("example@example.com")
     val users                              = List(RegisteredUser(email, "first name", "last name", verified = true), RegisteredUser("example2@example2.com", "first name2", "last name2", true))
     val userSelectionQuery                 = new DevelopersEmailQuery(Some("topic-dev"), None, None, false, Some("apiVersionFilter"), false, None)
-
+    val user                               = Actors.GatekeeperUser("Test user")
   }
 
   "emailConnector" when {
@@ -128,7 +129,7 @@ class GatekeeperEmailConnectorSpec extends AsyncHmrcSpec with BeforeAndAfterEach
 
         SaveEmail.success(emailUUIDString)
 
-        await(underTest.saveEmail(composeEmailForm, emailUUIDString, userSelectionQuery))
+        await(underTest.saveEmail(composeEmailForm, emailUUIDString, userSelectionQuery, user))
 
         SaveEmail.verify(emailUUIDString)
       }
@@ -136,7 +137,7 @@ class GatekeeperEmailConnectorSpec extends AsyncHmrcSpec with BeforeAndAfterEach
       "fail to save gatekeeper email" in new Setup {
         SaveEmail.failsWithStatus(emailUUIDString, UNAUTHORIZED)
         intercept[UpstreamErrorResponse] {
-          await(underTest.saveEmail(composeEmailForm, emailUUIDString, userSelectionQuery))
+          await(underTest.saveEmail(composeEmailForm, emailUUIDString, userSelectionQuery, user))
         }
         SaveEmail.verify(emailUUIDString)
       }
@@ -146,7 +147,7 @@ class GatekeeperEmailConnectorSpec extends AsyncHmrcSpec with BeforeAndAfterEach
       "update gatekeeper email" in new Setup {
         UpdateEmail.success(emailUUIDString)
 
-        await(underTest.updateEmail(composeEmailForm, emailUUIDString, Some(userSelectionQuery)))
+        await(underTest.updateEmail(composeEmailForm, emailUUIDString, Some(userSelectionQuery), user))
 
         UpdateEmail.verify(emailUUIDString)
       }
@@ -155,7 +156,7 @@ class GatekeeperEmailConnectorSpec extends AsyncHmrcSpec with BeforeAndAfterEach
         UpdateEmail.failsWithStatus(emailUUIDString, UNAUTHORIZED)
 
         intercept[UpstreamErrorResponse] {
-          await(underTest.updateEmail(composeEmailForm, emailUUIDString, Some(userSelectionQuery)))
+          await(underTest.updateEmail(composeEmailForm, emailUUIDString, Some(userSelectionQuery), user))
         }
 
         UpdateEmail.verify(emailUUIDString)

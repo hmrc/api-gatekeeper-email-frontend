@@ -30,6 +30,7 @@ import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.ws.WSClient
 import play.api.test.CSRFTokenHelper.CSRFFRequestHeader
 import play.api.test.FakeRequest
+import uk.gov.hmrc.apiplatform.modules.common.domain.models.Actors
 import uk.gov.hmrc.http.HeaderCarrier
 
 import uk.gov.hmrc.gatekeepercomposeemailfrontend.common.ControllerBaseSpec
@@ -66,7 +67,13 @@ object ComposeEmailControllerSpecHelpers extends ControllerBaseSpec with Matcher
 
   class EmailServiceTest extends EmailService(mock[GatekeeperEmailConnector]) {
 
-    override def saveEmail(composeEmailForm: ComposeEmailForm, emailUUID: String, userSelectionQuery: DevelopersEmailQuery)(implicit hc: HeaderCarrier): Future[OutgoingEmail] =
+    override def saveEmail(
+        composeEmailForm: ComposeEmailForm,
+        emailUUID: String,
+        userSelectionQuery: DevelopersEmailQuery,
+        composedBy: Actors.GatekeeperUser
+      )(implicit hc: HeaderCarrier
+      ): Future[OutgoingEmail] =
       Future.successful(OutgoingEmail("srinivasalu.munagala@digital.hmrc.gov.uk", "Hello", "*test email body*", "", "", "", "", None, userSelectionQuery, 1))
 
     override def fetchEmail(emailUUID: String)(implicit hc: HeaderCarrier): Future[OutgoingEmail] = {
@@ -76,7 +83,8 @@ object ComposeEmailControllerSpecHelpers extends ControllerBaseSpec with Matcher
     override def updateEmail(
         composeEmailForm: ComposeEmailForm,
         emailUUID: String,
-        userSelectionQuery: Option[DevelopersEmailQuery]
+        userSelectionQuery: Option[DevelopersEmailQuery],
+        composedBy: Actors.GatekeeperUser
       )(implicit hc: HeaderCarrier
       ): Future[OutgoingEmail] = {
       Future.successful(OutgoingEmail("srinivasalu.munagala@digital.hmrc.gov.uk", "Hello", "*test email body*", "", "", "", "", None, userSelectionQuery.get, 1))

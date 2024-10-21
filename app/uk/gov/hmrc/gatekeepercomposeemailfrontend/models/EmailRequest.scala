@@ -17,6 +17,7 @@
 package uk.gov.hmrc.gatekeepercomposeemailfrontend.models
 
 import play.api.libs.json.{Json, OFormat}
+import uk.gov.hmrc.apiplatform.modules.common.domain.models.Actors
 
 import uk.gov.hmrc.gatekeepercomposeemailfrontend.controllers.ComposeEmailForm
 
@@ -29,7 +30,8 @@ case class EmailRequest(
     force: Boolean = false,
     auditData: Map[String, String] = Map.empty,
     eventUrl: Option[String] = None,
-    userSelectionQuery: Option[DevelopersEmailQuery] = None
+    userSelectionQuery: Option[DevelopersEmailQuery] = None,
+    composedBy: Actors.GatekeeperUser
   )
 
 object EmailRequest {
@@ -37,23 +39,25 @@ object EmailRequest {
   implicit val userFmt: OFormat[RegisteredUser]           = Json.format[RegisteredUser]
   implicit val sendEmailRequestFmt: OFormat[EmailRequest] = Json.format[EmailRequest]
 
-  def createEmailRequest(form: ComposeEmailForm, developersEmailQuery: DevelopersEmailQuery) = {
+  def createEmailRequest(form: ComposeEmailForm, developersEmailQuery: DevelopersEmailQuery, composedBy: Actors.GatekeeperUser) = {
 
     EmailRequest(
       to = List(),
       templateId = "gatekeeper",
       EmailData(form.emailSubject, form.emailBody),
-      userSelectionQuery = Some(developersEmailQuery)
+      userSelectionQuery = Some(developersEmailQuery),
+      composedBy = composedBy
     )
   }
 
-  def updateEmailRequest(composeEmailForm: ComposeEmailForm, developersEmailQuery: Option[DevelopersEmailQuery]) = {
+  def updateEmailRequest(composeEmailForm: ComposeEmailForm, developersEmailQuery: Option[DevelopersEmailQuery], composedBy: Actors.GatekeeperUser) = {
 
     EmailRequest(
       List(),
       templateId = "gatekeeper",
       EmailData(composeEmailForm.emailSubject, composeEmailForm.emailBody),
-      userSelectionQuery = developersEmailQuery
+      userSelectionQuery = developersEmailQuery,
+      composedBy = composedBy
     )
   }
 

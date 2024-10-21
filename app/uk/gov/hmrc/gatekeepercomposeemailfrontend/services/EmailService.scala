@@ -19,6 +19,7 @@ package uk.gov.hmrc.gatekeepercomposeemailfrontend.services
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
+import uk.gov.hmrc.apiplatform.modules.common.domain.models.Actors
 import uk.gov.hmrc.http.HeaderCarrier
 
 import uk.gov.hmrc.gatekeepercomposeemailfrontend.connectors.GatekeeperEmailConnector
@@ -27,8 +28,9 @@ import uk.gov.hmrc.gatekeepercomposeemailfrontend.models.{DevelopersEmailQuery, 
 
 class EmailService @Inject() (emailConnector: GatekeeperEmailConnector)(implicit val ec: ExecutionContext) {
 
-  def saveEmail(composeEmailForm: ComposeEmailForm, emailUUID: String, userSelectionQuery: DevelopersEmailQuery)(implicit hc: HeaderCarrier): Future[OutgoingEmail] = {
-    emailConnector.saveEmail(composeEmailForm, emailUUID, userSelectionQuery)
+  def saveEmail(composeEmailForm: ComposeEmailForm, emailUUID: String, userSelectionQuery: DevelopersEmailQuery, composedBy: Actors.GatekeeperUser)(implicit hc: HeaderCarrier)
+      : Future[OutgoingEmail] = {
+    emailConnector.saveEmail(composeEmailForm, emailUUID, userSelectionQuery, composedBy)
   }
 
   def fetchEmail(emailUUID: String)(implicit hc: HeaderCarrier): Future[OutgoingEmail] = {
@@ -42,10 +44,11 @@ class EmailService @Inject() (emailConnector: GatekeeperEmailConnector)(implicit
   def updateEmail(
       composeEmailForm: ComposeEmailForm,
       emailUUID: String,
-      userSelectionQuery: Option[DevelopersEmailQuery]
+      userSelectionQuery: Option[DevelopersEmailQuery],
+      composedBy: Actors.GatekeeperUser
     )(implicit hc: HeaderCarrier
     ): Future[OutgoingEmail] = {
-    emailConnector.updateEmail(composeEmailForm, emailUUID, userSelectionQuery)
+    emailConnector.updateEmail(composeEmailForm, emailUUID, userSelectionQuery, composedBy)
   }
 
 }
