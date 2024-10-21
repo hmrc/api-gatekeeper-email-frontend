@@ -26,6 +26,7 @@ import org.scalatest.wordspec.AnyWordSpec
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 
 import play.api.test.Helpers._
+import uk.gov.hmrc.apiplatform.modules.common.domain.models.Actors
 import uk.gov.hmrc.http.HeaderCarrier
 
 import uk.gov.hmrc.gatekeepercomposeemailfrontend.connectors.GatekeeperEmailConnector
@@ -42,13 +43,14 @@ class EmailServiceSpec extends AnyWordSpec with Matchers with GuiceOneAppPerSuit
     val su                 = List(RegisteredUser("sawd", "efef", "eff", true))
     val emailUUID          = "emailUUID"
     val userSelectionQuery = new DevelopersEmailQuery(None, None, None, false, None, false, None)
+    val user               = Actors.GatekeeperUser("Test user")
 
   }
 
   "saveEmail" should {
     "handle saving an email successfully" in new Setup {
-      when(mockEmailConnector.saveEmail(*, *, *)(*)).thenReturn(Future.successful(OutgoingEmail("", "", "", "", "", "", "", None, userSelectionQuery, 1)))
-      val result = await(underTest.saveEmail(new ComposeEmailForm("", ""), "", userSelectionQuery))
+      when(mockEmailConnector.saveEmail(*, *, *, *)(*)).thenReturn(Future.successful(OutgoingEmail("", "", "", "", "", "", "", None, userSelectionQuery, 1)))
+      val result = await(underTest.saveEmail(new ComposeEmailForm("", ""), "", userSelectionQuery, user))
       result shouldBe OutgoingEmail("", "", "", "", "", "", "", None, userSelectionQuery, 1)
     }
   }
@@ -71,8 +73,8 @@ class EmailServiceSpec extends AnyWordSpec with Matchers with GuiceOneAppPerSuit
 
   "updateEmail" should {
     "handle updating an email successfully" in new Setup {
-      when(mockEmailConnector.updateEmail(*, *, *)(*)).thenReturn(Future.successful(OutgoingEmail("", "", "", "", "", "", "", None, userSelectionQuery, 1)))
-      val result = await(underTest.updateEmail(new ComposeEmailForm("", ""), "", Some(userSelectionQuery)))
+      when(mockEmailConnector.updateEmail(*, *, *, *)(*)).thenReturn(Future.successful(OutgoingEmail("", "", "", "", "", "", "", None, userSelectionQuery, 1)))
+      val result = await(underTest.updateEmail(new ComposeEmailForm("", ""), "", Some(userSelectionQuery), user))
       result shouldBe OutgoingEmail("", "", "", "", "", "", "", None, userSelectionQuery, 1)
     }
   }

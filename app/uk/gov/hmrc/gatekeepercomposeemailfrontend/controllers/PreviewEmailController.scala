@@ -28,6 +28,7 @@ import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
+import uk.gov.hmrc.apiplatform.modules.common.domain.models.Actors
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import uk.gov.hmrc.gatekeepercomposeemailfrontend.config.AppConfig
@@ -73,7 +74,7 @@ class PreviewEmailController @Inject() (
 
         val userSelectionMap: Map[String, String] = Json.parse(userSelection).as[Map[String, String]]
         emailService.fetchEmail(emailUUID).flatMap { emailFetched =>
-          val outgoingEmail = emailService.updateEmail(form, emailUUID, Some(emailFetched.userSelectionQuery))
+          val outgoingEmail = emailService.updateEmail(form, emailUUID, Some(emailFetched.userSelectionQuery), Actors.GatekeeperUser(request.name.get))
           outgoingEmail.map { email =>
             logger.info(s"Fetched email status:${emailFetched.status}")
             Ok(previewEmail(

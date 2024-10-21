@@ -98,7 +98,7 @@ class PreviewEmailControllerSpec extends ControllerBaseSpec with Matchers with F
     when(mockEmailService.fetchEmail(*)(*))
       .thenReturn(successful(Json.parse(outgoingEmail).as[OutgoingEmail]))
 
-    when(mockGatekeeperEmailConnector.updateEmail(*, *, *)(*))
+    when(mockGatekeeperEmailConnector.updateEmail(*, *, *, *)(*))
       .thenReturn(successful(Json.parse(outgoingEmail).as[OutgoingEmail]))
 
     def fakeApplication(): Application =

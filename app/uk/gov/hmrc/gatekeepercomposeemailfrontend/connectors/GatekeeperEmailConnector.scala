@@ -20,6 +20,7 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 import play.api.libs.json.Json
+import uk.gov.hmrc.apiplatform.modules.common.domain.models.Actors
 import uk.gov.hmrc.http.HttpReads.Implicits._
 import uk.gov.hmrc.http.client.HttpClientV2
 import uk.gov.hmrc.http.{HeaderCarrier, HttpErrorFunctions, StringContextOps, UpstreamErrorResponse}
@@ -37,17 +38,19 @@ class GatekeeperEmailConnector @Inject() (http: HttpClientV2, config: EmailConne
 
   lazy val serviceUrl = config.emailBaseUrl
 
-  def saveEmail(composeEmailForm: ComposeEmailForm, emailUUID: String, userSelectionQuery: DevelopersEmailQuery)(implicit hc: HeaderCarrier): Future[OutgoingEmail] = {
-    postSaveEmail(createEmailRequest(composeEmailForm, userSelectionQuery), emailUUID)
+  def saveEmail(composeEmailForm: ComposeEmailForm, emailUUID: String, userSelectionQuery: DevelopersEmailQuery, composedBy: Actors.GatekeeperUser)(implicit hc: HeaderCarrier)
+      : Future[OutgoingEmail] = {
+    postSaveEmail(createEmailRequest(composeEmailForm, userSelectionQuery, composedBy), emailUUID)
   }
 
   def updateEmail(
       composeEmailForm: ComposeEmailForm,
       emailUUID: String,
-      userSelectionQuery: Option[DevelopersEmailQuery]
+      userSelectionQuery: Option[DevelopersEmailQuery],
+      composedBy: Actors.GatekeeperUser
     )(implicit hc: HeaderCarrier
     ): Future[OutgoingEmail] = {
-    postUpdateEmail(updateEmailRequest(composeEmailForm, userSelectionQuery), emailUUID)
+    postUpdateEmail(updateEmailRequest(composeEmailForm, userSelectionQuery, composedBy), emailUUID)
   }
 
   def fetchEmail(emailUUID: String)(implicit hc: HeaderCarrier): Future[OutgoingEmail] = {

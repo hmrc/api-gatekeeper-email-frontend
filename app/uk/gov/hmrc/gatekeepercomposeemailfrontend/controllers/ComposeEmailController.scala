@@ -26,6 +26,7 @@ import views.html._
 import play.api.Logging
 import play.api.libs.json.{JsError, JsSuccess, Json}
 import play.api.mvc._
+import uk.gov.hmrc.apiplatform.modules.common.domain.models.Actors
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import uk.gov.hmrc.gatekeepercomposeemailfrontend.config.AppConfig
@@ -49,10 +50,10 @@ class ComposeEmailController @Inject() (
   ) extends FrontendController(mcc) with GatekeeperAuthWrapper with Logging {
 
   def initialiseEmail: Action[AnyContent] = requiresAtLeast(GatekeeperRole.USER) { implicit request =>
-    def persistEmailDetails(userSelectionQuery: DevelopersEmailQuery, userSelection: String): Future[Result] = {
+    def persistEmailDetails(userSelectionQuery: DevelopersEmailQuery, userSelection: String, composedBy: Actors.GatekeeperUser): Future[Result] = {
       val emailUUID = UUID.randomUUID().toString
       for {
-        email <- emailService.saveEmail(ComposeEmailForm("", ""), emailUUID, userSelectionQuery)
+        email <- emailService.saveEmail(ComposeEmailForm("", ""), emailUUID, userSelectionQuery, composedBy)
       } yield Ok(composeEmail(
         email.emailUUID,
         uk.gov.hmrc.gatekeepercomposeemailfrontend.controllers.ComposeEmailForm.form.fill(ComposeEmailForm("", "")),
@@ -70,7 +71,7 @@ class ComposeEmailController @Inject() (
                   try {
                     Json.parse(userSelectionQuery.head).validate[DevelopersEmailQuery] match {
                       case JsSuccess(value: DevelopersEmailQuery, _) =>
-                        persistEmailDetails(value, Json.toJson(userSelection).toString())
+                        persistEmailDetails(value, Json.toJson(userSelection).toString(), Actors.GatekeeperUser(request.name.get))
                       case JsError(errors)                           => Future.successful(BadRequest(JsErrorResponse(
                           ErrorCode.INVALID_REQUEST_PAYLOAD,
                           s"""Request payload does not contain gatekeeper user selected query data: ${errors.mkString(", ")}"""
