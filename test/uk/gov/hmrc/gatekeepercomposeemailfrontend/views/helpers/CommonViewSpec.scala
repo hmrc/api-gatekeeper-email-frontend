@@ -55,10 +55,14 @@ import uk.gov.hmrc.gatekeepercomposeemailfrontend.utils.WithCSRFAddToken
 
 trait CommonViewSpec extends AsyncHmrcSpec with GuiceOneAppPerSuite {
 
+  val mcc         = app.injector.instanceOf[MessagesControllerComponents]
+  val messagesApi = mcc.messagesApi
+
   implicit val fakeRequest: Request[AnyContentAsEmpty.type] = FakeRequest().withCSRFToken
 
-  implicit val userName: LoggedInUser = LoggedInUser(Some("gate.keeper"))
-  implicit val messages: Messages     = app.injector.instanceOf[MessagesControllerComponents].messagesApi.preferred(fakeRequest)
+  implicit val userName: LoggedInUser             = LoggedInUser(Some("gate.keeper"))
+  implicit val messagesProvider: MessagesProvider = MessagesImpl(Lang(Locale.ENGLISH), messagesApi)
+  implicit val messages: Messages                 = messagesApi.preferred(fakeRequest)
 
   implicit val appConfig: AppConfig = mock[AppConfig]
 
