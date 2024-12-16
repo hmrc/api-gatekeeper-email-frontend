@@ -15,7 +15,7 @@
  */
 
 // $COVERAGE-OFF$
-package uk.gov.hmrc.gatekeepercomposeemailfrontend.controllers
+package uk.gov.hmrc.gatekeepercomposeemailfrontend.controllers.testonly
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
