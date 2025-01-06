@@ -1,5 +1,4 @@
 import com.typesafe.sbt.digest.Import.*
-import com.typesafe.sbt.uglify.Import.*
 import com.typesafe.sbt.web.Import.*
 import net.ground5hark.sbt.concat.Import.*
 import uk.gov.hmrc.DefaultBuildSettings
@@ -24,15 +23,9 @@ lazy val microservice = Project(appName, file("."))
         (baseDirectory.value / "app" / "assets" / "javascripts") ** "*.js"
       )
     ),
-    uglifyCompressOptions := Seq(
-      "unused=false",
-      "dead_code=true"
-    ),
-    uglify / includeFilter := GlobFilter("apis-*.js"),
     pipelineStages := Seq(digest),
     Assets / pipelineStages := Seq(
-      concat,
-      uglify
+      concat
     )
   )
   .settings(
