@@ -5,9 +5,8 @@ object AppDependencies {
   lazy val bootstrapPlayVersion = "9.11.0"
   lazy val jsoupVersion         = "1.13.1"
   lazy val scalaCheckVersion    = "1.14.0"
-  lazy val seleniumVersion      = "4.8.3"
   lazy val apiDomainVersion     = "0.19.1"
-  lazy val hmrcFrontendVersion  = "10.13.0"
+  lazy val hmrcFrontendVersion  = "11.11.0"
 
   def apply(): Seq[ModuleID] = compile ++ test
 
