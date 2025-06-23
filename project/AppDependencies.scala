@@ -2,7 +2,7 @@ import sbt._
 
 object AppDependencies {
 
-  lazy val bootstrapPlayVersion = "9.11.0"
+  lazy val bootstrapPlayVersion = "9.13.0"
   lazy val jsoupVersion         = "1.13.1"
   lazy val scalaCheckVersion    = "1.14.0"
   lazy val apiDomainVersion     = "0.19.1"
@@ -19,7 +19,7 @@ object AppDependencies {
   lazy val test: Seq[ModuleID] = Seq(
     "uk.gov.hmrc"    %% "bootstrap-test-play-30"  % bootstrapPlayVersion,
     "org.jsoup"       % "jsoup"                   % jsoupVersion,
-    "uk.gov.hmrc"    %% "ui-test-runner"          % "0.45.0",
+    "uk.gov.hmrc"    %% "ui-test-runner"          % "0.46.0",
     "org.mockito"    %% "mockito-scala-scalatest" % "1.17.30",
     "org.scalacheck" %% "scalacheck"              % scalaCheckVersion
   ).map(_ % "test")
