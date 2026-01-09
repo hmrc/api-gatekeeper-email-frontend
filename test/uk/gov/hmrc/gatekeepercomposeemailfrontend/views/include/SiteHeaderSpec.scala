@@ -21,6 +21,7 @@ import scala.jdk.CollectionConverters._
 import org.jsoup.Jsoup
 import views.html.include.SiteHeader
 
+import play.api.mvc.RequestHeader
 import play.api.test.FakeRequest
 
 import uk.gov.hmrc.gatekeepercomposeemailfrontend.config.AppConfig
@@ -53,7 +54,7 @@ class SiteHeaderSpec extends CommonViewSpec {
   "SiteHeader" should {
 
     "render correctly" in new Setup {
-      val component  = siteHeader.render(messagesProvider.messages)
+      val component  = siteHeader.render(messagesProvider.messages, fakeRequest)
       val document   = Jsoup.parse(component.body)
       val navigation = document.getElementById("navigation")
 

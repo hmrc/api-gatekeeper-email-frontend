@@ -15,36 +15,37 @@
  *@
 
 @import uk.gov.hmrc.gatekeepercomposeemailfrontend.config.AppConfig
-@import uk.gov.hmrc.hmrcfrontend.views.html.components.HmrcHeader
+@import uk.gov.hmrc.hmrcfrontend.views.html.helpers.HmrcStandardHeader
 @import uk.gov.hmrc.hmrcfrontend.views.html.components.Header
 @import uk.gov.hmrc.hmrcfrontend.views.viewmodels.language.En
+@import uk.gov.hmrc.govukfrontend.views.viewmodels.servicenavigation.ServiceNavigationItem
+@import uk.gov.hmrc.govukfrontend.views.viewmodels.servicenavigation.ServiceNavigation
 
 @import uk.gov.hmrc.hmrcfrontend.views.viewmodels.header.NavigationItem
 @import uk.gov.hmrc.govukfrontend.views.Aliases.Text
 
-@this(hmrcHeader: HmrcHeader, appConfig: AppConfig)
-@()(implicit messages: Messages)
+@this(hmrcStandardHeader: HmrcStandardHeader, appConfig: AppConfig)
+@()(implicit messages: Messages, requestHeader: RequestHeader)
 
 @navigation = @{
     Seq(
-        NavigationItem(content = Text("APIs"), href = Some(appConfig.apiGatekeeperApisFrontendUrl)),
-        NavigationItem(content = Text("Applications"), href = Some(s"${appConfig.apiGatekeeperFrontendUrl}/applications")),
-        NavigationItem(content = Text("Developers"), href = Some(s"${appConfig.apiGatekeeperFrontendUrl}/developers")),
-        NavigationItem(content = Text("Terms of use"), href = Some(s"${appConfig.apiGatekeeperFrontendUrl}/terms-of-use")),
-        NavigationItem(content = Text("Email"), href = Some(s"${appConfig.apiGatekeeperFrontendUrl}/emails")),
-        NavigationItem(content = Text("API Approvals"), href = Some(s"${appConfig.apiGatekeeperFrontendUrl}/pending")),
-        NavigationItem(content = Text("XML"), href = Some(s"${appConfig.apiGatekeeperFrontendUrl}/xml-organisations"))
+        ServiceNavigationItem(content = Text("APIs"), href = appConfig.apiGatekeeperApisFrontendUrl),
+        ServiceNavigationItem(content = Text("Applications"), href = s"${appConfig.apiGatekeeperFrontendUrl}/applications"),
+        ServiceNavigationItem(content = Text("Developers"), href = s"${appConfig.apiGatekeeperFrontendUrl}/developers"),
+        ServiceNavigationItem(content = Text("Terms of use"), href = s"${appConfig.apiGatekeeperFrontendUrl}/terms-of-use"),
+        ServiceNavigationItem(content = Text("Email"), href = s"${appConfig.apiGatekeeperFrontendUrl}/emails"),
+        ServiceNavigationItem(content = Text("API Approvals"), href = s"${appConfig.apiGatekeeperFrontendUrl}/pending"),
+        ServiceNavigationItem(content = Text("XML"), href = s"${appConfig.apiGatekeeperFrontendUrl}/xml-organisations")
     )
 }
 
-@hmrcHeader(Header(
-    homepageUrl ="https://www.gov.uk",
+@hmrcStandardHeader(
     serviceName = Some(messages("service.name")),
-    navigation = Some(navigation),
-    serviceUrl = "",
+    serviceNavigation = Some(ServiceNavigation(
+        serviceName = Some(messages("service.name")),
+        navigation = navigation
+    )),
     displayHmrcBanner = false,
     containerClasses = "govuk-width-container",
-    signOutHref = None,
-    language = En
-))
+)
   
