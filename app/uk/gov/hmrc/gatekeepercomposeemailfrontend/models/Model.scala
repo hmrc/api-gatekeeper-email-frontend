@@ -21,7 +21,7 @@ import uk.gov.hmrc.http.SessionKeys
 //TODO make sealed trait
 object GatekeeperRole extends Enumeration {
   type GatekeeperRole = Value
-  val USER, SUPERUSER, ADMIN = Value
+  val USER, SUPERUSER, ADVANCEDUSER, ADMIN = Value
 }
 
 object GatekeeperSessionKeys {

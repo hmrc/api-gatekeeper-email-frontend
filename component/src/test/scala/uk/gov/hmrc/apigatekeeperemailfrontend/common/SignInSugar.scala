@@ -33,16 +33,23 @@ trait SignInSugar {
       |{
       |  "authorise": [
       |    {
-      |      "$or": [
+      |      "$or": [ {
+      |        "$or": [
+      |         {
+      |           "identifiers": [],
+      |           "state": "Activated",
+      |           "enrolment": "admin-role"
+      |         },
+      |         {
+      |           "identifiers": [],
+      |           "state": "Activated",
+      |           "enrolment": "super-user-role"
+      |         }
+      |       ] },
       |        {
       |          "identifiers": [],
       |          "state": "Activated",
-      |          "enrolment": "admin-role"
-      |        },
-      |        {
-      |          "identifiers": [],
-      |          "state": "Activated",
-      |          "enrolment": "super-user-role"
+      |          "enrolment": "advanced-user-role"
       |        },
       |        {
       |          "identifiers": [],
