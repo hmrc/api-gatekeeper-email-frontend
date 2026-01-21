@@ -39,6 +39,8 @@ class AppConfig @Inject() (config: Configuration, servicesConfig: ServicesConfig
 
   def superUserRole: String = getString("roles.super-user")
 
+  def advancedUserRole: String = getString("roles.advanced-user")
+
   def userRole: String = getString("roles.user")
 
   lazy val apiGatekeeperFrontendUrl: String     = config.get[String]("urls.apiGatekeeperFrontendUrl")

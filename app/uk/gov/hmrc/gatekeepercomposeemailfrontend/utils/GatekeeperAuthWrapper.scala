@@ -67,14 +67,16 @@ trait GatekeeperAuthWrapper extends I18nSupport {
   // $COVERAGE-OFF$
   def authPredicate(minimumRoleRequired: GatekeeperRole)(implicit appConfig: AppConfig): Predicate = {
 
-    val adminEnrolment     = Enrolment(appConfig.adminRole)
-    val superUserEnrolment = Enrolment(appConfig.superUserRole)
-    val userEnrolment      = Enrolment(appConfig.userRole)
+    val adminEnrolment        = Enrolment(appConfig.adminRole)
+    val superUserEnrolment    = Enrolment(appConfig.superUserRole)
+    val advancedUserEnrolment = Enrolment(appConfig.advancedUserRole)
+    val userEnrolment         = Enrolment(appConfig.userRole)
 
     minimumRoleRequired match {
-      case GatekeeperRole.ADMIN     => adminEnrolment
-      case GatekeeperRole.SUPERUSER => adminEnrolment or superUserEnrolment
-      case GatekeeperRole.USER      => adminEnrolment or superUserEnrolment or userEnrolment
+      case GatekeeperRole.ADMIN        => adminEnrolment
+      case GatekeeperRole.SUPERUSER    => adminEnrolment or superUserEnrolment
+      case GatekeeperRole.ADVANCEDUSER => adminEnrolment or superUserEnrolment or advancedUserEnrolment
+      case GatekeeperRole.USER         => adminEnrolment or superUserEnrolment or advancedUserEnrolment or userEnrolment
     }
   }
 
