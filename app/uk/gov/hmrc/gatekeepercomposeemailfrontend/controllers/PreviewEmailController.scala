@@ -33,7 +33,7 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import uk.gov.hmrc.gatekeepercomposeemailfrontend.config.AppConfig
 import uk.gov.hmrc.gatekeepercomposeemailfrontend.connectors.{AuthConnector, GatekeeperEmailConnector}
-import uk.gov.hmrc.gatekeepercomposeemailfrontend.models.{GatekeeperRole, OutgoingEmail, TestEmailRequest}
+import uk.gov.hmrc.gatekeepercomposeemailfrontend.models._
 import uk.gov.hmrc.gatekeepercomposeemailfrontend.services.EmailService
 import uk.gov.hmrc.gatekeepercomposeemailfrontend.utils.GatekeeperAuthWrapper
 
@@ -50,7 +50,7 @@ class PreviewEmailController @Inject() (
     val ec: ExecutionContext
   ) extends FrontendController(mcc) with GatekeeperAuthWrapper with I18nSupport with Logging {
 
-  def previewEmail(emailUUID: String, userSelection: String, previewSent: Boolean = false): Action[AnyContent] = requiresAtLeast(GatekeeperRole.USER) {
+  def previewEmail(emailUUID: String, userSelection: String, previewSent: Boolean = false): Action[AnyContent] = requiresAtLeast(GatekeeperRoles.USER) {
     implicit request =>
       val userSelectionMap: Map[String, String]                       = Json.parse(userSelection).as[Map[String, String]]
       def getFilledForm(email: OutgoingEmail): Form[PreviewEmailForm] = uk.gov.hmrc.gatekeepercomposeemailfrontend.controllers.PreviewEmailForm.form.fill(PreviewEmailForm(
@@ -68,7 +68,7 @@ class PreviewEmailController @Inject() (
       }
   }
 
-  def previewEmailAction(emailUUID: String, userSelection: String): Action[AnyContent] = requiresAtLeast(GatekeeperRole.USER) {
+  def previewEmailAction(emailUUID: String, userSelection: String): Action[AnyContent] = requiresAtLeast(GatekeeperRoles.USER) {
     implicit request =>
       def handleValidForm(form: ComposeEmailForm) = {
 
@@ -99,7 +99,7 @@ class PreviewEmailController @Inject() (
       ComposeEmailForm.form.bindFromRequest().fold(handleInvalidForm, handleValidForm)
   }
 
-  def sendEmail(emailUUID: String, userSelection: String): Action[AnyContent] = requiresAtLeast(GatekeeperRole.USER) {
+  def sendEmail(emailUUID: String, userSelection: String): Action[AnyContent] = requiresAtLeast(GatekeeperRoles.USER) {
     implicit request =>
       for {
         fetchEmail    <- emailService.fetchEmail(emailUUID)
@@ -109,7 +109,7 @@ class PreviewEmailController @Inject() (
       } yield Redirect(uk.gov.hmrc.gatekeepercomposeemailfrontend.controllers.routes.ComposeEmailController.sentEmailConfirmation(userSelection, emailsCount))
   }
 
-  def sendTestEmail(emailUUID: String, userSelection: String): Action[AnyContent] = requiresAtLeast(GatekeeperRole.USER) {
+  def sendTestEmail(emailUUID: String, userSelection: String): Action[AnyContent] = requiresAtLeast(GatekeeperRoles.USER) {
     implicit request =>
       {
         emailConnector.sendTestEmail(emailUUID, TestEmailRequest(request.email.get)).map(_ =>
@@ -118,7 +118,7 @@ class PreviewEmailController @Inject() (
       }
   }
 
-  def editEmail(emailUUID: String, userSelection: String): Action[AnyContent] = requiresAtLeast(GatekeeperRole.USER) {
+  def editEmail(emailUUID: String, userSelection: String): Action[AnyContent] = requiresAtLeast(GatekeeperRoles.USER) {
     implicit request =>
       {
         val userSelectionMap: Map[String, String] = Json.parse(userSelection).as[Map[String, String]]
