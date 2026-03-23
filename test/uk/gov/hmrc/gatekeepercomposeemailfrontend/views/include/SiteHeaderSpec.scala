@@ -38,13 +38,11 @@ class SiteHeaderSpec extends CommonViewSpec {
     val apiGatekeeperApisUrl = "http://localhost:9682/api-gatekeeper-apis"
 
     val expectedMenuItems = Map(
-      "APIs"          -> apiGatekeeperApisUrl,
-      "Applications"  -> s"$apiGatekeeperUrl/applications",
-      "Developers"    -> s"$apiGatekeeperUrl/developers",
-      "Terms of use"  -> s"$apiGatekeeperUrl/terms-of-use",
-      "Email"         -> s"$apiGatekeeperUrl/emails",
-      "API Approvals" -> s"$apiGatekeeperUrl/pending",
-      "XML"           -> s"$apiGatekeeperUrl/xml-organisations"
+      "APIs"         -> apiGatekeeperApisUrl,
+      "Applications" -> s"$apiGatekeeperUrl/applications",
+      "Developers"   -> s"$apiGatekeeperUrl/developers",
+      "XML vendors"  -> s"$apiGatekeeperUrl/xml-organisations",
+      "Email"        -> s"$apiGatekeeperUrl/emails"
     )
 
     when(mockAppConfig.apiGatekeeperFrontendUrl).thenReturn(apiGatekeeperUrl)
