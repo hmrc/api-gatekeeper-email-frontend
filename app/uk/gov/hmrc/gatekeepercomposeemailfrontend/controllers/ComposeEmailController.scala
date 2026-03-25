@@ -49,7 +49,7 @@ class ComposeEmailController @Inject() (
     val ec: ExecutionContext
   ) extends FrontendController(mcc) with GatekeeperAuthWrapper with Logging {
 
-  def initialiseEmail: Action[AnyContent] = requiresAtLeast(GatekeeperRole.USER) { implicit request =>
+  def initialiseEmail: Action[AnyContent] = requiresAtLeast(GatekeeperRoles.USER) { implicit request =>
     def persistEmailDetails(userSelectionQuery: DevelopersEmailQuery, userSelection: String, composedBy: Actors.GatekeeperUser): Future[Result] = {
       val emailUUID = UUID.randomUUID().toString
       for {
@@ -93,7 +93,7 @@ class ComposeEmailController @Inject() (
     }
   }
 
-  def sentEmailConfirmation(userSelection: String, users: Int): Action[AnyContent] = requiresAtLeast(GatekeeperRole.USER) {
+  def sentEmailConfirmation(userSelection: String, users: Int): Action[AnyContent] = requiresAtLeast(GatekeeperRoles.USER) {
     implicit request =>
       {
         val userSelectionMap: Map[String, String] = Json.parse(userSelection).as[Map[String, String]]
@@ -101,12 +101,12 @@ class ComposeEmailController @Inject() (
       }
   }
 
-  def deleteOption(emailUUID: String, userSelection: String): Action[AnyContent] = requiresAtLeast(GatekeeperRole.USER) {
+  def deleteOption(emailUUID: String, userSelection: String): Action[AnyContent] = requiresAtLeast(GatekeeperRoles.USER) {
     implicit request =>
       Future.successful(Ok(deleteEmail(DeleteEmailOptionForm.form, emailUUID, userSelection)))
   }
 
-  def delete(emailUUID: String, userSelection: String): Action[AnyContent] = requiresAtLeast(GatekeeperRole.USER) {
+  def delete(emailUUID: String, userSelection: String): Action[AnyContent] = requiresAtLeast(GatekeeperRoles.USER) {
     implicit request =>
       DeleteEmailOptionForm.form.bindFromRequest().fold(
         formWithErrors => {
