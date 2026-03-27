@@ -29,7 +29,6 @@ import uk.gov.hmrc.auth.core.retrieve.~
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 
 import uk.gov.hmrc.gatekeepercomposeemailfrontend.config.AppConfig
-import uk.gov.hmrc.gatekeepercomposeemailfrontend.models.GatekeeperRole.GatekeeperRole
 import uk.gov.hmrc.gatekeepercomposeemailfrontend.models._
 
 trait GatekeeperAuthWrapper extends I18nSupport {
@@ -39,7 +38,7 @@ trait GatekeeperAuthWrapper extends I18nSupport {
 
   implicit def loggedIn(implicit request: LoggedInRequest[_]): LoggedInUser = LoggedInUser(request.name)
 
-  def requiresAtLeast(minimumRoleRequired: GatekeeperRole)(body: LoggedInRequest[_] => Future[Result])(implicit ec: ExecutionContext, appConfig: AppConfig): Action[AnyContent] =
+  def requiresAtLeast(minimumRoleRequired: GatekeeperStrideRole)(body: LoggedInRequest[_] => Future[Result])(implicit ec: ExecutionContext, appConfig: AppConfig): Action[AnyContent] =
     Action.async {
       implicit request: Request[AnyContent] =>
         val predicate = authPredicate(minimumRoleRequired)
@@ -65,7 +64,7 @@ trait GatekeeperAuthWrapper extends I18nSupport {
   }
 
   // $COVERAGE-OFF$
-  def authPredicate(minimumRoleRequired: GatekeeperRole)(implicit appConfig: AppConfig): Predicate = {
+  def authPredicate(minimumRoleRequired: GatekeeperStrideRole)(implicit appConfig: AppConfig): Predicate = {
 
     val adminEnrolment        = Enrolment(appConfig.adminRole)
     val superUserEnrolment    = Enrolment(appConfig.superUserRole)
@@ -73,10 +72,10 @@ trait GatekeeperAuthWrapper extends I18nSupport {
     val userEnrolment         = Enrolment(appConfig.userRole)
 
     minimumRoleRequired match {
-      case GatekeeperRole.ADMIN        => adminEnrolment
-      case GatekeeperRole.SUPERUSER    => adminEnrolment or superUserEnrolment
-      case GatekeeperRole.ADVANCEDUSER => adminEnrolment or superUserEnrolment or advancedUserEnrolment
-      case GatekeeperRole.USER         => adminEnrolment or superUserEnrolment or advancedUserEnrolment or userEnrolment
+      case GatekeeperRoles.ADMIN        => adminEnrolment
+      case GatekeeperRoles.SUPERUSER    => adminEnrolment or superUserEnrolment
+      case GatekeeperRoles.ADVANCEDUSER => adminEnrolment or superUserEnrolment or advancedUserEnrolment
+      case GatekeeperRoles.USER         => adminEnrolment or superUserEnrolment or advancedUserEnrolment or userEnrolment
     }
   }
 

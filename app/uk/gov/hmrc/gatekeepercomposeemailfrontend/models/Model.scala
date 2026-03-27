@@ -18,10 +18,54 @@ package uk.gov.hmrc.gatekeepercomposeemailfrontend.models
 
 import uk.gov.hmrc.http.SessionKeys
 
-//TODO make sealed trait
-object GatekeeperRole extends Enumeration {
-  type GatekeeperRole = Value
-  val USER, SUPERUSER, ADVANCEDUSER, ADMIN = Value
+sealed trait GatekeeperRole {
+  def isAdmin: Boolean
+  def isSuperUser: Boolean
+  def isAdvancedUser: Boolean
+  def isUser: Boolean
+}
+
+sealed trait GatekeeperStrideRole extends GatekeeperRole
+
+object GatekeeperRoles {
+
+  /*
+   * Not used by email frontend but retaining for reference
+   */
+  // case object READ_ONLY extends GatekeeperRole {
+  //   val isAdmin: Boolean        = false
+  //   val isSuperUser: Boolean    = false
+  //   val isAdvancedUser: Boolean = false
+  //   val isUser: Boolean         = false
+  // }
+
+  case object USER extends GatekeeperStrideRole {
+    val isAdmin: Boolean        = false
+    val isSuperUser: Boolean    = false
+    val isAdvancedUser: Boolean = false
+    val isUser: Boolean         = true
+  }
+
+  case object ADVANCEDUSER extends GatekeeperStrideRole {
+    val isAdmin: Boolean        = false
+    val isSuperUser: Boolean    = false
+    val isAdvancedUser: Boolean = true
+    val isUser: Boolean         = true
+  }
+
+  case object SUPERUSER extends GatekeeperStrideRole {
+    val isAdmin: Boolean        = false
+    val isSuperUser: Boolean    = true
+    val isAdvancedUser: Boolean = true
+    val isUser: Boolean         = true
+  }
+
+  case object ADMIN extends GatekeeperStrideRole {
+    val isAdmin: Boolean        = true
+    val isSuperUser: Boolean    = true
+    val isAdvancedUser: Boolean = true
+    val isUser: Boolean         = true
+  }
 }
 
 object GatekeeperSessionKeys {

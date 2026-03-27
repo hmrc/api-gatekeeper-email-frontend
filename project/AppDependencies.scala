@@ -3,10 +3,11 @@ import sbt._
 object AppDependencies {
 
   lazy val bootstrapPlayVersion = "10.7.0"
-  lazy val jsoupVersion         = "1.13.1"
+  lazy val jsoupVersion         = "1.21.1"
   lazy val scalaCheckVersion    = "1.14.0"
-  lazy val apiDomainVersion     = "0.20.0"
-  lazy val hmrcFrontendVersion  = "12.25.0"
+  lazy val apiDomainVersion     = "1.0.0"
+  lazy val hmrcFrontendVersion  = "12.32.0"
+  lazy val mockitoScalaVersion  = "2.0.0"
 
   def apply(): Seq[ModuleID] = compile ++ test
 
@@ -20,8 +21,7 @@ object AppDependencies {
     "uk.gov.hmrc"    %% "bootstrap-test-play-30"  % bootstrapPlayVersion,
     "org.jsoup"       % "jsoup"                   % jsoupVersion,
     "uk.gov.hmrc"    %% "ui-test-runner"          % "0.46.0",
-    "org.mockito"    %% "mockito-scala-scalatest" % "1.17.30",
+    "org.mockito"    %% "mockito-scala-scalatest" % mockitoScalaVersion,
     "org.scalacheck" %% "scalacheck"              % scalaCheckVersion
   ).map(_ % "test")
-
 }

@@ -29,7 +29,7 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import uk.gov.hmrc.gatekeepercomposeemailfrontend.config.AppConfig
 import uk.gov.hmrc.gatekeepercomposeemailfrontend.connectors.AuthConnector
-import uk.gov.hmrc.gatekeepercomposeemailfrontend.models.GatekeeperRole
+import uk.gov.hmrc.gatekeepercomposeemailfrontend.models._
 import uk.gov.hmrc.gatekeepercomposeemailfrontend.utils.GatekeeperAuthWrapper
 
 @Singleton
@@ -42,7 +42,7 @@ class TestOnlyController @Inject() (
     val ec: ExecutionContext
   ) extends FrontendController(mcc) with GatekeeperAuthWrapper with Logging {
 
-  def displaydummypage(): Action[AnyContent] = requiresAtLeast(GatekeeperRole.USER) { implicit request =>
+  def displaydummypage(): Action[AnyContent] = requiresAtLeast(GatekeeperRoles.USER) { implicit request =>
     Future.successful(Ok(gkfeDummyForm()))
   }
 
