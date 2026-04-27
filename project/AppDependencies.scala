@@ -20,7 +20,7 @@ object AppDependencies {
   lazy val test: Seq[ModuleID] = Seq(
     "uk.gov.hmrc"    %% "bootstrap-test-play-30"  % bootstrapPlayVersion,
     "org.jsoup"       % "jsoup"                   % jsoupVersion,
-    "uk.gov.hmrc"    %% "ui-test-runner"          % "0.46.0",
+    "uk.gov.hmrc"    %% "ui-test-runner"          % "0.54.0",
     "org.mockito"    %% "mockito-scala-scalatest" % mockitoScalaVersion,
     "org.scalacheck" %% "scalacheck"              % scalaCheckVersion
   ).map(_ % "test")
