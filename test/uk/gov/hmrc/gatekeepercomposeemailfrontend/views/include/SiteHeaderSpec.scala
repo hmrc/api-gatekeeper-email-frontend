@@ -34,19 +34,22 @@ class SiteHeaderSpec extends CommonViewSpec {
     val mockAppConfig = mock[AppConfig]
     val siteHeader    = app.injector.instanceOf[SiteHeader]
 
-    val apiGatekeeperUrl     = "http://localhost:9684/api-gatekeeper"
-    val apiGatekeeperApisUrl = "http://localhost:9682/api-gatekeeper-apis"
+    val apiGatekeeperUrl             = "http://localhost:9684/api-gatekeeper"
+    val apiGatekeeperApisUrl         = "http://localhost:9682/api-gatekeeper-apis"
+    val apiGatekeeperOrganisationUrl = "http://localhost:15505/api-gatekeeper-organisation"
 
     val expectedMenuItems = Map(
-      "APIs"         -> apiGatekeeperApisUrl,
-      "Applications" -> s"$apiGatekeeperUrl/applications",
-      "Developers"   -> s"$apiGatekeeperUrl/developers",
-      "XML vendors"  -> s"$apiGatekeeperUrl/xml-organisations",
-      "Email"        -> s"$apiGatekeeperUrl/emails"
+      "APIs"          -> apiGatekeeperApisUrl,
+      "Applications"  -> s"$apiGatekeeperUrl/applications",
+      "Developers"    -> s"$apiGatekeeperUrl/developers",
+      "XML vendors"   -> s"$apiGatekeeperUrl/xml-organisations",
+      "Email"         -> s"$apiGatekeeperUrl/emails",
+      "Organisations" -> s"$apiGatekeeperOrganisationUrl/organisations"
     )
 
     when(mockAppConfig.apiGatekeeperFrontendUrl).thenReturn(apiGatekeeperUrl)
     when(mockAppConfig.apiGatekeeperApisFrontendUrl).thenReturn(apiGatekeeperApisUrl)
+    when(mockAppConfig.apiGatekeeperOrganisationFrontendUrl).thenReturn(apiGatekeeperOrganisationUrl)
   }
 
   "SiteHeader" should {
