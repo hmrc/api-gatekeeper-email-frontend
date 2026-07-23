@@ -24,7 +24,7 @@
 @import uk.gov.hmrc.govukfrontend.views.viewmodels.notificationbanner.NotificationBanner
 @import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
 
-@this(layout: Layout, appConfig: AppConfig, govukNotificationBanner: GovukNotificationBanner, errorSummary: components.errorSummary)
+@this(layout: Layout, appConfig: AppConfig, govukNotificationBanner: GovukNotificationBanner, errorSummary: components.errorSummary, govukButton: GovukButton)
 
 @(emailPreview: String, form: Form[PreviewEmailForm], userSelection: Map[String, String], status: String = "", previewSent: Boolean)(implicit request: LoggedInRequest[_], messages: Messages)
 @html = {
@@ -53,9 +53,13 @@
                 <input type="hidden" name="composeEmailForm.emailSubject" value="@form.data.getOrElse("composeEmailForm.emailSubject", "")" />
                 <input type="hidden" name="composeEmailForm.emailBody" value="@form.data.getOrElse("composeEmailForm.emailBody", "")" />
                 @if(status != "SENT") {
-                    <button draggable="false"
-                    class="govuk-button govuk-button--secondary@if(!requestHasEmail()){ govuk-!-width-full}"
-                    data-module="govuk-button" id="edit-email-button">Edit email</button>
+                    @govukButton(Button(
+                        id = Some("edit-email-button"),
+                        content = Text("Edit email"),
+                        inputType = Some("submit"),
+                        classes = "govuk-button--secondary" + (if (!requestHasEmail()) " govuk-!-width-full" else ""),
+                        preventDoubleClick = Some(true)
+                    ))
                 }
             }
     @if(!requestHasEmail()) {
@@ -73,9 +77,13 @@
           @if(status != "SENT") {
               <div class="@if(!requestHasEmail()){govuk-grid-column-one-half }govuk-!-padding-left-0">
                   @if(!requestHasEmail()){<div class="govuk-button-group">}
-                  <button class="govuk-button@if(requestHasEmail()){ govuk-!-width-two-thirds}" data-module="govuk-button" value="send" id="send-email-button">
-                      Send email
-                  </button>
+                  @govukButton(Button(
+                      id = Some("send-email-button"),
+                      content = Text("Send email"),
+                      inputType = Some("submit"),
+                      classes = if (requestHasEmail()) "govuk-!-width-two-thirds" else "",
+                      preventDoubleClick = Some(true)
+                  ))
                   @if(!requestHasEmail()){</div>}
               </div>
           }
@@ -88,10 +96,13 @@
           <div class="govuk-button-group">
               @helper.form(action = controllers.routes.ComposeEmailController.deleteOption(form.data.getOrElse("emailUUID", ""), Json.toJson(userSelection).toString())) {
                   @helper.CSRF.formField
-                  <button draggable="false"
-                  class="govuk-button   govuk-button--secondary" data-module="govuk-button" id="delete-email-button">
-                      Delete email
-                  </button>
+                  @govukButton(Button(
+                      id = Some("delete-email-button"),
+                      content = Text("Delete email"),
+                      inputType = Some("submit"),
+                      classes = "govuk-button--secondary",
+                      preventDoubleClick = Some(true)
+                  ))
               }
           </div>
       </div>
@@ -119,11 +130,13 @@
                         <input type="hidden" name="emailId" value="@form.data.getOrElse("emailUUID", "")" />
                         <input type="hidden" name="composeEmailForm.emailSubject" value="@form.data.getOrElse("composeEmailForm.emailSubject", "")" />
                         <input type="hidden" name="composeEmailForm.emailBody" value="@form.data.getOrElse("composeEmailForm.emailBody", "")" />
-                        <button draggable="false"
-                        class="govuk-button govuk-button--secondary"
-                        data-module="govuk-button" id="send-test-email-button">
-                            Send test email
-                        </button>
+                        @govukButton(Button(
+                            id = Some("send-test-email-button"),
+                            content = Text("Send test email"),
+                            inputType = Some("submit"),
+                            classes = "govuk-button--secondary",
+                            preventDoubleClick = Some(true)
+                        ))
 
                     }
 

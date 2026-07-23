@@ -21,7 +21,7 @@
 @import play.api.libs.json._
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 
-@this(layout: Layout, errorSummary: components.errorSummary)
+@this(layout: Layout, errorSummary: components.errorSummary, govukButton: GovukButton)
 
 @(emailUUID: String, form: Form[ComposeEmailForm], userSelection: Map[String, String])(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
 
@@ -64,19 +64,25 @@
     </div>
 
     <div class="govuk-button-group" style="float: left; margin-top: 0; margin-left: 0;">
-      <button class="govuk-button" data-module="govuk-button" type="submit" id="preview-button">
-        Preview email
-      </button>
+      @govukButton(Button(
+        id = Some("preview-button"),
+        content = Text("Preview email"),
+        inputType = Some("submit"),
+        preventDoubleClick = Some(true)
+      ))
     </div>
   </form>
   <div class="govuk-grid-column-one-half govuk-!-padding-right-0">
     <div class="govuk-button-group" style="float: left; margin-top: 0; margin-right: 10%;">
     @helper.form(action = controllers.routes.ComposeEmailController.deleteOption(emailUUID, Json.toJson(userSelection).toString())) {
       @helper.CSRF.formField
-      <button draggable="false"
-      class="govuk-button  govuk-button--secondary"  data-module="govuk-button" type="submit" id="delete-button">
-        Delete email
-      </button>
+      @govukButton(Button(
+        id = Some("delete-button"),
+        content = Text("Delete email"),
+        inputType = Some("submit"),
+        classes = "govuk-button--secondary",
+        preventDoubleClick = Some(true)
+      ))
     }
     </div>
   </div>
