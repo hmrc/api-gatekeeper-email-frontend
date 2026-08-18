@@ -6,7 +6,7 @@ object AppDependencies {
   lazy val jsoupVersion         = "1.21.1"
   lazy val scalaCheckVersion    = "1.14.0"
   lazy val apiDomainVersion     = "1.2.0"
-  lazy val hmrcFrontendVersion  = "12.32.0"
+  lazy val hmrcFrontendVersion  = "13.11.0"
   lazy val mockitoScalaVersion  = "2.0.0"
 
   def apply(): Seq[ModuleID] = compile ++ test
