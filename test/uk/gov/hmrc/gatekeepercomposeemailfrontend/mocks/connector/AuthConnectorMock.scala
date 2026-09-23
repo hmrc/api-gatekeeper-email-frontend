@@ -24,10 +24,10 @@ import uk.gov.hmrc.auth.core.retrieve.{Name, Retrieval, ~}
 import uk.gov.hmrc.auth.core.{Enrolment, Enrolments, InsufficientEnrolments, InvalidBearerToken}
 
 import uk.gov.hmrc.gatekeepercomposeemailfrontend.connectors.AuthConnector
-import uk.gov.hmrc.gatekeepercomposeemailfrontend.mocks.TestRoles._
+import uk.gov.hmrc.gatekeepercomposeemailfrontend.mocks.TestRoles.*
 
 trait AuthConnectorMock {
-  self: MockitoSugar with ArgumentMatchersSugar =>
+  self: MockitoSugar & ArgumentMatchersSugar =>
 
   val userName      = "userName"
   val email         = "test@email.com"
@@ -37,47 +37,47 @@ trait AuthConnectorMock {
   val mockAuthConnector = mock[AuthConnector]
 
   def givenFailedLogin(): Unit = {
-    when(mockAuthConnector.authorise(*, *)(*, *)).thenReturn(failed(new InvalidBearerToken))
+    when(mockAuthConnector.authorise(*, *)(using *, *)).thenReturn(failed(new InvalidBearerToken))
   }
 
   def givenTheGKUserIsAuthorisedAndIsANormalUser(): Unit = {
     val response = successful(new ~(new ~(Some(Name(Some(userName), None)), Enrolments(Set(Enrolment(userRole)))), Some(email)))
 
-    when(mockAuthConnector.authorise(*, any[Retrieval[Option[Name] ~ Enrolments ~ Option[String]]])(*, *))
+    when(mockAuthConnector.authorise(*, any[Retrieval[Option[Name] ~ Enrolments ~ Option[String]]])(using *, *))
       .thenReturn(response)
   }
 
   def givenTheGKUserHasInsufficientEnrolments(): Unit = {
-    when(mockAuthConnector.authorise(*, *[Retrieval[Any]])(*, *))
+    when(mockAuthConnector.authorise(*, *[Retrieval[Any]])(using *, *))
       .thenReturn(failed(new InsufficientEnrolments))
   }
 
   def givenTheGKUserIsAuthorisedAndIsASuperUser(): Unit = {
     val response = successful(new ~(new ~(Some(Name(Some(superUserName), None)), Enrolments(Set(Enrolment(superUserRole)))), Some(email)))
 
-    when(mockAuthConnector.authorise(*, any[Retrieval[Option[Name] ~ Enrolments ~ Option[String]]])(*, *))
+    when(mockAuthConnector.authorise(*, any[Retrieval[Option[Name] ~ Enrolments ~ Option[String]]])(using *, *))
       .thenReturn(response)
   }
 
   def givenTheGKUserIsAuthorisedAndIsAnAdmin(): Unit = {
     val response = successful(new ~(new ~(Some(Name(Some(adminName), None)), Enrolments(Set(Enrolment(adminRole)))), Some(email)))
 
-    when(mockAuthConnector.authorise(*, any[Retrieval[Option[Name] ~ Enrolments ~ Option[String]]])(*, *))
+    when(mockAuthConnector.authorise(*, any[Retrieval[Option[Name] ~ Enrolments ~ Option[String]]])(using *, *))
       .thenReturn(response)
   }
 
   def verifyAuthConnectorCalledForUser = {
     verify(mockAuthConnector)
-      .authorise(*, any[Retrieval[~[Option[Name], Enrolments]]])(*, *)
+      .authorise(*, any[Retrieval[~[Option[Name], Enrolments]]])(using *, *)
   }
 
   def verifyAuthConnectorCalledForSuperUser = {
     verify(mockAuthConnector)
-      .authorise(eqTo(Enrolment(adminRole) or Enrolment(superUserRole)), any[Retrieval[~[Option[Name], Enrolments]]])(*, *)
+      .authorise(eqTo(Enrolment(adminRole) or Enrolment(superUserRole)), any[Retrieval[~[Option[Name], Enrolments]]])(using *, *)
   }
 
   def verifyAuthConnectorCalledForAdmin = {
     verify(mockAuthConnector)
-      .authorise(eqTo(Enrolment(adminRole)), any[Retrieval[~[Option[Name], Enrolments]]])(*, *)
+      .authorise(eqTo(Enrolment(adminRole)), any[Retrieval[~[Option[Name], Enrolments]]])(using *, *)
   }
 }

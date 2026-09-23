@@ -17,6 +17,7 @@
 package uk.gov.hmrc.gatekeepercomposeemailfrontend.models
 
 import play.api.libs.json.{Json, OFormat}
+import uk.gov.hmrc.apiplatform.modules.common.domain.models.Actor.given
 import uk.gov.hmrc.apiplatform.modules.common.domain.models.Actors
 
 import uk.gov.hmrc.gatekeepercomposeemailfrontend.controllers.ComposeEmailForm

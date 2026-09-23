@@ -15,11 +15,11 @@
  *@
 
 @import uk.gov.hmrc.gatekeepercomposeemailfrontend.config.AppConfig
-@import include._
+@import include.*
 
 @this(layout: Layout)
 
-@()(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
+@()(implicit request: Request[?], messages: Messages, appConfig: AppConfig)
 
 @layout(pageTitle = Some(s"${appConfig.title} - Email Deleted")){
 <div class="govuk-form-group">

@@ -16,7 +16,7 @@
 
 package uk.gov.hmrc.gatekeepercomposeemailfrontend.views
 
-import scala.jdk.CollectionConverters._
+import scala.jdk.CollectionConverters.*
 
 import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}

@@ -23,7 +23,7 @@ import org.apache.pekko.stream.Materializer
 import org.mockito.MockitoSugar
 import org.scalatest.GivenWhenThen
 import org.scalatest.matchers.should.Matchers
-import views.html._
+import views.html.*
 
 import play.api.Application
 import play.api.inject.guice.GuiceApplicationBuilder

@@ -86,19 +86,19 @@ class PreviewEmailControllerSpec extends ControllerBaseSpec with Matchers with F
          |  }
       """.stripMargin
 
-    when(mockGatekeeperEmailConnector.sendEmail(*)(*))
+    when(mockGatekeeperEmailConnector.sendEmail(*)(using *))
       .thenReturn(successful(Json.parse(outgoingEmail).as[OutgoingEmail]))
 
-    when(mockGatekeeperEmailConnector.sendTestEmail(*, *)(*))
+    when(mockGatekeeperEmailConnector.sendTestEmail(*, *)(using *))
       .thenReturn(successful(Json.parse(outgoingEmail).as[OutgoingEmail]))
 
-    when(mockGatekeeperEmailConnector.fetchEmail(*)(*))
+    when(mockGatekeeperEmailConnector.fetchEmail(*)(using *))
       .thenReturn(successful(Json.parse(outgoingEmail).as[OutgoingEmail]))
 
-    when(mockEmailService.fetchEmail(*)(*))
+    when(mockEmailService.fetchEmail(*)(using *))
       .thenReturn(successful(Json.parse(outgoingEmail).as[OutgoingEmail]))
 
-    when(mockGatekeeperEmailConnector.updateEmail(*, *, *, *)(*))
+    when(mockGatekeeperEmailConnector.updateEmail(*, *, *, *)(using *))
       .thenReturn(successful(Json.parse(outgoingEmail).as[OutgoingEmail]))
 
     def fakeApplication(): Application =

@@ -20,21 +20,23 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 import play.api.libs.json.Json
+import play.api.libs.ws.JsonBodyWritables
 import uk.gov.hmrc.apiplatform.modules.common.domain.models.Actors
-import uk.gov.hmrc.http.HttpReads.Implicits._
+import uk.gov.hmrc.http.HttpReads.Implicits.*
 import uk.gov.hmrc.http.client.HttpClientV2
 import uk.gov.hmrc.http.{HeaderCarrier, HttpErrorFunctions, StringContextOps, UpstreamErrorResponse}
 
 import uk.gov.hmrc.gatekeepercomposeemailfrontend.config.EmailConnectorConfig
 import uk.gov.hmrc.gatekeepercomposeemailfrontend.controllers.{ComposeEmailForm, PreviewEmailForm}
+import uk.gov.hmrc.gatekeepercomposeemailfrontend.models.*
 import uk.gov.hmrc.gatekeepercomposeemailfrontend.models.EmailRequest.{createEmailRequest, updateEmailRequest}
-import uk.gov.hmrc.gatekeepercomposeemailfrontend.models._
 import uk.gov.hmrc.gatekeepercomposeemailfrontend.utils.ApplicationLogger
 
 @Singleton
 class GatekeeperEmailConnector @Inject() (http: HttpClientV2, config: EmailConnectorConfig)(implicit ec: ExecutionContext)
     extends HttpErrorFunctions
-    with ApplicationLogger {
+    with ApplicationLogger
+    with JsonBodyWritables {
 
   lazy val serviceUrl = config.emailBaseUrl
 

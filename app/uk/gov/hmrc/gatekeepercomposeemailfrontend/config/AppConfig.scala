@@ -22,7 +22,7 @@ import play.api.Configuration
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
 @Singleton
-class AppConfig @Inject() (config: Configuration, servicesConfig: ServicesConfig)
+class AppConfig @Inject() (config: Configuration)
     extends ServicesConfig(config) with EmailConnectorConfig {
   val appName      = "HMRC API Gatekeeper"
   val title        = "HMRC API Gatekeeper"

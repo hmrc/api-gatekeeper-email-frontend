@@ -22,23 +22,23 @@ import views.html.ForbiddenView
 
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, Request, Result}
-import uk.gov.hmrc.auth.core._
+import uk.gov.hmrc.auth.core.*
 import uk.gov.hmrc.auth.core.authorise.Predicate
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals
 import uk.gov.hmrc.auth.core.retrieve.~
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 
 import uk.gov.hmrc.gatekeepercomposeemailfrontend.config.AppConfig
-import uk.gov.hmrc.gatekeepercomposeemailfrontend.models._
+import uk.gov.hmrc.gatekeepercomposeemailfrontend.models.*
 
 trait GatekeeperAuthWrapper extends I18nSupport {
   self: FrontendBaseController =>
   def authConnector: AuthConnector
   val forbiddenView: ForbiddenView
 
-  implicit def loggedIn(implicit request: LoggedInRequest[_]): LoggedInUser = LoggedInUser(request.name)
+  implicit def loggedIn(implicit request: LoggedInRequest[?]): LoggedInUser = LoggedInUser(request.name)
 
-  def requiresAtLeast(minimumRoleRequired: GatekeeperStrideRole)(body: LoggedInRequest[_] => Future[Result])(implicit ec: ExecutionContext, appConfig: AppConfig): Action[AnyContent] =
+  def requiresAtLeast(minimumRoleRequired: GatekeeperStrideRole)(body: LoggedInRequest[?] => Future[Result])(implicit ec: ExecutionContext, appConfig: AppConfig): Action[AnyContent] =
     Action.async {
       implicit request: Request[AnyContent] =>
         val predicate = authPredicate(minimumRoleRequired)
@@ -80,11 +80,11 @@ trait GatekeeperAuthWrapper extends I18nSupport {
   }
 
   // these are here for future use and copies logic from Gatekeeper
-  def isAtLeastSuperUser(implicit request: LoggedInRequest[_], appConfig: AppConfig): Boolean = {
+  def isAtLeastSuperUser(implicit request: LoggedInRequest[?], appConfig: AppConfig): Boolean = {
     request.authorisedEnrolments.getEnrolment(appConfig.superUserRole).isDefined || request.authorisedEnrolments.getEnrolment(appConfig.adminRole).isDefined
   }
 
-  def isAdmin(implicit request: LoggedInRequest[_], appConfig: AppConfig): Boolean = {
+  def isAdmin(implicit request: LoggedInRequest[?], appConfig: AppConfig): Boolean = {
     request.authorisedEnrolments.getEnrolment(appConfig.adminRole).isDefined
   }
 

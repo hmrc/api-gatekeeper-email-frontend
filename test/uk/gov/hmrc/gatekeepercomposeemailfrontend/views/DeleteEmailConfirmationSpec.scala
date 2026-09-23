@@ -16,19 +16,14 @@
 
 package uk.gov.hmrc.gatekeepercomposeemailfrontend.views
 
-import java.util.UUID
-import scala.jdk.CollectionConverters._
-
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
-import views.html.{DeleteEmail, DeleteEmailConfirmation}
+import views.html.DeleteEmailConfirmation
 
-import play.api.data.FormError
 import play.api.test.CSRFTokenHelper.CSRFRequest
 import play.api.test.FakeRequest
 import play.twirl.api.Html
 
-import uk.gov.hmrc.gatekeepercomposeemailfrontend.controllers.DeleteEmailOptionForm
 import uk.gov.hmrc.gatekeepercomposeemailfrontend.views.helpers.CommonViewSpec
 
 class DeleteEmailConfirmationSpec extends CommonViewSpec {

@@ -27,7 +27,7 @@ object ComposeEmailForm {
     mapping(
       "emailSubject" -> text.verifying("email.subject.required", _.nonEmpty),
       "emailBody"    -> text.verifying("email.body.required", _.nonEmpty)
-    )(ComposeEmailForm.apply)(ComposeEmailForm.unapply)
+    )(ComposeEmailForm.apply)(form => Some(form.emailSubject, form.emailBody))
   )
 }
 
@@ -41,8 +41,8 @@ object PreviewEmailForm {
       "composeEmailForm" -> mapping(
         "emailSubject" -> text.verifying("email.subject.required", _.nonEmpty),
         "emailBody"    -> text.verifying("email.body.required", _.nonEmpty)
-      )(ComposeEmailForm.apply)(ComposeEmailForm.unapply)
-    )(PreviewEmailForm.apply)(PreviewEmailForm.unapply)
+      )(ComposeEmailForm.apply)(form => Some(form.emailSubject, form.emailBody))
+    )(PreviewEmailForm.apply)(form => Some(form.emailUUID, form.composeEmailForm))
   )
 }
 
@@ -50,7 +50,9 @@ case class DeleteEmailOptionForm(value: String)
 
 object DeleteEmailOptionForm {
 
-  val form: Form[DeleteEmailOptionForm] = Form(mapping(
-    "value" -> text.verifying("error.required", _.nonEmpty)
-  )(DeleteEmailOptionForm.apply)(DeleteEmailOptionForm.unapply))
+  val form: Form[DeleteEmailOptionForm] = Form(
+    mapping(
+      "value" -> text.verifying("error.required", _.nonEmpty)
+    )(DeleteEmailOptionForm.apply)(form => Some(form.value))
+  )
 }
