@@ -36,8 +36,8 @@ trait GatekeeperAuthWrapper extends I18nSupport {
   def authConnector: AuthConnector
   val forbiddenView: ForbiddenView
 
-  // TODO
-  implicit def loggedIn(implicit request: LoggedInRequest[?]): LoggedInUser = LoggedInUser(request.name)
+  given Conversion[LoggedInRequest[?], LoggedInUser] with
+    def apply(using request: LoggedInRequest[?]): LoggedInUser = LoggedInUser(request.name)
 
   def requiresAtLeast(minimumRoleRequired: GatekeeperStrideRole)(body: LoggedInRequest[?] => Future[Result])(using ec: ExecutionContext, appConfig: AppConfig): Action[AnyContent] =
     Action.async {

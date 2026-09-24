@@ -87,7 +87,6 @@ class ComposeEmailControllerSpec extends ControllerBaseSpec with Matchers {
         .withFormUrlEncodedBody("email-recipients" -> composeEmailRecipients, "user-selection" -> userSelectionData, "user-selection-query" -> selectionQuery)
         .withCSRFToken
 
-      println(fakeRequest.body)
       val result = controller.initialiseEmail()(fakeRequest)
       status(result) shouldBe OK
       contentAsString(result).contains("Compose email") shouldBe true
@@ -185,7 +184,6 @@ class ComposeEmailControllerSpec extends ControllerBaseSpec with Matchers {
       val request = FakeRequest("POST", s"/delete/${emailUUID}/:userSelection").withSession(csrfToken, authToken, userToken).withFormUrlEncodedBody("value" -> "true").withCSRFToken
 
       val result = controller.delete(emailUUID, "{}")(request)
-      println(contentAsString(result))
 
       status(result) shouldBe OK
 
