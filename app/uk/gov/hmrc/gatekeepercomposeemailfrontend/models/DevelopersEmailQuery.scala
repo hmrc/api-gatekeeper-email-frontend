@@ -50,7 +50,7 @@ case class DevelopersEmailQuery(
   )
 
 object DevelopersEmailQuery {
-  implicit val registeredUserFormatter: OFormat[RegisteredUser]          = Json.format[RegisteredUser]
-  implicit val emailOverrideFormatter: OFormat[EmailOverride]            = Json.format[EmailOverride]
-  implicit val formatDevelopersEmailQuery: OFormat[DevelopersEmailQuery] = Json.format[DevelopersEmailQuery]
+  given OFormat[RegisteredUser]       = Json.format[RegisteredUser]
+  given OFormat[EmailOverride]        = Json.format[EmailOverride]
+  given OFormat[DevelopersEmailQuery] = Json.format[DevelopersEmailQuery]
 }

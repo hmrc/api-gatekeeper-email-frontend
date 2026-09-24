@@ -22,7 +22,7 @@
         formHelper: FormWithCSRF
 )
 
-@()(implicit request: Request[?], messages: Messages)
+@()(using request: Request[?], messages: Messages)
 
 @layout(pageTitle = Some("TESTONLY PAGE DO NOT USE")) {
 

@@ -32,8 +32,8 @@ case class OutgoingEmail(
   )
 
 object OutgoingEmail {
-  implicit val userFmt: OFormat[RegisteredUser]                             = Json.format[RegisteredUser]
-  implicit val emailOverrideFormatter: OFormat[EmailOverride]               = Json.format[EmailOverride]
-  implicit val developersEmailQueryFormatter: OFormat[DevelopersEmailQuery] = Json.format[DevelopersEmailQuery]
-  implicit val emailFmt: OFormat[OutgoingEmail]                             = Json.format[OutgoingEmail]
+  given OFormat[RegisteredUser]       = Json.format[RegisteredUser]
+  given OFormat[EmailOverride]        = Json.format[EmailOverride]
+  given OFormat[DevelopersEmailQuery] = Json.format[DevelopersEmailQuery]
+  given OFormat[OutgoingEmail]        = Json.format[OutgoingEmail]
 }

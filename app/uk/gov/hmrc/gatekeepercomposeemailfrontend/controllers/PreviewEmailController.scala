@@ -46,7 +46,7 @@ class PreviewEmailController @Inject() (
     override val forbiddenView: ForbiddenView,
     override val authConnector: AuthConnector,
     emailConnector: GatekeeperEmailConnector
-  )(implicit val appConfig: AppConfig,
+  )(using val appConfig: AppConfig,
     val ec: ExecutionContext
   ) extends FrontendController(mcc) with GatekeeperAuthWrapper with I18nSupport with Logging {
 

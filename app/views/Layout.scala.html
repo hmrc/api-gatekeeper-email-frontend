@@ -29,7 +29,7 @@
       hmrcScripts: HmrcScripts,
 )
 
-@(pageTitle: Option[String] = None)(contentBlock: Html)(implicit requestHeader: RequestHeader, messages: Messages)
+@(pageTitle: Option[String] = None)(contentBlock: Html)(using requestHeader: RequestHeader, messages: Messages)
 
 
 @scriptElem = {

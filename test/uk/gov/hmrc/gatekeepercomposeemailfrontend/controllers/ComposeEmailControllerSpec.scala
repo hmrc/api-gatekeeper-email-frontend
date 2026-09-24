@@ -48,7 +48,7 @@ class ComposeEmailControllerSpec extends ControllerBaseSpec with Matchers {
 
     val fakePostFormRequest = FakeRequest("POST", "/email").withSession(csrfToken, authToken, userToken).withCSRFToken
 
-    implicit val hc: HeaderCarrier = HeaderCarrier()
+    given HeaderCarrier = HeaderCarrier()
 
     val composeEmail: ComposeEmail                   = fakeApp.injector.instanceOf[ComposeEmail]
     val emailSentConfirmation: EmailSentConfirmation = fakeApp.injector.instanceOf[EmailSentConfirmation]

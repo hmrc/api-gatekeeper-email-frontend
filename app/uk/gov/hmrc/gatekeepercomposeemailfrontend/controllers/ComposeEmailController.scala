@@ -45,7 +45,7 @@ class ComposeEmailController @Inject() (
     deleteEmail: DeleteEmail,
     override val forbiddenView: ForbiddenView,
     override val authConnector: AuthConnector
-  )(implicit val appConfig: AppConfig,
+  )(using val appConfig: AppConfig,
     val ec: ExecutionContext
   ) extends FrontendController(mcc) with GatekeeperAuthWrapper with Logging {
 

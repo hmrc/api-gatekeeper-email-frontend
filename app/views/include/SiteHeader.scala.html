@@ -25,7 +25,7 @@
 @import uk.gov.hmrc.govukfrontend.views.Aliases.Text
 
 @this(hmrcStandardHeader: HmrcStandardHeader, appConfig: AppConfig)
-@()(implicit messages: Messages, requestHeader: RequestHeader)
+@()(using messages: Messages, requestHeader: RequestHeader)
 
 @navigation = @{
     Seq(

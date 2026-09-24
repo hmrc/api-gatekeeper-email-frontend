@@ -19,7 +19,7 @@
 
 @this(layout: Layout)
 
-@()(implicit request: Request[?], messages: Messages, appConfig: AppConfig)
+@()(using request: Request[?], messages: Messages, appConfig: AppConfig)
 
 @layout(pageTitle = Some(s"${appConfig.title} - Email Deleted")){
 <div class="govuk-form-group">

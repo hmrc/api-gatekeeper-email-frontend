@@ -41,9 +41,9 @@ import uk.gov.hmrc.gatekeepercomposeemailfrontend.services.EmailService
 
 object ComposeEmailControllerSpecHelpers extends ControllerBaseSpec with Matchers with GivenWhenThen
     with MockitoSugar {
-  implicit val materializer: Materializer = app.materializer
-  lazy val forbiddenView                  = app.injector.instanceOf[ForbiddenView]
-  val errorTemplate: ErrorTemplate        = fakeApplication().injector.instanceOf[ErrorTemplate]
+  given Materializer               = app.materializer
+  lazy val forbiddenView           = app.injector.instanceOf[ForbiddenView]
+  val errorTemplate: ErrorTemplate = fakeApplication().injector.instanceOf[ErrorTemplate]
 
   override def fakeApplication(): Application =
     new GuiceApplicationBuilder()
@@ -72,11 +72,11 @@ object ComposeEmailControllerSpecHelpers extends ControllerBaseSpec with Matcher
         emailUUID: String,
         userSelectionQuery: DevelopersEmailQuery,
         composedBy: Actors.GatekeeperUser
-      )(implicit hc: HeaderCarrier
+      )(using hc: HeaderCarrier
       ): Future[OutgoingEmail] =
       Future.successful(OutgoingEmail("srinivasalu.munagala@digital.hmrc.gov.uk", "Hello", "*test email body*", "", "", "", "", None, userSelectionQuery, 1))
 
-    override def fetchEmail(emailUUID: String)(implicit hc: HeaderCarrier): Future[OutgoingEmail] = {
+    override def fetchEmail(emailUUID: String)(using hc: HeaderCarrier): Future[OutgoingEmail] = {
       Future.successful(OutgoingEmail("srinivasalu.munagala@digital.hmrc.gov.uk", "Hello", "*test email body*", "", "", "", "", None, userSelectionQuery, 1))
     }
 
@@ -85,12 +85,12 @@ object ComposeEmailControllerSpecHelpers extends ControllerBaseSpec with Matcher
         emailUUID: String,
         userSelectionQuery: Option[DevelopersEmailQuery],
         composedBy: Actors.GatekeeperUser
-      )(implicit hc: HeaderCarrier
+      )(using hc: HeaderCarrier
       ): Future[OutgoingEmail] = {
       Future.successful(OutgoingEmail("srinivasalu.munagala@digital.hmrc.gov.uk", "Hello", "*test email body*", "", "", "", "", None, userSelectionQuery.get, 1))
     }
 
-    override def deleteEmail(emailUUID: String)(implicit hc: HeaderCarrier): Future[Boolean] = Future.successful(true)
+    override def deleteEmail(emailUUID: String)(using hc: HeaderCarrier): Future[Boolean] = Future.successful(true)
   }
   val mockGateKeeperService = new EmailServiceTest
 

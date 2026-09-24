@@ -24,7 +24,7 @@
         govukButton: GovukButton
 )
 
-@(form: Form[?], emailUUID: String, userSelection: String)(implicit request: Request[?], messages: Messages)
+@(form: Form[?], emailUUID: String, userSelection: String)(using request: Request[?], messages: Messages)
 
 @layout(pageTitle = Some(messages("deleteemail.confirmation"))) {
 

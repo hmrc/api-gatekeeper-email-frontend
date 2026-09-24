@@ -35,7 +35,7 @@ import uk.gov.hmrc.gatekeepercomposeemailfrontend.models.{DevelopersEmailQuery, 
 
 class EmailServiceSpec extends AnyWordSpec with Matchers with GuiceOneAppPerSuite with MockitoSugar with ArgumentMatchersSugar {
 
-  implicit val hc: HeaderCarrier = HeaderCarrier()
+  given HeaderCarrier = HeaderCarrier()
 
   trait Setup {
     val mockEmailConnector = mock[GatekeeperEmailConnector]

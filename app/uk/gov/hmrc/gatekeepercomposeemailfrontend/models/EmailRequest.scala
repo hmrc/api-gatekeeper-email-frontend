@@ -36,9 +36,9 @@ case class EmailRequest(
   )
 
 object EmailRequest {
-  implicit val emailDataFmt: OFormat[EmailData]           = Json.format[EmailData]
-  implicit val userFmt: OFormat[RegisteredUser]           = Json.format[RegisteredUser]
-  implicit val sendEmailRequestFmt: OFormat[EmailRequest] = Json.format[EmailRequest]
+  given OFormat[EmailData]      = Json.format[EmailData]
+  given OFormat[RegisteredUser] = Json.format[RegisteredUser]
+  given OFormat[EmailRequest]   = Json.format[EmailRequest]
 
   def createEmailRequest(form: ComposeEmailForm, developersEmailQuery: DevelopersEmailQuery, composedBy: Actors.GatekeeperUser) = {
 

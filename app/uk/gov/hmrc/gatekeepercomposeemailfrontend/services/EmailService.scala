@@ -26,18 +26,18 @@ import uk.gov.hmrc.gatekeepercomposeemailfrontend.connectors.GatekeeperEmailConn
 import uk.gov.hmrc.gatekeepercomposeemailfrontend.controllers.ComposeEmailForm
 import uk.gov.hmrc.gatekeepercomposeemailfrontend.models.{DevelopersEmailQuery, OutgoingEmail}
 
-class EmailService @Inject() (emailConnector: GatekeeperEmailConnector)(implicit val ec: ExecutionContext) {
+class EmailService @Inject() (emailConnector: GatekeeperEmailConnector)(using val ec: ExecutionContext) {
 
-  def saveEmail(composeEmailForm: ComposeEmailForm, emailUUID: String, userSelectionQuery: DevelopersEmailQuery, composedBy: Actors.GatekeeperUser)(implicit hc: HeaderCarrier)
+  def saveEmail(composeEmailForm: ComposeEmailForm, emailUUID: String, userSelectionQuery: DevelopersEmailQuery, composedBy: Actors.GatekeeperUser)(using hc: HeaderCarrier)
       : Future[OutgoingEmail] = {
     emailConnector.saveEmail(composeEmailForm, emailUUID, userSelectionQuery, composedBy)
   }
 
-  def fetchEmail(emailUUID: String)(implicit hc: HeaderCarrier): Future[OutgoingEmail] = {
+  def fetchEmail(emailUUID: String)(using hc: HeaderCarrier): Future[OutgoingEmail] = {
     emailConnector.fetchEmail(emailUUID)
   }
 
-  def deleteEmail(emailUUID: String)(implicit hc: HeaderCarrier): Future[Boolean] = {
+  def deleteEmail(emailUUID: String)(using hc: HeaderCarrier): Future[Boolean] = {
     emailConnector.deleteEmail(emailUUID)
   }
 
@@ -46,7 +46,7 @@ class EmailService @Inject() (emailConnector: GatekeeperEmailConnector)(implicit
       emailUUID: String,
       userSelectionQuery: Option[DevelopersEmailQuery],
       composedBy: Actors.GatekeeperUser
-    )(implicit hc: HeaderCarrier
+    )(using hc: HeaderCarrier
     ): Future[OutgoingEmail] = {
     emailConnector.updateEmail(composeEmailForm, emailUUID, userSelectionQuery, composedBy)
   }

@@ -23,7 +23,7 @@
 
 @this(layout: Layout, errorSummary: components.errorSummary, govukButton: GovukButton)
 
-@(emailUUID: String, form: Form[ComposeEmailForm], userSelection: Map[String, String])(implicit request: Request[?], messages: Messages, appConfig: AppConfig)
+@(emailUUID: String, form: Form[ComposeEmailForm], userSelection: Map[String, String])(using request: Request[?], messages: Messages, appConfig: AppConfig)
 
 @layout(pageTitle = Some(s"${appConfig.title} - Compose Email")) {
   @errorSummary(form.errors)
