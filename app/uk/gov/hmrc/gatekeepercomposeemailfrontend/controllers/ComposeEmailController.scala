@@ -21,17 +21,17 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.control.NonFatal
 
-import views.html._
+import views.html.*
 
 import play.api.Logging
 import play.api.libs.json.{JsError, JsSuccess, Json}
-import play.api.mvc._
+import play.api.mvc.*
 import uk.gov.hmrc.apiplatform.modules.common.domain.models.Actors
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import uk.gov.hmrc.gatekeepercomposeemailfrontend.config.AppConfig
 import uk.gov.hmrc.gatekeepercomposeemailfrontend.connectors.AuthConnector
-import uk.gov.hmrc.gatekeepercomposeemailfrontend.models._
+import uk.gov.hmrc.gatekeepercomposeemailfrontend.models.*
 import uk.gov.hmrc.gatekeepercomposeemailfrontend.services.EmailService
 import uk.gov.hmrc.gatekeepercomposeemailfrontend.utils.GatekeeperAuthWrapper
 
@@ -45,26 +45,42 @@ class ComposeEmailController @Inject() (
     deleteEmail: DeleteEmail,
     override val forbiddenView: ForbiddenView,
     override val authConnector: AuthConnector
-  )(implicit val appConfig: AppConfig,
+  )(using val appConfig: AppConfig,
     val ec: ExecutionContext
   ) extends FrontendController(mcc) with GatekeeperAuthWrapper with Logging {
+
+  private def badRequestPayload(msg: String): Future[Result] = {
+    Future.successful(
+      BadRequest(
+        JsErrorResponse(
+          ErrorCode.INVALID_REQUEST_PAYLOAD,
+          msg
+        )
+      )
+    )
+  }
 
   def initialiseEmail: Action[AnyContent] = requiresAtLeast(GatekeeperRoles.USER) { implicit request =>
     def persistEmailDetails(userSelectionQuery: DevelopersEmailQuery, userSelection: String, composedBy: Actors.GatekeeperUser): Future[Result] = {
       val emailUUID = UUID.randomUUID().toString
       for {
         email <- emailService.saveEmail(ComposeEmailForm("", ""), emailUUID, userSelectionQuery, composedBy)
-      } yield Ok(composeEmail(
-        email.emailUUID,
-        uk.gov.hmrc.gatekeepercomposeemailfrontend.controllers.ComposeEmailForm.form.fill(ComposeEmailForm("", "")),
-        Json.parse(userSelection).as[Map[String, String]]
-      ))
+      } yield {
+        Ok(
+          composeEmail(
+            email.emailUUID,
+            uk.gov.hmrc.gatekeepercomposeemailfrontend.controllers.ComposeEmailForm.form.fill(ComposeEmailForm("", "")),
+            Json.parse(userSelection).as[List[(String, String)]].toMap
+          )
+        )
+      }
     }
 
     try {
       val body: Option[Map[String, Seq[String]]] = request.body.asInstanceOf[AnyContentAsFormUrlEncoded].asFormUrlEncoded
       body.map(elems => elems.get("user-selection")).head match {
-        case Some(userSelectedData) => Json.parse(userSelectedData.head).validate[Map[String, String]] match {
+        case Some(userSelectedData) =>
+          Json.parse(userSelectedData.head).validate[Map[String, String]] match {
             case JsSuccess(userSelection: Map[String, String], _) =>
               body.map(elems => elems.get("user-selection-query")).head match {
                 case Some(userSelectionQuery) =>
@@ -72,19 +88,23 @@ class ComposeEmailController @Inject() (
                     Json.parse(userSelectionQuery.head).validate[DevelopersEmailQuery] match {
                       case JsSuccess(value: DevelopersEmailQuery, _) =>
                         persistEmailDetails(value, Json.toJson(userSelection).toString(), Actors.GatekeeperUser(request.name.get))
-                      case JsError(errors)                           => Future.successful(BadRequest(JsErrorResponse(
-                          ErrorCode.INVALID_REQUEST_PAYLOAD,
-                          s"""Request payload does not contain gatekeeper user selected query data: ${errors.mkString(", ")}"""
-                        )))
+                      case JsError(errors)                           =>
+                        logger.error("Request payload does not contain gatekeeper user selected query data" + errors.mkString(", "))
+                        badRequestPayload("""Request payload does not contain gatekeeper user selected query data""")
                     }
                   } catch {
                     case NonFatal(e) =>
                       logger.error("Email recipients not valid JSON", e)
-                      Future.successful(BadRequest(JsErrorResponse(ErrorCode.INVALID_REQUEST_PAYLOAD, s"Request payload does not appear to be JSON: ${e.getMessage}")))
+                      badRequestPayload("Request payload does not appear to be JSON")
                   }
+                case None                     => badRequestPayload("Request payload does not contain user selection")
               }
+            case JsError(errors)                                  =>
+              logger.error("User selection is not valid JSON" + errors.mkString(", "))
+              badRequestPayload("Request payload does not appear to be JSON")
           }
-        case None                   => Future.successful(BadRequest(JsErrorResponse(ErrorCode.INVALID_REQUEST_PAYLOAD, s"Request payload does not contain gatekeeper user selected options")))
+        case None                   =>
+          badRequestPayload("Request payload does not contain gatekeeper user selected options")
       }
     } catch {
       case _: Throwable =>

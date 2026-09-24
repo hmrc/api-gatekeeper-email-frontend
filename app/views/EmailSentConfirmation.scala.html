@@ -18,7 +18,7 @@
 
 @this(layout: Layout)
 
-@(userSelection: Map[String, String], users: Int)(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
+@(userSelection: Map[String, String], users: Int)(using request: Request[?], messages: Messages, appConfig: AppConfig)
 
 @layout(pageTitle = Some(s"${appConfig.title} - Email Sent")){
 
@@ -32,7 +32,7 @@
              @users emails sent to users interested in
              <br>
            <span class="govuk-!-font-weight-bold">
-             @for((key, value) <- userSelection) {
+             @for((_, value) <- userSelection) {
                 @Html(value)
              }
            </span>

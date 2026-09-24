@@ -27,7 +27,7 @@ import uk.gov.hmrc.gatekeepercomposeemailfrontend.config.{AppConfig, EmailConnec
   */
 class MicroserviceModule(val environment: Environment, val configuration: Configuration) extends play.api.inject.Module {
 
-  override def bindings(environment: Environment, configuration: Configuration): Seq[Binding[_]] = {
+  override def bindings(environment: Environment, configuration: Configuration): Seq[Binding[?]] = {
     Seq(
       bind[EmailConnectorConfig].to[AppConfig]
     )

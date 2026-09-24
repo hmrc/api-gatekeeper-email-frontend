@@ -14,18 +14,15 @@
  * limitations under the License.
  *@
 
-@import uk.gov.hmrc.govukfrontend.views.html.components._
+@import uk.gov.hmrc.govukfrontend.views.html.components.*
 @import uk.gov.hmrc.gatekeepercomposeemailfrontend.controllers
 
 @this(
         layout: Layout,
-        formHelper: FormWithCSRF,
-        errorSummary: components.errorSummary,
-        yesNoRadio: components.yesNoRadio,
-        govukButton: GovukButton
+        formHelper: FormWithCSRF
 )
 
-@()(implicit request: Request[_], messages: Messages)
+@()(using request: Request[?], messages: Messages)
 
 @layout(pageTitle = Some("TESTONLY PAGE DO NOT USE")) {
 

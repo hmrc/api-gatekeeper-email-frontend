@@ -15,7 +15,7 @@
  *@
 
 @import play.twirl.api.TwirlFeatureImports.defining
-@(errors: Seq[FormError], fieldName: String)(implicit messagesProvider: MessagesProvider)
+@(errors: Seq[FormError], fieldName: String)(using messagesProvider: MessagesProvider)
 @if(errors.exists(_.key == fieldName)) {
     @defining(errors.filter(_.key == fieldName)) { errors =>
         @if(errors.nonEmpty) {

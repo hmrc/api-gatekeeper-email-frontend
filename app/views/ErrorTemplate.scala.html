@@ -18,7 +18,7 @@
 @import uk.gov.hmrc.govukfrontend.views.html.components.Text
 @this(layout: Layout)
 
-@(pageTitle: String, heading: String, message: String)(implicit requestHeader: RequestHeader, messages: Messages, applicationConfig: AppConfig)
+@(pageTitle: String, heading: String, message: String)(using requestHeader: RequestHeader, messages: Messages)
 
 @layout(pageTitle = Some(pageTitle)) {
  <h1 class="govuk-heading-xl">@{Text(heading).asHtml}</h1>

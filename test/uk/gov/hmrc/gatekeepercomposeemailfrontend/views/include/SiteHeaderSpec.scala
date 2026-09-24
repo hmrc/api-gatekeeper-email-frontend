@@ -16,16 +16,12 @@
 
 package uk.gov.hmrc.gatekeepercomposeemailfrontend.views.include
 
-import scala.jdk.CollectionConverters._
+import scala.jdk.CollectionConverters.*
 
 import org.jsoup.Jsoup
 import views.html.include.SiteHeader
 
-import play.api.mvc.RequestHeader
-import play.api.test.FakeRequest
-
 import uk.gov.hmrc.gatekeepercomposeemailfrontend.config.AppConfig
-import uk.gov.hmrc.gatekeepercomposeemailfrontend.models.LoggedInUser
 import uk.gov.hmrc.gatekeepercomposeemailfrontend.views.helpers.CommonViewSpec
 
 class SiteHeaderSpec extends CommonViewSpec {

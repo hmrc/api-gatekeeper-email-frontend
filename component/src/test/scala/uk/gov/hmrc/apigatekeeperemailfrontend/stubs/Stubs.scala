@@ -16,11 +16,11 @@
 
 package uk.gov.hmrc.apigatekeeperemailfrontend.stubs
 
-import com.github.tomakehurst.wiremock.client.WireMock._
+import com.github.tomakehurst.wiremock.client.WireMock.*
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import org.scalatest.matchers.should.Matchers
 
-import play.api.http.Status._
+import play.api.http.Status.*
 
 import uk.gov.hmrc.gatekeepercomposeemailfrontend.utils.ApplicationLogger
 

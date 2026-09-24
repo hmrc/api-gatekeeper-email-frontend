@@ -33,25 +33,19 @@ package uk.gov.hmrc.gatekeepercomposeemailfrontend.views.helpers
  */
 
 import java.util.Locale
-import scala.collection.JavaConverters.asScalaBufferConverter
 
-import org.jsoup.nodes.Document
-import org.scalatest.Assertion
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 
 import play.api.Application
-import play.api.i18n.{Lang, Messages, MessagesApi, MessagesImpl, MessagesProvider}
+import play.api.i18n.{Lang, Messages, MessagesImpl, MessagesProvider}
 import play.api.inject.guice.GuiceApplicationBuilder
-import play.api.mvc.request.RequestAttrKey
 import play.api.mvc.{AnyContentAsEmpty, MessagesControllerComponents, Request}
 import play.api.test.CSRFTokenHelper.CSRFRequest
-import play.api.test.{FakeRequest, StubMessagesFactory}
-import play.test.Helpers
+import play.api.test.FakeRequest
 
 import uk.gov.hmrc.gatekeepercomposeemailfrontend.common.AsyncHmrcSpec
 import uk.gov.hmrc.gatekeepercomposeemailfrontend.config.AppConfig
 import uk.gov.hmrc.gatekeepercomposeemailfrontend.models.LoggedInUser
-import uk.gov.hmrc.gatekeepercomposeemailfrontend.utils.WithCSRFAddToken
 
 trait CommonViewSpec extends AsyncHmrcSpec with GuiceOneAppPerSuite {
 

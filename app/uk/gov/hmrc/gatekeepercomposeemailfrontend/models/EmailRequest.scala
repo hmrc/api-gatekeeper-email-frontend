@@ -17,6 +17,7 @@
 package uk.gov.hmrc.gatekeepercomposeemailfrontend.models
 
 import play.api.libs.json.{Json, OFormat}
+import uk.gov.hmrc.apiplatform.modules.common.domain.models.Actor.given
 import uk.gov.hmrc.apiplatform.modules.common.domain.models.Actors
 
 import uk.gov.hmrc.gatekeepercomposeemailfrontend.controllers.ComposeEmailForm
@@ -35,9 +36,9 @@ case class EmailRequest(
   )
 
 object EmailRequest {
-  implicit val emailDataFmt: OFormat[EmailData]           = Json.format[EmailData]
-  implicit val userFmt: OFormat[RegisteredUser]           = Json.format[RegisteredUser]
-  implicit val sendEmailRequestFmt: OFormat[EmailRequest] = Json.format[EmailRequest]
+  given OFormat[EmailData]      = Json.format[EmailData]
+  given OFormat[RegisteredUser] = Json.format[RegisteredUser]
+  given OFormat[EmailRequest]   = Json.format[EmailRequest]
 
   def createEmailRequest(form: ComposeEmailForm, developersEmailQuery: DevelopersEmailQuery, composedBy: Actors.GatekeeperUser) = {
 

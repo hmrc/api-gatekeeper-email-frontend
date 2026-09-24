@@ -25,7 +25,7 @@ import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import uk.gov.hmrc.apiplatform.modules.common.domain.models.Actors
 import uk.gov.hmrc.http.HeaderCarrier
 
@@ -35,7 +35,7 @@ import uk.gov.hmrc.gatekeepercomposeemailfrontend.models.{DevelopersEmailQuery, 
 
 class EmailServiceSpec extends AnyWordSpec with Matchers with GuiceOneAppPerSuite with MockitoSugar with ArgumentMatchersSugar {
 
-  implicit val hc: HeaderCarrier = HeaderCarrier()
+  given HeaderCarrier = HeaderCarrier()
 
   trait Setup {
     val mockEmailConnector = mock[GatekeeperEmailConnector]
@@ -49,7 +49,7 @@ class EmailServiceSpec extends AnyWordSpec with Matchers with GuiceOneAppPerSuit
 
   "saveEmail" should {
     "handle saving an email successfully" in new Setup {
-      when(mockEmailConnector.saveEmail(*, *, *, *)(*)).thenReturn(Future.successful(OutgoingEmail("", "", "", "", "", "", "", None, userSelectionQuery, 1)))
+      when(mockEmailConnector.saveEmail(*, *, *, *)(using *)).thenReturn(Future.successful(OutgoingEmail("", "", "", "", "", "", "", None, userSelectionQuery, 1)))
       val result = await(underTest.saveEmail(new ComposeEmailForm("", ""), "", userSelectionQuery, user))
       result shouldBe OutgoingEmail("", "", "", "", "", "", "", None, userSelectionQuery, 1)
     }
@@ -57,7 +57,7 @@ class EmailServiceSpec extends AnyWordSpec with Matchers with GuiceOneAppPerSuit
 
   "fetchEmail" should {
     "handle fetching an email successfully" in new Setup {
-      when(mockEmailConnector.fetchEmail(*)(*)).thenReturn(Future.successful(OutgoingEmail("", "", "", "", "", "", "", None, userSelectionQuery, 1)))
+      when(mockEmailConnector.fetchEmail(*)(using *)).thenReturn(Future.successful(OutgoingEmail("", "", "", "", "", "", "", None, userSelectionQuery, 1)))
       val result = await(underTest.fetchEmail(emailUUID = emailUUID))
       result shouldBe OutgoingEmail("", "", "", "", "", "", "", None, userSelectionQuery, 1)
     }
@@ -65,7 +65,7 @@ class EmailServiceSpec extends AnyWordSpec with Matchers with GuiceOneAppPerSuit
 
   "deleteEmail" should {
     "handle deleting an email successfully" in new Setup {
-      when(mockEmailConnector.deleteEmail(*)(*)).thenReturn(Future.successful(true))
+      when(mockEmailConnector.deleteEmail(*)(using *)).thenReturn(Future.successful(true))
       val result = await(underTest.deleteEmail(emailUUID = emailUUID))
       result shouldBe true
     }
@@ -73,7 +73,7 @@ class EmailServiceSpec extends AnyWordSpec with Matchers with GuiceOneAppPerSuit
 
   "updateEmail" should {
     "handle updating an email successfully" in new Setup {
-      when(mockEmailConnector.updateEmail(*, *, *, *)(*)).thenReturn(Future.successful(OutgoingEmail("", "", "", "", "", "", "", None, userSelectionQuery, 1)))
+      when(mockEmailConnector.updateEmail(*, *, *, *)(using *)).thenReturn(Future.successful(OutgoingEmail("", "", "", "", "", "", "", None, userSelectionQuery, 1)))
       val result = await(underTest.updateEmail(new ComposeEmailForm("", ""), "", Some(userSelectionQuery), user))
       result shouldBe OutgoingEmail("", "", "", "", "", "", "", None, userSelectionQuery, 1)
     }

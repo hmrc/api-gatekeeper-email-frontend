@@ -17,7 +17,7 @@
 package uk.gov.hmrc.gatekeepercomposeemailfrontend.views
 
 import java.util.UUID
-import scala.jdk.CollectionConverters._
+import scala.jdk.CollectionConverters.*
 
 import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}
@@ -80,7 +80,7 @@ class PreviewEmailSpec extends CommonViewSpec {
         userSelection,
         "",
         previewSent
-      )(loggedInRequestWithEmail, messages)
+      )(using loggedInRequestWithEmail, messages)
 
       val document = Jsoup.parse(page.body)
       validateStardardPageElements(document)
@@ -99,7 +99,7 @@ class PreviewEmailSpec extends CommonViewSpec {
         userSelection,
         "SENT",
         previewSent
-      )(loggedInRequestWithOutEmail, messages)
+      )(using loggedInRequestWithOutEmail, messages)
 
       val document = Jsoup.parse(page.body)
       validateStardardPageElements(document)
@@ -119,7 +119,7 @@ class PreviewEmailSpec extends CommonViewSpec {
         "PENDING",
         previewSent
       )(
-        loggedInRequestWithEmail,
+        using loggedInRequestWithEmail,
         messages
       )
 

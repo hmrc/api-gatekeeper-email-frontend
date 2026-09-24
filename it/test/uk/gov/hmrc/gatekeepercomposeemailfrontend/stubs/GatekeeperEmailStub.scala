@@ -18,7 +18,7 @@ package uk.gov.hmrc.gatekeepercomposeemailfrontend.stubs
 
 import java.util.UUID
 
-import com.github.tomakehurst.wiremock.client.WireMock.{verify => wireMockVerify, _}
+import com.github.tomakehurst.wiremock.client.WireMock.{verify as wireMockVerify, *}
 
 import play.api.http.Status.OK
 import play.api.libs.json.Json

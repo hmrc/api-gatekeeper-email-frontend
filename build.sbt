@@ -8,7 +8,7 @@ lazy val appName = "api-gatekeeper-email-frontend"
 Global / bloopAggregateSourceDependencies := true
 Global / bloopExportJarClassifiers := Some(Set("sources"))
 
-ThisBuild / scalaVersion := "2.13.18"
+ThisBuild / scalaVersion := "3.7.4"
 ThisBuild / majorVersion := 0
 ThisBuild / libraryDependencySchemes += "org.scala-lang.modules" %% "scala-xml" % VersionScheme.Always
 ThisBuild / semanticdbEnabled := true
@@ -44,10 +44,8 @@ lazy val microservice = Project(appName, file("."))
   )
   .settings(
     scalacOptions ++= Seq(
-      "-Wconf:cat=unused&src=views/.*\\.scala:s",
-      // https://www.scala-lang.org/2021/01/12/configuring-and-suppressing-warnings.html
-      // suppress warnings in generated routes files
-      "-Wconf:src=routes/.*:s"
+      "-Wconf:msg=unused import&src=html/.*:s",
+      "-Wconf:msg=unused&src=routes/.*:s"
     )
   )
 
@@ -58,8 +56,6 @@ lazy val it = (project in file("it"))
     name := "integration-tests",
     DefaultBuildSettings.itSettings()
   )
-
-
 
 lazy val component = (project in file("component"))
   .dependsOn(microservice % "test->test")

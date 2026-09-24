@@ -26,7 +26,7 @@ import uk.gov.hmrc.gatekeepercomposeemailfrontend.config.AppConfig
 
 trait ControllerBaseSpec extends AsyncHmrcSpec with GuiceOneAppPerSuite {
 
-  implicit val appConfig: AppConfig = app.injector.instanceOf[AppConfig]
+  given AppConfig = app.injector.instanceOf[AppConfig]
 
   lazy val fakeApp: Application = fakeApplication()
 

@@ -14,19 +14,19 @@
  * limitations under the License.
  *@
 
-@import include._
-@import play.api.libs.json._
+@import include.*
+@import play.api.libs.json.*
 @import uk.gov.hmrc.gatekeepercomposeemailfrontend.config.AppConfig
 @import uk.gov.hmrc.gatekeepercomposeemailfrontend.controllers
 @import uk.gov.hmrc.gatekeepercomposeemailfrontend.controllers.PreviewEmailForm
 @import uk.gov.hmrc.gatekeepercomposeemailfrontend.models.LoggedInRequest
-@import uk.gov.hmrc.govukfrontend.views.html.components._
+@import uk.gov.hmrc.govukfrontend.views.html.components.*
 @import uk.gov.hmrc.govukfrontend.views.viewmodels.notificationbanner.NotificationBanner
 @import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
 
 @this(layout: Layout, appConfig: AppConfig, govukNotificationBanner: GovukNotificationBanner, errorSummary: components.errorSummary, govukButton: GovukButton)
 
-@(emailPreview: String, form: Form[PreviewEmailForm], userSelection: Map[String, String], status: String = "", previewSent: Boolean)(implicit request: LoggedInRequest[_], messages: Messages)
+@(emailPreview: String, form: Form[PreviewEmailForm], userSelection: Map[String, String], status: String = "", previewSent: Boolean)(using request: LoggedInRequest[?], messages: Messages)
 @html = {
     <div>
         <h3 class="govuk-notification-banner__heading" id="email-sent-banner">Test email sent</h3>

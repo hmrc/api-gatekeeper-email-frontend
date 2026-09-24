@@ -19,22 +19,21 @@ package uk.gov.hmrc.gatekeepercomposeemailfrontend.controllers
 import java.util.UUID
 
 import org.apache.pekko.stream.Materializer
-import org.mockito.{ArgumentMatchersSugar, MockitoSugar}
 import org.scalatest.matchers.should.Matchers
 import views.html.{ComposeEmail, EmailSentConfirmation}
 
 import play.api.http.Status
-import play.api.test.CSRFTokenHelper._
+import play.api.test.CSRFTokenHelper.*
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import play.filters.csrf.CSRF.TokenProvider
 import uk.gov.hmrc.http.HeaderCarrier
 
-import uk.gov.hmrc.gatekeepercomposeemailfrontend.models._
+import uk.gov.hmrc.gatekeepercomposeemailfrontend.models.*
 import uk.gov.hmrc.gatekeepercomposeemailfrontend.services.EmailService
-import uk.gov.hmrc.gatekeepercomposeemailfrontend.utils.ComposeEmailControllerSpecHelpers._
+import uk.gov.hmrc.gatekeepercomposeemailfrontend.utils.ComposeEmailControllerSpecHelpers.*
 
-class ComposeEmailControllerSpec extends ControllerBaseSpec with Matchers with MockitoSugar with ArgumentMatchersSugar {
+class ComposeEmailControllerSpec extends ControllerBaseSpec with Matchers {
 
   trait Setup extends ControllerSetupBase {
     val su                                  = List(RegisteredUser("sawd", "efef", "eff", true))
@@ -49,7 +48,7 @@ class ComposeEmailControllerSpec extends ControllerBaseSpec with Matchers with M
 
     val fakePostFormRequest = FakeRequest("POST", "/email").withSession(csrfToken, authToken, userToken).withCSRFToken
 
-    implicit val hc: HeaderCarrier = HeaderCarrier()
+    given HeaderCarrier = HeaderCarrier()
 
     val composeEmail: ComposeEmail                   = fakeApp.injector.instanceOf[ComposeEmail]
     val emailSentConfirmation: EmailSentConfirmation = fakeApp.injector.instanceOf[EmailSentConfirmation]
@@ -87,21 +86,23 @@ class ComposeEmailControllerSpec extends ControllerBaseSpec with Matchers with M
         .withSession(csrfToken, authToken, userToken)
         .withFormUrlEncodedBody("email-recipients" -> composeEmailRecipients, "user-selection" -> userSelectionData, "user-selection-query" -> selectionQuery)
         .withCSRFToken
-      val result                 = controller.initialiseEmail()(fakeRequest)
+
+      val result = controller.initialiseEmail()(fakeRequest)
       status(result) shouldBe OK
       contentAsString(result).contains("Compose email") shouldBe true
     }
 
     "handle a form which contains the selection query but its value is not valid JSON" in new Setup {
       val userSelectionData =
-        """{"API":"Agent Authorisation","Topic":"Business and policy"}""".stripMargin
-      val selectionQuery    = """{topic:topic-dev, "apiVersionFilter": "apiVersionFilter"}""".stripMargin
+        // """{"API":"Agent Authorisation","Topic":"Business and policy"}""".stripMargin
+        """{"API":123,"Topic":"Business and policy"}""".stripMargin
+      val selectionQuery = """{topic:topic-dev, "apiVersionFilter": "apiVersionFilter"}""".stripMargin
       givenTheGKUserIsAuthorisedAndIsANormalUser()
-      val fakeRequest       = FakeRequest("POST", "/email")
+      val fakeRequest    = FakeRequest("POST", "/email")
         .withSession(csrfToken, authToken, userToken)
         .withFormUrlEncodedBody("user-selection" -> userSelectionData, "user-selection-query" -> selectionQuery)
         .withCSRFToken
-      val result            = controller.initialiseEmail()(fakeRequest)
+      val result         = controller.initialiseEmail()(fakeRequest)
       status(result) shouldBe BAD_REQUEST
       (contentAsJson(result) \ "code").as[String] shouldBe "INVALID_REQUEST_PAYLOAD"
       (contentAsJson(result) \ "message").as[String] should startWith("Request payload does not appear to be JSON")
@@ -111,7 +112,7 @@ class ComposeEmailControllerSpec extends ControllerBaseSpec with Matchers with M
     "handle a form which contains selection query which contains valid JSON but which does not have mandatory attributes" in new Setup {
       val userSelectionData =
         """{"API":"Agent Authorisation","Topic":"Business and policy"}""".stripMargin
-      val selectionQuery    = """{"topic":"topic-dev", "apiVersionFilter": "apiVersionFilter"}""".stripMargin
+      val selectionQuery    = """{"topic":123}""".stripMargin
       givenTheGKUserIsAuthorisedAndIsANormalUser()
       val fakeRequest       = FakeRequest("POST", "/email")
         .withSession(csrfToken, authToken, userToken)
@@ -183,7 +184,6 @@ class ComposeEmailControllerSpec extends ControllerBaseSpec with Matchers with M
       val request = FakeRequest("POST", s"/delete/${emailUUID}/:userSelection").withSession(csrfToken, authToken, userToken).withFormUrlEncodedBody("value" -> "true").withCSRFToken
 
       val result = controller.delete(emailUUID, "{}")(request)
-      println(contentAsString(result))
 
       status(result) shouldBe OK
 

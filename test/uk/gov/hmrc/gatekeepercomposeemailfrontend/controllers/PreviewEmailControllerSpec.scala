@@ -42,7 +42,7 @@ import uk.gov.hmrc.gatekeepercomposeemailfrontend.utils.ComposeEmailControllerSp
 import uk.gov.hmrc.gatekeepercomposeemailfrontend.utils.WithCSRFAddToken
 
 class PreviewEmailControllerSpec extends ControllerBaseSpec with Matchers with FutureAwaits with DefaultAwaitTimeout with WithCSRFAddToken {
-  implicit val materializer: Materializer = app.materializer
+  given Materializer = app.materializer
 
   trait Setup extends ControllerSetupBase {
     val emailUUID                                                      = UUID.randomUUID().toString
@@ -56,7 +56,7 @@ class PreviewEmailControllerSpec extends ControllerBaseSpec with Matchers with F
 
     val request = FakeRequest().withCSRFToken
 
-    val controller                 = new PreviewEmailController(
+    val controller      = new PreviewEmailController(
       mcc,
       composeEmailTemplateView,
       mockEmailService,
@@ -65,8 +65,8 @@ class PreviewEmailControllerSpec extends ControllerBaseSpec with Matchers with F
       mockAuthConnector,
       mockGatekeeperEmailConnector
     )
-    implicit val hc: HeaderCarrier = HeaderCarrier()
-    val selectionQuery             = """{"topic":"topic-dev", "privateapimatch": false, "apiVersionFilter": "apiVersionFilter", "allUsers": false}""".stripMargin
+    given HeaderCarrier = HeaderCarrier()
+    val selectionQuery  = """{"topic":"topic-dev", "privateapimatch": false, "apiVersionFilter": "apiVersionFilter", "allUsers": false}""".stripMargin
 
     val outgoingEmail =
       s"""
@@ -86,19 +86,19 @@ class PreviewEmailControllerSpec extends ControllerBaseSpec with Matchers with F
          |  }
       """.stripMargin
 
-    when(mockGatekeeperEmailConnector.sendEmail(*)(*))
+    when(mockGatekeeperEmailConnector.sendEmail(*)(using *))
       .thenReturn(successful(Json.parse(outgoingEmail).as[OutgoingEmail]))
 
-    when(mockGatekeeperEmailConnector.sendTestEmail(*, *)(*))
+    when(mockGatekeeperEmailConnector.sendTestEmail(*, *)(using *))
       .thenReturn(successful(Json.parse(outgoingEmail).as[OutgoingEmail]))
 
-    when(mockGatekeeperEmailConnector.fetchEmail(*)(*))
+    when(mockGatekeeperEmailConnector.fetchEmail(*)(using *))
       .thenReturn(successful(Json.parse(outgoingEmail).as[OutgoingEmail]))
 
-    when(mockEmailService.fetchEmail(*)(*))
+    when(mockEmailService.fetchEmail(*)(using *))
       .thenReturn(successful(Json.parse(outgoingEmail).as[OutgoingEmail]))
 
-    when(mockGatekeeperEmailConnector.updateEmail(*, *, *, *)(*))
+    when(mockGatekeeperEmailConnector.updateEmail(*, *, *, *)(using *))
       .thenReturn(successful(Json.parse(outgoingEmail).as[OutgoingEmail]))
 
     def fakeApplication(): Application =

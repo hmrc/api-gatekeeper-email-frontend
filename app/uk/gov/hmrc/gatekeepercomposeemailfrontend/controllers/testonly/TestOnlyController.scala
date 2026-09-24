@@ -29,7 +29,7 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import uk.gov.hmrc.gatekeepercomposeemailfrontend.config.AppConfig
 import uk.gov.hmrc.gatekeepercomposeemailfrontend.connectors.AuthConnector
-import uk.gov.hmrc.gatekeepercomposeemailfrontend.models._
+import uk.gov.hmrc.gatekeepercomposeemailfrontend.models.*
 import uk.gov.hmrc.gatekeepercomposeemailfrontend.utils.GatekeeperAuthWrapper
 
 @Singleton
@@ -38,7 +38,7 @@ class TestOnlyController @Inject() (
     gkfeDummyForm: GKFEDummyForm,
     override val forbiddenView: ForbiddenView,
     override val authConnector: AuthConnector
-  )(implicit val appConfig: AppConfig,
+  )(using val appConfig: AppConfig,
     val ec: ExecutionContext
   ) extends FrontendController(mcc) with GatekeeperAuthWrapper with Logging {
 
@@ -47,5 +47,3 @@ class TestOnlyController @Inject() (
   }
 
 }
-
-// $COVERAGE-ON$
