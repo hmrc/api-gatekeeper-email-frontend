@@ -6,7 +6,7 @@ object AppDependencies {
   lazy val jsoupVersion         = "1.21.1"
   lazy val commonDomainVersion  = "1.4.0"
   lazy val apiDomainVersion     = "1.8.0"
-  lazy val hmrcFrontendVersion  = "12.32.0"
+  lazy val hmrcFrontendVersion  = "13.15.0"
 
   def apply(): Seq[ModuleID] = compile ++ test
 
