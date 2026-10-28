@@ -67,6 +67,38 @@ trait SignInSugar {
       |}
     """.stripMargin
 
+  val requestJsonForAdvancedUser =
+    """
+      |{
+      |  "authorise": [
+      |    {
+      |      "$or": [
+      |        {
+      |          "identifiers": [],
+      |          "state": "Activated",
+      |          "enrolment": "admin-role"
+      |        },
+      |        {
+      |          "identifiers": [],
+      |          "state": "Activated",
+      |          "enrolment": "super-user-role"
+      |        },
+      |        {
+      |          "identifiers": [],
+      |          "state": "Activated",
+      |          "enrolment": "advanced-user-role"
+      |        }
+      |      ]
+      |    }
+      |  ],
+      |  "retrieve": [
+      |    "optionalName",
+      |    "authorisedEnrolments",
+      |    "email"
+      |  ]
+      |}
+    """.stripMargin
+
   val requestJsonForSuperUser =
     """
       |{
@@ -111,15 +143,30 @@ trait SignInSugar {
       |}
     """.stripMargin
 
-  def signInGatekeeper(app: Application) = {
+  // def signInGatekeeper(app: Application) = {
 
+  //   val responseJson =
+  //     s"""{
+  //        |  "optionalName": {"name":"$gatekeeperId","lastName":"Smith"},
+  //        |  "authorisedEnrolments": [{"key": "user-role"}]
+  //        |}""".stripMargin
+
+  //   setupAuthCall(requestJsonForUser, responseJson)
+  //   setupStrideAuthPage(app)
+
+  //   DummyStartPage.goTo() // 1st call will redirect to stride auth but we've stubbed out response to set cookie, still need to hit this route though
+  //   DummyStartPage.goTo() // now we have a valid session cookie we should be fine and normal auth stub should work as normal
+  // }
+
+  def signInAdvancedUserGatekeeper(app: Application) = {
     val responseJson =
       s"""{
          |  "optionalName": {"name":"$gatekeeperId","lastName":"Smith"},
-         |  "authorisedEnrolments": [{"key": "user-role"}]
+         |  "authorisedEnrolments": [{"key": "advanced-user-role"}]
          |}""".stripMargin
 
     setupAuthCall(requestJsonForUser, responseJson)
+    setupAuthCall(requestJsonForAdvancedUser, responseJson)
     setupStrideAuthPage(app)
 
     DummyStartPage.goTo() // 1st call will redirect to stride auth but we've stubbed out response to set cookie, still need to hit this route though
@@ -135,6 +182,7 @@ trait SignInSugar {
          |}""".stripMargin
 
     setupAuthCall(requestJsonForUser, responseJson)
+    setupAuthCall(requestJsonForAdvancedUser, responseJson)
     setupAuthCall(requestJsonForSuperUser, responseJson)
     setupStrideAuthPage(app)
 
@@ -151,6 +199,7 @@ trait SignInSugar {
          |}""".stripMargin
 
     setupAuthCall(requestJsonForUser, responseJson)
+    setupAuthCall(requestJsonForAdvancedUser, responseJson)
     setupAuthCall(requestJsonForSuperUser, responseJson)
     setupAuthCall(requestJsonForAdmin, responseJson)
     setupStrideAuthPage(app)
