@@ -143,21 +143,6 @@ trait SignInSugar {
       |}
     """.stripMargin
 
-  // def signInGatekeeper(app: Application) = {
-
-  //   val responseJson =
-  //     s"""{
-  //        |  "optionalName": {"name":"$gatekeeperId","lastName":"Smith"},
-  //        |  "authorisedEnrolments": [{"key": "user-role"}]
-  //        |}""".stripMargin
-
-  //   setupAuthCall(requestJsonForUser, responseJson)
-  //   setupStrideAuthPage(app)
-
-  //   DummyStartPage.goTo() // 1st call will redirect to stride auth but we've stubbed out response to set cookie, still need to hit this route though
-  //   DummyStartPage.goTo() // now we have a valid session cookie we should be fine and normal auth stub should work as normal
-  // }
-
   def signInAdvancedUserGatekeeper(app: Application) = {
     val responseJson =
       s"""{
