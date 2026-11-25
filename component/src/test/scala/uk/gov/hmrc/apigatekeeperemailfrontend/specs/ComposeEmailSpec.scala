@@ -29,7 +29,7 @@ class ComposeEmailSpec extends ApiGatekeeperEmailBaseSpec with GatekeeperEmailSt
   }
 
   def primePageForTesting() = {
-    signInGatekeeper(app)
+    signInAdvancedUserGatekeeper(app)
     SaveEmail.success()
 
     And("I've selected to compose an email")
